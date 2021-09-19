@@ -1,0 +1,75 @@
+version: "3"
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - "8080:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+
+  user_api:
+    build:
+      context: ./inquiry_api
+      dockerfile: Dockerfile
+    volumes:
+      - ./user_api:/usr/src/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user_db
+
+  user_db:
+    image: postgres:13.4-alpine
+    volumes:
+      - user-postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=user_db
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_HOST_AUTH_METHOD=trust
+
+  inquiry_api:
+    build:
+      context: ./inquiry_api
+      dockerfile: Dockerfile
+    volumes:
+      - ./inquiry_api:/usr/src/app
+    ports:
+      - "3001:3000"
+    depends_on:
+      - inquiry_db
+
+  inquiry_db:
+    image: postgres:13.4-alpine
+    volumes:
+      - inquiry-postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=inquiry_db
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_HOST_AUTH_METHOD=trust
+
+  auth_api:
+    build:
+      context: ./auth_api
+      dockerfile: Dockerfile
+      target: dev
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./auth_api:/go/src/app
+    ports:
+      - 8088:8080
+
+volumes:
+  user-postgres-data:
+  inquiry-postgres-data:
