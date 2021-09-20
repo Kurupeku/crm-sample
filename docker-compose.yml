@@ -58,6 +58,31 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
       - POSTGRES_HOST_AUTH_METHOD=trust
 
+  staff_api:
+    build:
+      context: ./staff_api
+      dockerfile: Dockerfile
+      target: dev
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./staff:/go/src/app
+    ports:
+      - 3002:3000
+    depends_on:
+      - staff_db
+
+  staff_db:
+    image: postgres:13.4-alpine
+    volumes:
+      - staff-postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=staff_db
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_HOST_AUTH_METHOD=trust
+
   auth_api:
     build:
       context: ./auth_api
@@ -68,8 +93,9 @@ services:
     volumes:
       - ./auth_api:/go/src/app
     ports:
-      - 8088:8080
+      - 2000:3000
 
 volumes:
   user-postgres-data:
   inquiry-postgres-data:
+  staff-postgres-data:
