@@ -66,11 +66,12 @@ services:
     tty: true
     stdin_open: true
     volumes:
-      - ./staff:/go/src/app
+      - ./staff_api:/go/src/app
     ports:
       - 3002:3000
     depends_on:
       - staff_db
+    command: tail -f /dev/null
 
   staff_db:
     image: postgres:13.4-alpine
