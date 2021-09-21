@@ -1,0 +1,31 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Staff {
+  id: ID!
+  name: String!
+  email: String!
+}
+
+type Query {
+  staffs: [Staff!]!
+  staff(id: ID!): Staff!
+}
+
+input NewStaffInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input StaffInput {
+  id: ID!
+  name: String
+  email: String
+}
+
+type Mutation {
+  createStaff(input: NewStaffInput): Staff!
+  updateStaff(input: StaffInput): Staff!
+}
