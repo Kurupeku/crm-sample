@@ -5,6 +5,7 @@ package graph
 
 import (
 	"context"
+
 	"staff_api/entity"
 	"staff_api/graph/generated"
 	"staff_api/graph/model"
@@ -58,6 +59,25 @@ func (r *mutationResolver) UpdateStaff(ctx context.Context, input *model.StaffIn
 	}
 
 	if err := r.DB.Model(&staff).Updates(params).Error; err != nil {
+		return nil, gqlerror.Errorf("レコードの更新に失敗しました")
+	}
+
+	return model.StaffFromEntity(&staff), nil
+}
+
+func (r *mutationResolver) ChangeStaffPassword(ctx context.Context, input *model.StaffChangePasswordInput) (*model.Staff, error) {
+	var staff entity.Staff
+	if count := r.DB.First(&staff, input.ID).RowsAffected; count == 0 {
+		return nil, gqlerror.Errorf("対象のレコードは存在しません")
+	}
+
+	if bcrypt.CompareHashAndPassword(staff.PasswordDigest, []byte(input.Password)) != nil {
+		return nil, gqlerror.Errorf("現在のパスワードが正しくありません")
+	}
+
+	newHash, _ := bcrypt.GenerateFromPassword([]byte(input.NewPassword), 10)
+
+	if err := r.DB.Model(&staff).Update("password_digest", newHash).Error; err != nil {
 		return nil, gqlerror.Errorf("レコードの更新に失敗しました")
 	}
 
