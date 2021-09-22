@@ -44,11 +44,12 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		CreateStaff     func(childComplexity int, input *model.NewStaffInput) int
-		DeleteStaff     func(childComplexity int, id string) int
-		DeleteStaffIcon func(childComplexity int, id string) int
-		UpdateStaff     func(childComplexity int, input *model.StaffInput) int
-		UploadStaffIcon func(childComplexity int, input *model.StaffIconInput) int
+		ChangeStaffPassword func(childComplexity int, input *model.StaffChangePasswordInput) int
+		CreateStaff         func(childComplexity int, input *model.NewStaffInput) int
+		DeleteStaff         func(childComplexity int, id string) int
+		DeleteStaffIcon     func(childComplexity int, id string) int
+		UpdateStaff         func(childComplexity int, input *model.StaffInput) int
+		UploadStaffIcon     func(childComplexity int, input *model.StaffIconInput) int
 	}
 
 	Query struct {
@@ -69,6 +70,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	CreateStaff(ctx context.Context, input *model.NewStaffInput) (*model.Staff, error)
 	UpdateStaff(ctx context.Context, input *model.StaffInput) (*model.Staff, error)
+	ChangeStaffPassword(ctx context.Context, input *model.StaffChangePasswordInput) (*model.Staff, error)
 	DeleteStaff(ctx context.Context, id string) (*model.Staff, error)
 	UploadStaffIcon(ctx context.Context, input *model.StaffIconInput) (*model.Staff, error)
 	DeleteStaffIcon(ctx context.Context, id string) (*model.Staff, error)
@@ -92,6 +94,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Mutation.changeStaffPassword":
+		if e.complexity.Mutation.ChangeStaffPassword == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_changeStaffPassword_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ChangeStaffPassword(childComplexity, args["input"].(*model.StaffChangePasswordInput)), true
 
 	case "Mutation.createStaff":
 		if e.complexity.Mutation.CreateStaff == nil {
@@ -313,9 +327,16 @@ input StaffIconInput {
   icon: String!
 }
 
+input StaffChangePasswordInput {
+  id: ID!
+  password: String!
+  newPassword: String!
+}
+
 type Mutation {
   createStaff(input: NewStaffInput): Staff!
   updateStaff(input: StaffInput): Staff!
+  changeStaffPassword(input: StaffChangePasswordInput): Staff!
   deleteStaff(id: ID!): Staff!
   uploadStaffIcon(input: StaffIconInput): Staff!
   deleteStaffIcon(id: ID!): Staff!
@@ -327,6 +348,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_changeStaffPassword_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.StaffChangePasswordInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOStaffChangePasswordInput2ᚖstaff_apiᚋgraphᚋmodelᚐStaffChangePasswordInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_createStaff_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -539,6 +575,48 @@ func (ec *executionContext) _Mutation_updateStaff(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().UpdateStaff(rctx, args["input"].(*model.StaffInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Staff)
+	fc.Result = res
+	return ec.marshalNStaff2ᚖstaff_apiᚋgraphᚋmodelᚐStaff(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_changeStaffPassword(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_changeStaffPassword_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ChangeStaffPassword(rctx, args["input"].(*model.StaffChangePasswordInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2197,6 +2275,45 @@ func (ec *executionContext) unmarshalInputNewStaffInput(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputStaffChangePasswordInput(ctx context.Context, obj interface{}) (model.StaffChangePasswordInput, error) {
+	var it model.StaffChangePasswordInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+			it.Password, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "newPassword":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("newPassword"))
+			it.NewPassword, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputStaffIconInput(ctx context.Context, obj interface{}) (model.StaffIconInput, error) {
 	var it model.StaffIconInput
 	asMap := map[string]interface{}{}
@@ -2297,6 +2414,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "updateStaff":
 			out.Values[i] = ec._Mutation_updateStaff(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "changeStaffPassword":
+			out.Values[i] = ec._Mutation_changeStaffPassword(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -3072,6 +3194,14 @@ func (ec *executionContext) unmarshalONewStaffInput2ᚖstaff_apiᚋgraphᚋmodel
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputNewStaffInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOStaffChangePasswordInput2ᚖstaff_apiᚋgraphᚋmodelᚐStaffChangePasswordInput(ctx context.Context, v interface{}) (*model.StaffChangePasswordInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputStaffChangePasswordInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

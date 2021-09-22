@@ -33,9 +33,16 @@ input StaffIconInput {
   icon: String!
 }
 
+input StaffChangePasswordInput {
+  id: ID!
+  password: String!
+  newPassword: String!
+}
+
 type Mutation {
   createStaff(input: NewStaffInput): Staff!
   updateStaff(input: StaffInput): Staff!
+  changeStaffPassword(input: StaffChangePasswordInput): Staff!
   deleteStaff(id: ID!): Staff!
   uploadStaffIcon(input: StaffIconInput): Staff!
   deleteStaffIcon(id: ID!): Staff!
