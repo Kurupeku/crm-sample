@@ -6,6 +6,9 @@ type Staff {
   id: ID!
   name: String!
   email: String!
+  icon: String
+  createdAt: String!
+  updatedAt: String!
 }
 
 type Query {
@@ -25,7 +28,13 @@ input StaffInput {
   email: String
 }
 
+input StaffIconInput {
+  id: ID!
+  icon: String!
+}
+
 type Mutation {
   createStaff(input: NewStaffInput): Staff!
   updateStaff(input: StaffInput): Staff!
+  uploadStaffIcon(input: StaffIconInput): Staff!
 }

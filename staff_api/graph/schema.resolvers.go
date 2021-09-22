@@ -5,10 +5,12 @@ package graph
 
 import (
 	"context"
-	"regexp"
+	"log"
+
 	"staff_api/entity"
 	"staff_api/graph/generated"
 	"staff_api/graph/model"
+	"staff_api/graph/validator"
 
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"golang.org/x/crypto/bcrypt"
@@ -22,7 +24,7 @@ func (r *mutationResolver) CreateStaff(ctx context.Context, input *model.NewStaf
 		PasswordDigest: hashed,
 	}
 
-	if !emailRegex.MatchString(input.Email) {
+	if validator.IsValidEmail(input.Email) {
 		return nil, gqlerror.Errorf("Emailの形式が正しくありません")
 	}
 
@@ -50,7 +52,7 @@ func (r *mutationResolver) UpdateStaff(ctx context.Context, input *model.StaffIn
 	}
 
 	if input.Email != nil {
-		if emailRegex.MatchString(*input.Email) {
+		if validator.IsValidEmail(*input.Email) {
 			return nil, gqlerror.Errorf("Emailの形式が正しくありません")
 		}
 
@@ -58,6 +60,24 @@ func (r *mutationResolver) UpdateStaff(ctx context.Context, input *model.StaffIn
 	}
 
 	if err := r.DB.Model(&staff).Updates(params).Error; err != nil {
+		return nil, gqlerror.Errorf("レコードの更新に失敗しました")
+	}
+
+	return model.StaffFromEntity(&staff), nil
+}
+
+func (r *mutationResolver) UploadStaffIcon(ctx context.Context, input *model.StaffIconInput) (*model.Staff, error) {
+	var staff entity.Staff
+	if count := r.DB.First(&staff, input.ID).RowsAffected; count == 0 {
+		return nil, gqlerror.Errorf("対象のレコードは存在しません")
+	}
+
+	if validator.IsValidIcon(input.Icon) {
+		return nil, gqlerror.Errorf("有効な画像ではありません")
+	}
+
+	if err := r.DB.Model(&staff).Update("icon", input.Icon).Error; err != nil {
+		log.Println("err:", err)
 		return nil, gqlerror.Errorf("レコードの更新に失敗しました")
 	}
 
@@ -95,11 +115,3 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")

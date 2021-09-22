@@ -44,8 +44,9 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		CreateStaff func(childComplexity int, input *model.NewStaffInput) int
-		UpdateStaff func(childComplexity int, input *model.StaffInput) int
+		CreateStaff     func(childComplexity int, input *model.NewStaffInput) int
+		UpdateStaff     func(childComplexity int, input *model.StaffInput) int
+		UploadStaffIcon func(childComplexity int, input *model.StaffIconInput) int
 	}
 
 	Query struct {
@@ -54,15 +55,19 @@ type ComplexityRoot struct {
 	}
 
 	Staff struct {
-		Email func(childComplexity int) int
-		ID    func(childComplexity int) int
-		Name  func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		Email     func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Icon      func(childComplexity int) int
+		Name      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
 	}
 }
 
 type MutationResolver interface {
 	CreateStaff(ctx context.Context, input *model.NewStaffInput) (*model.Staff, error)
 	UpdateStaff(ctx context.Context, input *model.StaffInput) (*model.Staff, error)
+	UploadStaffIcon(ctx context.Context, input *model.StaffIconInput) (*model.Staff, error)
 }
 type QueryResolver interface {
 	Staffs(ctx context.Context) ([]*model.Staff, error)
@@ -108,6 +113,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateStaff(childComplexity, args["input"].(*model.StaffInput)), true
 
+	case "Mutation.uploadStaffIcon":
+		if e.complexity.Mutation.UploadStaffIcon == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_uploadStaffIcon_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UploadStaffIcon(childComplexity, args["input"].(*model.StaffIconInput)), true
+
 	case "Query.staff":
 		if e.complexity.Query.Staff == nil {
 			break
@@ -127,6 +144,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Staffs(childComplexity), true
 
+	case "Staff.createdAt":
+		if e.complexity.Staff.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Staff.CreatedAt(childComplexity), true
+
 	case "Staff.email":
 		if e.complexity.Staff.Email == nil {
 			break
@@ -141,12 +165,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Staff.ID(childComplexity), true
 
+	case "Staff.icon":
+		if e.complexity.Staff.Icon == nil {
+			break
+		}
+
+		return e.complexity.Staff.Icon(childComplexity), true
+
 	case "Staff.name":
 		if e.complexity.Staff.Name == nil {
 			break
 		}
 
 		return e.complexity.Staff.Name(childComplexity), true
+
+	case "Staff.updatedAt":
+		if e.complexity.Staff.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Staff.UpdatedAt(childComplexity), true
 
 	}
 	return 0, false
@@ -220,6 +258,9 @@ type Staff {
   id: ID!
   name: String!
   email: String!
+  icon: String
+  createdAt: String!
+  updatedAt: String!
 }
 
 type Query {
@@ -239,9 +280,15 @@ input StaffInput {
   email: String
 }
 
+input StaffIconInput {
+  id: ID!
+  icon: String!
+}
+
 type Mutation {
   createStaff(input: NewStaffInput): Staff!
   updateStaff(input: StaffInput): Staff!
+  uploadStaffIcon(input: StaffIconInput): Staff!
 }
 `, BuiltIn: false},
 }
@@ -273,6 +320,21 @@ func (ec *executionContext) field_Mutation_updateStaff_args(ctx context.Context,
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOStaffInput2ᚖstaff_apiᚋgraphᚋmodelᚐStaffInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_uploadStaffIcon_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.StaffIconInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOStaffIconInput2ᚖstaff_apiᚋgraphᚋmodelᚐStaffIconInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -417,6 +479,48 @@ func (ec *executionContext) _Mutation_updateStaff(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().UpdateStaff(rctx, args["input"].(*model.StaffInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Staff)
+	fc.Result = res
+	return ec.marshalNStaff2ᚖstaff_apiᚋgraphᚋmodelᚐStaff(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_uploadStaffIcon(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_uploadStaffIcon_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UploadStaffIcon(rctx, args["input"].(*model.StaffIconInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -670,6 +774,108 @@ func (ec *executionContext) _Staff_email(ctx context.Context, field graphql.Coll
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Email, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Staff_icon(ctx context.Context, field graphql.CollectedField, obj *model.Staff) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Staff",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Icon, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Staff_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Staff) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Staff",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Staff_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Staff) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Staff",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1847,6 +2053,37 @@ func (ec *executionContext) unmarshalInputNewStaffInput(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputStaffIconInput(ctx context.Context, obj interface{}) (model.StaffIconInput, error) {
+	var it model.StaffIconInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "icon":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("icon"))
+			it.Icon, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputStaffInput(ctx context.Context, obj interface{}) (model.StaffInput, error) {
 	var it model.StaffInput
 	asMap := map[string]interface{}{}
@@ -1916,6 +2153,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "updateStaff":
 			out.Values[i] = ec._Mutation_updateStaff(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "uploadStaffIcon":
+			out.Values[i] = ec._Mutation_uploadStaffIcon(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2011,6 +2253,18 @@ func (ec *executionContext) _Staff(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "email":
 			out.Values[i] = ec._Staff_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "icon":
+			out.Values[i] = ec._Staff_icon(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._Staff_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._Staff_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2664,6 +2918,14 @@ func (ec *executionContext) unmarshalONewStaffInput2ᚖstaff_apiᚋgraphᚋmodel
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputNewStaffInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOStaffIconInput2ᚖstaff_apiᚋgraphᚋmodelᚐStaffIconInput(ctx context.Context, v interface{}) (*model.StaffIconInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputStaffIconInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

@@ -8,6 +8,11 @@ type NewStaffInput struct {
 	Password string `json:"password"`
 }
 
+type StaffIconInput struct {
+	ID   string `json:"id"`
+	Icon string `json:"icon"`
+}
+
 type StaffInput struct {
 	ID    string  `json:"id"`
 	Name  *string `json:"name"`
