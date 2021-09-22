@@ -71,7 +71,6 @@ services:
       - 3002:3000
     depends_on:
       - staff_db
-    command: tail -f /dev/null
 
   staff_db:
     image: postgres:13.4-alpine
