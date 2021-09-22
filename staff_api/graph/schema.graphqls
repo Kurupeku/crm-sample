@@ -36,5 +36,7 @@ input StaffIconInput {
 type Mutation {
   createStaff(input: NewStaffInput): Staff!
   updateStaff(input: StaffInput): Staff!
+  deleteStaff(id: ID!): Staff!
   uploadStaffIcon(input: StaffIconInput): Staff!
+  deleteStaffIcon(id: ID!): Staff!
 }

@@ -1,8 +1,10 @@
 package graph
 
+// This file will be automatically regenerated based on the schema, any resolver implementations
+// will be copied through when generating and any unknown code will be moved to the end.
+
 import (
 	"context"
-
 	"staff_api/entity"
 	"staff_api/graph/generated"
 	"staff_api/graph/model"
@@ -62,6 +64,19 @@ func (r *mutationResolver) UpdateStaff(ctx context.Context, input *model.StaffIn
 	return model.StaffFromEntity(&staff), nil
 }
 
+func (r *mutationResolver) DeleteStaff(ctx context.Context, id string) (*model.Staff, error) {
+	var staff entity.Staff
+	if count := r.DB.First(&staff, id).RowsAffected; count == 0 {
+		return nil, gqlerror.Errorf("対象のレコードは存在しません")
+	}
+
+	if err := r.DB.Delete(&staff, id).Error; err != nil {
+		return nil, gqlerror.Errorf("レコードの削除に失敗しました")
+	}
+
+	return model.StaffFromEntity(&staff), nil
+}
+
 func (r *mutationResolver) UploadStaffIcon(ctx context.Context, input *model.StaffIconInput) (*model.Staff, error) {
 	var staff entity.Staff
 	if count := r.DB.First(&staff, input.ID).RowsAffected; count == 0 {
@@ -73,6 +88,19 @@ func (r *mutationResolver) UploadStaffIcon(ctx context.Context, input *model.Sta
 	}
 
 	if err := r.DB.Model(&staff).Update("icon", input.Icon).Error; err != nil {
+		return nil, gqlerror.Errorf("レコードの更新に失敗しました")
+	}
+
+	return model.StaffFromEntity(&staff), nil
+}
+
+func (r *mutationResolver) DeleteStaffIcon(ctx context.Context, id string) (*model.Staff, error) {
+	var staff entity.Staff
+	if count := r.DB.First(&staff, id).RowsAffected; count == 0 {
+		return nil, gqlerror.Errorf("対象のレコードは存在しません")
+	}
+
+	if err := r.DB.Model(&staff).Update("icon", nil).Error; err != nil {
 		return nil, gqlerror.Errorf("レコードの更新に失敗しました")
 	}
 
@@ -102,8 +130,10 @@ func (r *queryResolver) Staff(ctx context.Context, id string) (*model.Staff, err
 	return model.StaffFromEntity(&staff), nil
 }
 
+// Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
+// Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
