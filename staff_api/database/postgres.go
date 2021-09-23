@@ -1,26 +1,31 @@
 package database
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"os"
+
+	"staff_api/entity"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"staff_api/entity"
 )
 
-func Connect() (*gorm.DB, error) {
-	// dsn := "host=staff_db user=postgres password=postgres port=5432 sslmode=disable TimeZone=Asia/Tokyo"
-	host := os.Getenv("STAFF_DB_HOST")
-	user := os.Getenv("STAFF_DB_USER")
-	password := os.Getenv("STAFF_DB_PASSWORD")
-	port := os.Getenv("STAFF_DB_PORT")
+const database = "postgres"
 
-	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s port=%s sslmode=disable TimeZone=Asia/Tokyo",
-		host, user, password, port,
-	)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+type Meta struct {
+	host     string
+	user     string
+	password string
+	port     string
+	dbname   string
+}
+
+func Connect() (*gorm.DB, error) {
+	m := Meta{}
+	m.Init()
+	db, err := connect(&m)
 
 	if err != nil {
 		return nil, err
@@ -32,4 +37,52 @@ func Connect() (*gorm.DB, error) {
 	}
 
 	return db, nil
+}
+
+func (m *Meta) Init() {
+	m.host = os.Getenv("DB_HOST")
+	m.user = os.Getenv("DB_USER")
+	m.password = os.Getenv("DB_PASSWORD")
+	m.port = os.Getenv("DB_PORT")
+	m.dbname = os.Getenv("STAFF_DB_NAME") + "_" + os.Getenv("GO_ENV")
+}
+
+func (m *Meta) PgDsn() string {
+	return fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Tokyo",
+		m.host, m.port, m.user, m.password, m.dbname,
+	)
+}
+
+func (m *Meta) PgDsnWithoutDBName() string {
+	return fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s sslmode=disable TimeZone=Asia/Tokyo",
+		m.host, m.port, m.user, m.password,
+	)
+}
+
+func connectOrCreatePostgresDatabase(m *Meta) (*gorm.DB, error) {
+	db, err := gorm.Open(postgres.Open(m.PgDsnWithoutDBName()), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	db = db.Exec(fmt.Sprintf("CREATE DATABASE %s;", m.dbname))
+
+	if db.Error != nil {
+		db, err = gorm.Open(postgres.Open(m.PgDsn()), &gorm.Config{})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return db, nil
+}
+
+func connect(m *Meta) (*gorm.DB, error) {
+	switch database {
+	case "postgres":
+		return connectOrCreatePostgresDatabase(m)
+	}
+
+	return nil, errors.New("const 'database' is unmatched in method connect")
 }
