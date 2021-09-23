@@ -23,7 +23,7 @@ func (r *mutationResolver) CreateStaff(ctx context.Context, input *model.NewStaf
 		PasswordDigest: hashed,
 	}
 
-	if validator.IsValidEmail(input.Email) {
+	if validator.IsInvalidEmail(input.Email) {
 		return nil, gqlerror.Errorf("Emailの形式が正しくありません")
 	}
 
@@ -51,7 +51,7 @@ func (r *mutationResolver) UpdateStaff(ctx context.Context, input *model.StaffIn
 	}
 
 	if input.Email != nil {
-		if validator.IsValidEmail(*input.Email) {
+		if validator.IsInvalidEmail(*input.Email) {
 			return nil, gqlerror.Errorf("Emailの形式が正しくありません")
 		}
 
@@ -103,7 +103,7 @@ func (r *mutationResolver) UploadStaffIcon(ctx context.Context, input *model.Sta
 		return nil, gqlerror.Errorf("対象のレコードは存在しません")
 	}
 
-	if validator.IsValidIcon(input.Icon) {
+	if validator.IsInvalidIcon(input.Icon) {
 		return nil, gqlerror.Errorf("有効な画像ではありません")
 	}
 
