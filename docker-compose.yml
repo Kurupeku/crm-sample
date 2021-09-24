@@ -1,6 +1,17 @@
 version: "3"
 
 services:
+  db:
+    image: postgres:13.4-alpine
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=db
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_HOST_AUTH_METHOD=trust
+
   client:
     build:
       context: ./client
@@ -23,18 +34,17 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - user_db
+      - db
 
-  user_db:
-    image: postgres:13.4-alpine
-    volumes:
-      - user-postgres-data:/var/lib/postgresql/data
+  user_db_gui:
+    image: sosedoff/pgweb
+    ports:
+      - "3010:8081"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST=user_db
-      - PGDATA=/var/lib/postgresql/data/pgdata
-      - POSTGRES_HOST_AUTH_METHOD=trust
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/user_development?sslmode=disable
+    depends_on:
+      - db
+    restart: always
 
   inquiry_api:
     build:
@@ -45,18 +55,17 @@ services:
     ports:
       - "3001:3000"
     depends_on:
-      - inquiry_db
+      - db
 
-  inquiry_db:
-    image: postgres:13.4-alpine
-    volumes:
-      - inquiry-postgres-data:/var/lib/postgresql/data
+  inquiry_db_gui:
+    image: sosedoff/pgweb
+    ports:
+      - "3011:8081"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST=inquiry_db
-      - PGDATA=/var/lib/postgresql/data/pgdata
-      - POSTGRES_HOST_AUTH_METHOD=trust
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/inquiry_development?sslmode=disable
+    depends_on:
+      - db
+    restart: always
 
   staff_api:
     build:
@@ -66,22 +75,21 @@ services:
     tty: true
     stdin_open: true
     volumes:
-      - ./staff:/go/src/app
+      - ./staff_api:/go/src/app
     ports:
       - 3002:3000
     depends_on:
-      - staff_db
+      - db
 
-  staff_db:
-    image: postgres:13.4-alpine
-    volumes:
-      - staff-postgres-data:/var/lib/postgresql/data
+  staff_db_gui:
+    image: sosedoff/pgweb
+    ports:
+      - "3012:8081"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST=staff_db
-      - PGDATA=/var/lib/postgresql/data/pgdata
-      - POSTGRES_HOST_AUTH_METHOD=trust
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/staff_development?sslmode=disable
+    depends_on:
+      - db
+    restart: always
 
   auth_api:
     build:
@@ -93,9 +101,7 @@ services:
     volumes:
       - ./auth_api:/go/src/app
     ports:
-      - 2000:3000
+      - 3003:3000
 
 volumes:
-  user-postgres-data:
-  inquiry-postgres-data:
-  staff-postgres-data:
+  postgres-data:
