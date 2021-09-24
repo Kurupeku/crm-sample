@@ -61,23 +61,6 @@ func (m *Meta) PgDsnWithoutDBName() string {
 	)
 }
 
-func connectOrCreatePostgresDatabase(m *Meta) (*gorm.DB, error) {
-	db, err := gorm.Open(postgres.Open(m.PgDsnWithoutDBName()), &gorm.Config{})
-	if err != nil {
-		log.Fatal(err)
-	}
-	db = db.Exec(fmt.Sprintf("CREATE DATABASE %s;", m.dbname))
-
-	if db.Error != nil {
-		db, err = gorm.Open(postgres.Open(m.PgDsn()), &gorm.Config{})
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return db, nil
-}
-
 func connect(m *Meta) (*gorm.DB, error) {
 	switch database {
 	case "postgres":
@@ -85,4 +68,19 @@ func connect(m *Meta) (*gorm.DB, error) {
 	}
 
 	return nil, errors.New("const 'database' is unmatched in method connect")
+}
+
+func connectOrCreatePostgresDatabase(m *Meta) (*gorm.DB, error) {
+	public, err := gorm.Open(postgres.Open(m.PgDsnWithoutDBName()), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	public.Exec(fmt.Sprintf("CREATE DATABASE %s;", m.dbname))
+
+	named, err := gorm.Open(postgres.Open(m.PgDsn()), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+
+	return named, nil
 }

@@ -129,7 +129,7 @@ func (r *mutationResolver) DeleteStaffIcon(ctx context.Context, id string) (*mod
 
 func (r *queryResolver) Staffs(ctx context.Context) ([]*model.Staff, error) {
 	var staffs []entity.Staff
-	if err := r.DB.Find(&staffs).Error; err != nil {
+	if err := r.DB.Order("created_at").Find(&staffs).Error; err != nil {
 		return nil, gqlerror.Errorf("情報を取得できませんでした")
 	}
 
