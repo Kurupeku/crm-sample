@@ -21,6 +21,7 @@ COPY Gemfile* ./
 RUN bundle -j4
 
 COPY . ./
+COPY ../.en ./
 
 # RUN yarn install
 
