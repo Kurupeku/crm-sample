@@ -1,7 +1,13 @@
 ja:
   activerecord:
     models:
+      user: ユーザー
     attributes:
+      user:
+        company_name: 会社名
+        name: 名前
+        email: Email
+        tel: 電話番号
 
   attributes:
     id: ID
