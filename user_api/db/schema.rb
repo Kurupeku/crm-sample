@@ -17,10 +17,10 @@ ActiveRecord::Schema.define(version: 2021_09_26_084050) do
 
   create_table "addresses", force: :cascade do |t|
     t.bigint "user_id"
-    t.string "postal_code"
-    t.string "prefecture"
-    t.string "city"
-    t.string "street"
+    t.string "postal_code", null: false
+    t.string "prefecture", null: false
+    t.string "city", null: false
+    t.string "street", null: false
     t.string "building"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 2021_09_26_084050) do
     t.string "tel", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   add_foreign_key "addresses", "users"

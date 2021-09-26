@@ -4,10 +4,10 @@
 #
 #  id          :bigint           not null, primary key
 #  building    :string
-#  city        :string
-#  postal_code :string
-#  prefecture  :string
-#  street      :string
+#  city        :string           not null
+#  postal_code :string           not null
+#  prefecture  :string           not null
+#  street      :string           not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #  user_id     :bigint
