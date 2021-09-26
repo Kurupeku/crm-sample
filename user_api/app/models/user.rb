@@ -12,11 +12,15 @@
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #
+# Indexes
+#
+#  index_users_on_email  (email) UNIQUE
+#
 class User < ApplicationRecord
   has_one :address, dependent: :destroy
 
   validates :name, presence: true
-  validates :email, format: { with: EMAIL_REGEXP }
+  validates :email, uniqueness: true, format: { with: EMAIL_REGEXP }
   validates :tel, format: { with: PHONE_NUMBER_REGEX }
 
   def created_at_unix
