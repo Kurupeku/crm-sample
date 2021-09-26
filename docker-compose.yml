@@ -35,6 +35,7 @@ services:
       - "3000:3000"
     depends_on:
       - db
+    command: tail -f /dev/null
 
   user_db_gui:
     image: sosedoff/pgweb

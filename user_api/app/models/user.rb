@@ -13,11 +13,11 @@
 #  updated_at   :datetime         not null
 #
 class User < ApplicationRecord
-  with_options presence: true do
-    validates :name
-    validates :email, format: { with: EMAIL_REGEXP }
-    validates :tel, format: { with: PHONE_NUMBER_REGEX }
-  end
+  has_one :address, dependent: :destroy
+
+  validates :name, presence: true
+  validates :email, format: { with: EMAIL_REGEXP }
+  validates :tel, format: { with: PHONE_NUMBER_REGEX }
 
   def created_at_unix
     created_at&.to_i
