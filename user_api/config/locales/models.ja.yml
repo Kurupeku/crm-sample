@@ -1,0 +1,24 @@
+ja:
+  activerecord:
+    models:
+      user: ユーザー
+      address: 住所
+    attributes:
+      user:
+        company_name: 会社名
+        name: 名前
+        email: Email
+        tel: 電話番号
+      address:
+        postal_code: 郵便番号
+        prefecture: 都道府県
+        city: 市区町村
+        street: 町名・番地
+        building: 部屋番号
+        full_address: 住所
+        full_address_with_postal_code: 住所
+
+  attributes:
+    id: ID
+    created_at: 作成日時
+    updated_at: 更新日時
