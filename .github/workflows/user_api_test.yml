@@ -1,6 +1,8 @@
 name: Rails CI
 
 on:
+  workflow_dispatch:
+  
   push:
     paths:
       - "user_api/**"
@@ -29,6 +31,7 @@ jobs:
         DB_USER: postgres
         DB_PASSWORD: postgres
         DB_PORT: 5432
+        USER_DB_NAME: user
 
     steps:
       - name: Check out branch
