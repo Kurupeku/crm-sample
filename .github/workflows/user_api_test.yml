@@ -36,19 +36,8 @@ jobs:
 
       - name: Setup postgres client
         run: |
-          apt-get update -qq \
-          apt-get install -yq postgresql-client
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Setup yarn
-        run: |
-          curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-          echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
           apt-get update -qq
-          apt install -yq yarn
+          apt-get install -yq postgresql-client
 
       - name: Install bundles
         run: bundle install -j4
