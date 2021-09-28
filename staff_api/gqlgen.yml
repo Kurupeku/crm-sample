@@ -31,3 +31,7 @@ models:
       - github.com/99designs/gqlgen/graphql.Int32
   Staff:
     model: staff_api/graph/model.Staff
+  PageInfo:
+    model: staff_api/graph/model.PageInfo
+  StaffList:
+    model: staff_api/graph/model.StaffList
