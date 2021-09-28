@@ -14,6 +14,10 @@ type StaffChangePasswordInput struct {
 	NewPassword string `json:"newPassword"`
 }
 
+type StaffIDInput struct {
+	ID string `json:"id"`
+}
+
 type StaffIconInput struct {
 	ID   string `json:"id"`
 	Icon string `json:"icon"`
