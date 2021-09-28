@@ -32,7 +32,7 @@ services:
     volumes:
       - ./user_api:/usr/src/app
     ports:
-      - "3000:3000"
+      - "3002:3000"
     depends_on:
       - db
     command: tail -f /dev/null
@@ -40,7 +40,7 @@ services:
   user_db_gui:
     image: sosedoff/pgweb
     ports:
-      - "3010:8081"
+      - "3012:8081"
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/user_development?sslmode=disable
     depends_on:
@@ -54,14 +54,14 @@ services:
     volumes:
       - ./inquiry_api:/usr/src/app
     ports:
-      - "3001:3000"
+      - "3003:3000"
     depends_on:
       - db
 
   inquiry_db_gui:
     image: sosedoff/pgweb
     ports:
-      - "3011:8081"
+      - "3013:8081"
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/inquiry_development?sslmode=disable
     depends_on:
@@ -78,14 +78,14 @@ services:
     volumes:
       - ./staff_api:/go/src/app
     ports:
-      - 3002:3000
+      - 3001:3000
     depends_on:
       - db
 
   staff_db_gui:
     image: sosedoff/pgweb
     ports:
-      - "3012:8081"
+      - "3011:8081"
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/staff_development?sslmode=disable
     depends_on:
@@ -102,7 +102,7 @@ services:
     volumes:
       - ./auth_api:/go/src/app
     ports:
-      - 3003:3000
+      - 3004:3000
 
 volumes:
   postgres-data:

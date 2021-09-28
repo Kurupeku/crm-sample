@@ -15,6 +15,18 @@ type Staff struct {
 	UpdatedAt string `json:"updatedAt"`
 }
 
+type PageInfo struct {
+	CurrentPage int `json:"currentPage"`
+	RecordCount int `json:"recordCount"`
+	PageCount   int `json:"pageCount"`
+	Limit       int `json:"limit"`
+}
+
+type StaffList struct {
+	PageInfo *PageInfo `json:"pageInfo"`
+	Staffs   []*Staff  `json:"staffs"`
+}
+
 func StaffFromEntity(e *entity.Staff) *Staff {
 	return &Staff{
 		ID:        fmt.Sprintf("%d", e.ID),

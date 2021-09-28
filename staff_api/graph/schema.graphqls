@@ -11,8 +11,21 @@ type Staff {
   updatedAt: String!
 }
 
+type PageInfo {
+  currentPage: Int!
+  recordCount: Int!
+  pageCount: Int!
+  limit: Int!
+}
+
+type StaffList {
+  pageInfo: PageInfo!
+  staffs: [Staff!]!
+}
+
 type Query {
   staffs: [Staff!]!
+  staffList(page: Int, per: Int): StaffList!
   staff(id: ID!): Staff!
 }
 
@@ -26,6 +39,10 @@ input StaffInput {
   id: ID!
   name: String
   email: String
+}
+
+input StaffIDInput {
+  id: ID!
 }
 
 input StaffIconInput {
@@ -43,7 +60,7 @@ type Mutation {
   createStaff(input: NewStaffInput): Staff!
   updateStaff(input: StaffInput): Staff!
   changeStaffPassword(input: StaffChangePasswordInput): Staff!
-  deleteStaff(id: ID!): Staff!
+  deleteStaff(input: StaffIDInput): Staff!
   uploadStaffIcon(input: StaffIconInput): Staff!
-  deleteStaffIcon(id: ID!): Staff!
+  deleteStaffIcon(input: StaffIDInput): Staff!
 }
