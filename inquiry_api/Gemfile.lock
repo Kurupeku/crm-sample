@@ -1,6 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    aasm (5.2.0)
+      concurrent-ruby (~> 1.0)
     actioncable (6.1.4.1)
       actionpack (= 6.1.4.1)
       activesupport (= 6.1.4.1)
@@ -74,6 +76,8 @@ GEM
     dotenv-rails (2.7.6)
       dotenv (= 2.7.6)
       railties (>= 3.2)
+    enum_help (0.0.17)
+      activesupport (>= 3.0.0)
     erubi (1.10.0)
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
@@ -212,10 +216,12 @@ PLATFORMS
   aarch64-linux
 
 DEPENDENCIES
+  aasm
   annotate
   bootsnap (>= 1.4.4)
   byebug
   dotenv-rails
+  enum_help
   factory_bot_rails
   faker
   gimei

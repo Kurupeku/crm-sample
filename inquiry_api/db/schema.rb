@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_29_071643) do
+ActiveRecord::Schema.define(version: 2021_09_29_081414) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,4 +29,16 @@ ActiveRecord::Schema.define(version: 2021_09_29_071643) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "progresses", force: :cascade do |t|
+    t.bigint "inquiry_id", null: false
+    t.integer "rank", default: 0, null: false
+    t.datetime "contacted_at"
+    t.date "recontacted_on"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "aasm_state"
+    t.index ["inquiry_id"], name: "index_progresses_on_inquiry_id"
+  end
+
+  add_foreign_key "progresses", "inquiries"
 end
