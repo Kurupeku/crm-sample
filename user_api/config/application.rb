@@ -31,13 +31,6 @@ module App
     config.i18n.default_locale = :ja
     config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]
 
-    config.middleware.insert_before 0, Rack::Cors do
-      allow do
-        origins '*'
-        resource '*', headers: :any, methods: %i[get post put patch delete]
-      end
-    end
-
     config.generators do |g|
       g.test_framework :rspec, view_specs: false,
                                helper_specs: false,
