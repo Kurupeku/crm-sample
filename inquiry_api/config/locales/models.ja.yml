@@ -6,7 +6,6 @@ ja:
 
     attributes:
       inquiry:
-        staff_id: スタッフID
         user_id: ユーザーID
         company_name: 会社名
         name: 担当者名
@@ -18,12 +17,13 @@ ja:
         progress: 進捗
 
       progress:
+        staff_id: スタッフID
         inquiry_id: 問い合わせID
         inquiry: 問い合わせ
         rank: 見込みランク
         contacted_at: 連絡日時
         reconciled_on: 再連絡日
-        aasm_state:
+        state:
           waiting: 未着手
           waiting_recontact: 再度連絡待ち
           contacting: 連絡中

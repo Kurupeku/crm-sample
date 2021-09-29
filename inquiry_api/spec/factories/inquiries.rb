@@ -12,12 +12,10 @@
 #  tel               :string           not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  staff_id          :integer
 #  user_id           :integer
 #
 FactoryBot.define do
   factory :inquiry do
-    staff_id { 1 }
     user_id { 1 }
     company_name { Faker::Company.name }
     name { Gimei.kanji }

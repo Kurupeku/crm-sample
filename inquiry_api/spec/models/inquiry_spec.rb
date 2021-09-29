@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: inquiries
@@ -12,7 +14,6 @@
 #  tel               :string           not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  staff_id          :integer
 #  user_id           :integer
 #
 require 'rails_helper'
@@ -108,6 +109,16 @@ RSpec.describe Inquiry, type: :model do
         inquiry.tel = '123456789011'
         inquiry.valid?
         is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+      end
+    end
+  end
+
+  describe '# init_progress' do
+    context 'Progressモデルが紐付いていない場合' do
+      let(:inquiry) { build :inquiry }
+
+      it 'Progressインスタンスを生成してから保存される' do
+        expect { inquiry.save! }.to change { inquiry.progress.present? }.from(false).to(true)
       end
     end
   end
