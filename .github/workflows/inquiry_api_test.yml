@@ -1,15 +1,15 @@
-name: User API Test
+name: Inquiry API Test
 
 on:
   workflow_dispatch:
 
   push:
     paths:
-      - "user_api/**"
+      - "inquiry_api/**"
 
 defaults:
   run:
-    working-directory: ./user_api
+    working-directory: ./inquiry_api
 
 jobs:
   build:
@@ -31,7 +31,9 @@ jobs:
         DB_USER: postgres
         DB_PASSWORD: postgres
         DB_PORT: 5432
-        USER_DB_NAME: user
+        USER_DB_NAME: inquiry
+        TZ: Asia/Tokyo
+        LANG: C.UTF-8
 
     steps:
       - name: Check out branch
