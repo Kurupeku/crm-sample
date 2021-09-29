@@ -25,17 +25,7 @@ class InquiriesController < ApplicationController
     { data: @inquiry.attributes }.to_json
   end
 
-  def shaped_massages
-    @inquiry.errors.messages.to_a.each_with_object([]) do |pair, result|
-      key, msgs = pair
-      msgs.each do |msg|
-        result << { key: key, message: msg }
-      end
-      result
-    end
-  end
-
   def error_json
-    { errors: shaped_massages }.to_json
+    { errors: @inquiry.errors.full_messages, data: nil }.to_json
   end
 end
