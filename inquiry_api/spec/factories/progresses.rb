@@ -21,10 +21,10 @@
 #
 FactoryBot.define do
   factory :progress do
-    inquiry { nil }
-    rank { 1 }
-    status { 1 }
-    contacted_at { "2021-09-29 16:50:47" }
-    recontacted_on { "2021-09-29" }
+    association :inquiry
+
+    rank { 0 }
+    contacted_at { nil }
+    recontacted_on { nil }
   end
 end
