@@ -1,7 +1,19 @@
 ja:
   activerecord:
     models:
+      inquiry: 問い合わせ
+
     attributes:
+      inquiry:
+        staff_id: スタッフID
+        user_id: ユーザーID
+        company_name: 会社名
+        name: 担当者名
+        email: Email
+        tel: 電話番号
+        number_of_users: 利用人数
+        introductory_term: 導入時期
+        detail: 要望
 
   attributes:
     id: ID
