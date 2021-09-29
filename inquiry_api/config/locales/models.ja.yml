@@ -2,6 +2,7 @@ ja:
   activerecord:
     models:
       inquiry: 問い合わせ
+      progress: 進捗
 
     attributes:
       inquiry:
@@ -14,6 +15,29 @@ ja:
         number_of_users: 利用人数
         introductory_term: 導入時期
         detail: 要望
+        progress: 進捗
+
+      progress:
+        inquiry_id: 問い合わせID
+        inquiry: 問い合わせ
+        rank: 見込みランク
+        contacted_at: 連絡日時
+        reconciled_on: 再連絡日
+        aasm_state:
+          waiting: 未着手
+          waiting_recontact: 再度連絡待ち
+          contacting: 連絡中
+          estimating: 見積中
+          archived: 対応済み
+          ordered: 受注済み
+
+  enums:
+    progress:
+      rank:
+        a: A
+        b: B
+        c: C
+        d: D
 
   attributes:
     id: ID

@@ -18,6 +18,8 @@
 #  user_id           :integer
 #
 class Inquiry < ApplicationRecord
+  has_one :progress
+
   with_options presence: true do
     validates :name
     validates :email, fomat: { with: EMAIL_REGEXP }
