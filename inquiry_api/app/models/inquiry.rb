@@ -14,10 +14,11 @@
 #  tel               :string           not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  staff_id          :integer
 #  user_id           :integer
 #
 class Inquiry < ApplicationRecord
+  before_save :init_progress
+
   has_one :progress
 
   with_options presence: true do
@@ -28,4 +29,10 @@ class Inquiry < ApplicationRecord
 
   validates :email, format: { with: EMAIL_REGEXP }
   validates :tel, format: { with: PHONE_NUMBER_REGEX }
+
+  private
+
+  def init_progress
+    build_progress if progress.blank?
+  end
 end

@@ -3,13 +3,14 @@
 # Table name: progresses
 #
 #  id             :bigint           not null, primary key
-#  aasm_state     :string
 #  contacted_at   :datetime
 #  rank           :integer          default("d"), not null
 #  recontacted_on :date
+#  state          :string
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  inquiry_id     :bigint           not null
+#  staff_id       :integer
 #
 # Indexes
 #
@@ -28,7 +29,7 @@ class Progress < ApplicationRecord
 
   enum rank: { d: 0, c: 1, b: 2, a: 3 }
 
-  aasm whiny_transitions: false do
+  aasm column: :state do
     state :waiting, initial: true
     state :waiting_recontact
     state :contacting
@@ -40,13 +41,13 @@ class Progress < ApplicationRecord
     error_on_all_events :state_denied
 
     event :contact do
-      transitions from: :waiting,
+      transitions from: %i[waiting waiting_recontact],
                   to: :contacting
     end
 
     event :recontact do
-      transitions from: :waiting_recontact,
-                  to: :contacting
+      transitions from: %i[waiting contacting],
+                  to: :waiting_recontact
     end
 
     event :contacted do
@@ -55,25 +56,33 @@ class Progress < ApplicationRecord
     end
 
     event :archive do
-      transitions from: %i[waiting waiting_recontact contacting],
+      transitions from: %i[waiting waiting_recontact contacting estimating],
                   to: :archived
     end
 
     event :order do
       transitions from: %i[estimating archived],
-                  to: :archived
+                  to: :ordered
     end
   end
 
-  def status_changed
-    @event_log = I18n.t :status_denied,
-                        scope: %i[active_record logs messages],
-                        to_state: :aasm.to_state
+  def state_i18n
+    I18n.t state.to_sym,
+           scope: %i[activerecord attributes progress state]
   end
 
+  private
+
   def state_changed
+    message = I18n.t :status_changed,
+                     scope: %i[activerecord logs messages],
+                     to_state: aasm.to_state
+    @event_log = message
+  end
+
+  def state_denied
     message = I18n.t :status_denied,
-                     scope: %i[active_record errors messages]
+                     scope: %i[activerecord errors messages]
     errors.add :base, message
   end
 end

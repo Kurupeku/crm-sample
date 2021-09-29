@@ -10,13 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_29_081414) do
+ActiveRecord::Schema.define(version: 2021_09_29_144700) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "inquiries", force: :cascade do |t|
-    t.integer "staff_id"
     t.integer "user_id"
     t.string "company_name"
     t.string "name", null: false
@@ -36,7 +35,8 @@ ActiveRecord::Schema.define(version: 2021_09_29_081414) do
     t.date "recontacted_on"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "aasm_state"
+    t.string "state"
+    t.integer "staff_id"
     t.index ["inquiry_id"], name: "index_progresses_on_inquiry_id"
   end
 
