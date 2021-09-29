@@ -142,6 +142,9 @@ ja:
       header:
         one: "%{model}にエラーが発生しました"
         other: "%{model}に%{count}個のエラーが発生しました"
+    routes:
+      not_found: 指定されたPATHは存在しません
+      internal_server_error: サーバーエラー
   helpers:
     select:
       prompt: 選択してください
