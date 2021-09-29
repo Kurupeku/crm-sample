@@ -20,6 +20,7 @@ class Inquiry < ApplicationRecord
   before_save :init_progress
 
   has_one :progress
+  has_many :comments
 
   with_options presence: true do
     validates :name
