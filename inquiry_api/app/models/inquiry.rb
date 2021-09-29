@@ -22,9 +22,10 @@ class Inquiry < ApplicationRecord
 
   with_options presence: true do
     validates :name
-    validates :email, fomat: { with: EMAIL_REGEXP }
-    validates :tel, format: { with: PHONE_NUMBER_REGEX }
-    validates :number_of_users
+    validates :number_of_users, numericality: { only_integer: true, greater_than: 0 }
     validates :introductory_term
   end
+
+  validates :email, format: { with: EMAIL_REGEXP }
+  validates :tel, format: { with: PHONE_NUMBER_REGEX }
 end

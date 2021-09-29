@@ -18,5 +18,97 @@
 require 'rails_helper'
 
 RSpec.describe Inquiry, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe '# validateions' do
+    let(:inquiry) { build :inquiry }
+
+    context 'nameが空の場合' do
+      it 'バリデーションに弾かれる' do
+        expected_error = '担当者名を入力してください'
+
+        inquiry.name = ''
+        inquiry.valid?
+        is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+
+        inquiry.name = nil
+        inquiry.valid?
+        is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+      end
+    end
+
+    context 'number_of_usersが空の場合' do
+      it 'バリデーションに弾かれる' do
+        expected_error = '利用人数を入力してください'
+
+        inquiry.number_of_users = ''
+        inquiry.valid?
+        is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+
+        inquiry.number_of_users = nil
+        inquiry.valid?
+        is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+      end
+    end
+
+    context 'number_of_usersが1未満もしくはInteger以外の場合' do
+      it 'バリデーションに弾かれる' do
+        inquiry.number_of_users = 0
+        inquiry.valid?
+        is_asserted_by { inquiry.errors.full_messages.first == '利用人数は0より大きい値にしてください' }
+
+        inquiry.number_of_users = 1.1
+        inquiry.valid?
+        is_asserted_by { inquiry.errors.full_messages.first == '利用人数は整数で入力してください' }
+      end
+    end
+
+    context 'introductory_termが空の場合' do
+      it 'バリデーションに弾かれる' do
+        expected_error = '導入時期を入力してください'
+
+        inquiry.introductory_term = ''
+        inquiry.valid?
+        is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+
+        inquiry.introductory_term = nil
+        inquiry.valid?
+        is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+      end
+    end
+
+    context 'emailが正しいフォーマットでない場合' do
+      it 'バリデーションに弾かれる' do
+        expected_error = 'Emailは不正な値です'
+
+        inquiry.email = ''
+        inquiry.valid?
+        is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+
+        inquiry.email = nil
+        inquiry.valid?
+        is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+
+        inquiry.email = 'email.email.com'
+        inquiry.valid?
+        is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+      end
+    end
+
+    context 'tel が正しいフォーマットでない場合' do
+      it 'バリデーションに引っかかる' do
+        expected_error = '電話番号は不正な値です'
+
+        inquiry.tel = ''
+        inquiry.valid?
+        is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+
+        inquiry.tel = nil
+        inquiry.valid?
+        is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+
+        inquiry.tel = '123456789011'
+        inquiry.valid?
+        is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+      end
+    end
+  end
 end
