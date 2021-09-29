@@ -3,6 +3,7 @@ ja:
     models:
       inquiry: 問い合わせ
       progress: 進捗
+      comment: コメント
 
     attributes:
       inquiry:
@@ -17,9 +18,9 @@ ja:
         progress: 進捗
 
       progress:
-        staff_id: スタッフID
         inquiry_id: 問い合わせID
         inquiry: 問い合わせ
+        staff_id: スタッフID
         rank: 見込みランク
         contacted_at: 連絡日時
         reconciled_on: 再連絡日
@@ -30,6 +31,11 @@ ja:
           estimating: 見積中
           archived: 対応済み
           ordered: 受注済み
+
+      comment:
+        inquiry_id: 問い合わせID
+        user_id: ユーザーID
+        content: 内容
 
   enums:
     progress:
