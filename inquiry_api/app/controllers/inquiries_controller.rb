@@ -1,6 +1,7 @@
 class InquiriesController < ApplicationController
   def create
     @inquiry = Inquiry.new inquiry_params
+
     if @inquiry.save
       render json: success_json, status: :created
     else
@@ -15,9 +16,10 @@ class InquiriesController < ApplicationController
   end
 
   def inquiry_attribute_keys
-    %i[
-      company_name name email tel
-      number_of_users introductory_term detail
+    [
+      :company_name, :name, :email, :tel,
+      :number_of_users, :introductory_term,
+      :detail, { menu_ids: [] }
     ]
   end
 

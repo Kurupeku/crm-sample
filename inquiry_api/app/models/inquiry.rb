@@ -21,6 +21,8 @@ class Inquiry < ApplicationRecord
 
   has_one :progress
   has_many :comments
+  has_many :menu_inquiry_attachments
+  has_many :menus, through: :menu_inquiry_attachments
 
   with_options presence: true do
     validates :name
