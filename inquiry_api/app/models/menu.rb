@@ -11,6 +11,9 @@
 #  updated_at   :datetime         not null
 #
 class Menu < ApplicationRecord
+  has_many :menu_inquiry_attachments
+  has_many :inquiries, through: :menu_inquiry_attachments
+
   validates :name, presence: true, uniqueness: true
 
   scope :published, lambda {

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_30_110505) do
+ActiveRecord::Schema.define(version: 2021_09_30_115338) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,6 +38,15 @@ ActiveRecord::Schema.define(version: 2021_09_30_110505) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "menu_inquiry_attachments", force: :cascade do |t|
+    t.bigint "menu_id", null: false
+    t.bigint "inquiry_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["inquiry_id"], name: "index_menu_inquiry_attachments_on_inquiry_id"
+    t.index ["menu_id"], name: "index_menu_inquiry_attachments_on_menu_id"
+  end
+
   create_table "menus", force: :cascade do |t|
     t.string "name", null: false
     t.date "published_on"
@@ -58,5 +67,7 @@ ActiveRecord::Schema.define(version: 2021_09_30_110505) do
   end
 
   add_foreign_key "comments", "inquiries"
+  add_foreign_key "menu_inquiry_attachments", "inquiries"
+  add_foreign_key "menu_inquiry_attachments", "menus"
   add_foreign_key "progresses", "inquiries"
 end
