@@ -16,4 +16,8 @@ class Menu < ApplicationRecord
   scope :published, lambda {
     where.not published_on: nil
   }
+
+  scope :unpublished, lambda {
+    where published_on: nil
+  }
 end

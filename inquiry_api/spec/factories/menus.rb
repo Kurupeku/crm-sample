@@ -10,7 +10,7 @@
 #
 FactoryBot.define do
   factory :menu do
-    name { Faker::Lorem.word }
+    name { Faker::Lorem.unique.word }
     published_on { nil }
   end
 end

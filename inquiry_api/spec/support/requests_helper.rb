@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+def json_headers
+  { 'ACCEPT' => 'application/json' }
+end
+
 def parse_body(response)
   JSON.parse(response.body).deep_symbolize_keys
 end
