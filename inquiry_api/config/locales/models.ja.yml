@@ -4,6 +4,7 @@ ja:
       inquiry: 問い合わせ
       progress: 進捗
       comment: コメント
+      menu: メニュー
 
     attributes:
       inquiry:
@@ -36,6 +37,10 @@ ja:
         inquiry_id: 問い合わせID
         user_id: ユーザーID
         content: 内容
+
+      menu:
+        name: メニュー名
+        published_on: 公開日
 
   enums:
     progress:
