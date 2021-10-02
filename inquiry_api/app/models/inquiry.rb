@@ -19,9 +19,9 @@
 class Inquiry < ApplicationRecord
   before_save :init_progress
 
-  has_one :progress
-  has_many :comments
-  has_many :menu_inquiry_attachments
+  has_one :progress, dependent: :delete
+  has_many :comments, dependent: :delete_all
+  has_many :menu_inquiry_attachments, dependent: :delete_all
   has_many :menus, through: :menu_inquiry_attachments
 
   with_options presence: true do

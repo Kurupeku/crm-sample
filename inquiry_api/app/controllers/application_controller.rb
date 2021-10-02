@@ -14,10 +14,10 @@ class ApplicationController < ActionController::API
   end
 
   def not_found_json
-    { errors: [I18n.t(:not_found, scope: %i[errors routes])] }.to_json
+    { errors: [I18n.t(:not_found, scope: %i[errors routes])], data: nil }.to_json
   end
 
   def internal_server_error_json
-    { errors: [I18n.t(:internal_server_error, scope: %i[errors routes])] }.to_json
+    { errors: [I18n.t(:internal_server_error, scope: %i[errors routes])], data: nil }.to_json
   end
 end
