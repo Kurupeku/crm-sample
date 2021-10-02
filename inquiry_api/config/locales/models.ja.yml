@@ -32,6 +32,12 @@ ja:
           estimating: 見積中
           archived: 対応済み
           ordered: 受注済み
+        event:
+          contact: 連絡する
+          recontact: 再度連絡する
+          contacted: 見積を始める
+          archive: 完了する
+          order: 受注へ進む
 
       comment:
         inquiry_id: 問い合わせID

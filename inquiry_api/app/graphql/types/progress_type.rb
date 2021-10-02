@@ -38,5 +38,10 @@ module Types
     def updated_at
       object.updated_at.to_i
     end
+
+    field :selectable_events, [ProgressEventType], null: false
+    def selectable_events
+      object.selectable_events
+    end
   end
 end
