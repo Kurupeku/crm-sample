@@ -1,6 +1,5 @@
 module Types
   class QueryType < Types::BaseObject
-    # Add `node(id: ID!) and `nodes(ids: [ID!]!)`
     include GraphQL::Types::Relay::HasNodeField
     include GraphQL::Types::Relay::HasNodesField
 
@@ -57,7 +56,7 @@ module Types
       Menu.all.order(created_at: :desc).page(page).per(per)
     end
 
-    field :menu, Menu, null: true do
+    field :menu, MenuType, null: true do
       argument :id, ID, required: true
     end
     def menu(id:)

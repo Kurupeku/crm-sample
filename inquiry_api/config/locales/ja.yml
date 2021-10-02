@@ -145,6 +145,8 @@ ja:
     routes:
       not_found: 指定されたPATHは存在しません
       internal_server_error: サーバーエラー
+    aasm:
+      invalid_event: このイベントは実行不可能です
   helpers:
     select:
       prompt: 選択してください
