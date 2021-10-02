@@ -71,7 +71,20 @@ class Progress < ApplicationRecord
            scope: %i[activerecord attributes progress state]
   end
 
+  def selectable_events
+    %i[contact recontact contacted archive order].select do |event|
+      send "may_#{event}?"
+    end.map do |event|
+      { label: event_i18n(event), event: event }
+    end
+  end
+
   private
+
+  def event_i18n(event)
+    I18n.t event.to_sym,
+           scope: %i[activerecord attributes progress event]
+  end
 
   def state_changed
     message = I18n.t :status_changed,

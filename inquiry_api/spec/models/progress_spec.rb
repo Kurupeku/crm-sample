@@ -194,4 +194,30 @@ RSpec.describe Progress, type: :model do
       end
     end
   end
+
+  describe '# selectable_events' do
+    context 'status == waitingの場合' do
+      let(:events) do
+        %i[contact recontact contacted archive].map do |event|
+          { label: I18n.t(event, scope: %i[activerecord attributes progress event]), event: event }
+        end
+      end
+      let(:progress) { create :progress }
+      it 'order以外のeventが配列で返される' do
+        is_asserted_by { progress.selectable_events == events }
+      end
+    end
+
+    context 'status == estimatingの場合' do
+      let(:events) do
+        %i[archive order].map do |event|
+          { label: I18n.t(event, scope: %i[activerecord attributes progress event]), event: event }
+        end
+      end
+      let(:progress) { create :progress, state: 'estimating' }
+      it 'archiveとorderのみが配列で返される' do
+        is_asserted_by { progress.selectable_events == events }
+      end
+    end
+  end
 end
