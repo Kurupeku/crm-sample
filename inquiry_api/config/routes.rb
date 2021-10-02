@@ -1,3 +1,6 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  get '/menus' => 'menus#index', constraints: ->(req) { req.format == :json }
+  post '/inquiries' => 'inquiries#create', constraints: ->(req) { req.format == :json }
+  post '/graphql', to: 'graphql#execute'
+  mount GraphiQL::Rails::Engine, at: '/', graphql_path: '/graphql' if Rails.env.development?
 end
