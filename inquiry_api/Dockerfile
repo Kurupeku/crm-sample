@@ -19,7 +19,7 @@ RUN apt-get update -qq \
 
 COPY Gemfile ./
 COPY Gemfile.lock ./
-RUN bundle install -j4
+RUN bundle install
 
 COPY . ./
 
