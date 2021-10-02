@@ -31,7 +31,7 @@ jobs:
         DB_USER: postgres
         DB_PASSWORD: postgres
         DB_PORT: 5432
-        USER_DB_NAME: inquiry
+        INQUIRY_DB_NAME: inquiry
         TZ: Asia/Tokyo
         LANG: C.UTF-8
 
