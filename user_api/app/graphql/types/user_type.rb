@@ -3,6 +3,8 @@
 module Types
   # Schema for User model
   class UserType < Types::BaseObject
+    key fields: 'id'
+
     field :id, ID, null: false
     field :company_name, String, null: true
     field :name, String, null: false
@@ -21,6 +23,10 @@ module Types
     field :updated_at, Int, null: false
     def updated_at
       object.updated_at_unix
+    end
+
+    def self.resolve_reference(reference, _context)
+      User.find reference[:id]
     end
   end
 end

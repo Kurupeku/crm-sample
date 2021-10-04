@@ -17,6 +17,10 @@ resolver:
 autobind:
   - "staff_api/graph/model"
 
+federation:
+  filename: graph/generated/federation.go
+  package: generated
+
 models:
   ID:
     model:
@@ -31,7 +35,7 @@ models:
       - github.com/99designs/gqlgen/graphql.Int32
   Staff:
     model: staff_api/graph/model.Staff
-  PageInfo:
-    model: staff_api/graph/model.PageInfo
+  StaffPageInfo:
+    model: staff_api/graph/model.StaffPageInfo
   StaffList:
     model: staff_api/graph/model.StaffList

@@ -1,5 +1,7 @@
 module Types
   class InquiryType < Types::BaseObject
+    key fields: 'id'
+
     field :id, ID, null: false
     field :user_id, Integer, null: true
     field :company_name, String, null: true
@@ -33,6 +35,15 @@ module Types
     field :updated_at, Int, null: false
     def updated_at
       object.updated_at.to_i
+    end
+
+    field :user, UserType, null: true
+    def user
+      { __typename: UserType, id: object.user_id }
+    end
+
+    def self.resolve_reference(reference, _context)
+      Inquiry.find reference[:id]
     end
   end
 end
