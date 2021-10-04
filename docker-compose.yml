@@ -25,6 +25,51 @@ services:
       - ./client:/app
       - /app/node_modules
 
+  federation:
+    build:
+      context: ./federation
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./federation:/app
+      - /app/node_modules
+    links:
+      - staff_api:staff_api
+      - user_api:user_api
+      - inquiry_api:inquiry_api
+    depends_on:
+      - staff_api
+      - user_api
+      - inquiry_api
+    command: npm run dev
+
+  staff_api:
+    build:
+      context: ./staff_api
+      dockerfile: Dockerfile
+      target: dev
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./staff_api:/go/src/app
+    ports:
+      - 3001:3000
+    depends_on:
+      - db
+
+  staff_db_gui:
+    image: sosedoff/pgweb
+    ports:
+      - "3011:8081"
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/staff_development?sslmode=disable
+    depends_on:
+      - db
+    restart: always
+
   user_api:
     build:
       context: ./inquiry_api
@@ -65,30 +110,6 @@ services:
       - "3013:8081"
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/inquiry_development?sslmode=disable
-    depends_on:
-      - db
-    restart: always
-
-  staff_api:
-    build:
-      context: ./staff_api
-      dockerfile: Dockerfile
-      target: dev
-    tty: true
-    stdin_open: true
-    volumes:
-      - ./staff_api:/go/src/app
-    ports:
-      - 3001:3000
-    depends_on:
-      - db
-
-  staff_db_gui:
-    image: sosedoff/pgweb
-    ports:
-      - "3011:8081"
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/staff_development?sslmode=disable
     depends_on:
       - db
     restart: always
