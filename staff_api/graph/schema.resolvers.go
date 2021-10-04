@@ -5,7 +5,6 @@ package graph
 
 import (
 	"context"
-
 	"staff_api/entity"
 	"staff_api/graph/generated"
 	"staff_api/graph/model"
@@ -179,7 +178,7 @@ func (r *queryResolver) StaffList(ctx context.Context, page *int, per *int) (*mo
 		pa = pa + 1
 	}
 
-	pageInfo := &model.PageInfo{
+	pageInfo := &model.StaffPageInfo{
 		CurrentPage: pg,
 		RecordCount: rc,
 		PageCount:   pa,
