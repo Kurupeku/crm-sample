@@ -6,9 +6,9 @@ module Mutations
     type Types::ProgressType
 
     def resolve(id:, rank:)
-      menu = Menu.find id
-      menu.send "#{rank}!"
-      menu
+      progress = Progress.find id
+      progress.send "#{rank}!"
+      progress
     end
   end
 end

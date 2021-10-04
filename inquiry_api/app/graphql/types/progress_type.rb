@@ -1,5 +1,7 @@
 module Types
   class ProgressType < Types::BaseObject
+    key fields: 'id'
+
     field :id, ID, null: false
     field :staff_id, Integer, null: true
     field :inquiry_id, Integer, null: false
@@ -42,6 +44,15 @@ module Types
     field :selectable_events, [ProgressEventType], null: false
     def selectable_events
       object.selectable_events
+    end
+
+    field :staff, StaffType, null: false
+    def staff
+      { __typename: StaffType, id: object.staff_id }
+    end
+
+    def self.resolve_reference(reference, _context)
+      Progress.find reference[:id]
     end
   end
 end

@@ -6,8 +6,8 @@ module Mutations
     type Types::ProgressType
 
     def resolve(id:, staff_id:)
-      menu = Menu.find id
-      menu.update!(staff_id: staff_id) && menu
+      progress = Progress.find id
+      progress.update!(staff_id: staff_id) && progress
     end
   end
 end

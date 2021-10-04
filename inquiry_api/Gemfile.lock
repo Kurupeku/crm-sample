@@ -65,6 +65,9 @@ GEM
     annotate (3.1.1)
       activerecord (>= 3.2, < 7.0)
       rake (>= 10.4, < 14.0)
+    apollo-federation (1.1.5)
+      google-protobuf (~> 3.7)
+      graphql (>= 1.9.8)
     bootsnap (1.9.0)
       msgpack (~> 1.0)
     builder (3.2.4)
@@ -91,6 +94,7 @@ GEM
       romaji
     globalid (0.5.2)
       activesupport (>= 5.0)
+    google-protobuf (3.18.0)
     graphiql-rails (1.8.0)
       railties
       sprockets-rails
@@ -218,6 +222,7 @@ PLATFORMS
 DEPENDENCIES
   aasm
   annotate
+  apollo-federation
   bootsnap (>= 1.4.4)
   byebug
   dotenv-rails

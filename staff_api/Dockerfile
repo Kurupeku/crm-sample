@@ -6,7 +6,7 @@ WORKDIR ${ROOT}
 
 COPY go.mod go.sum ./
 RUN go mod download
-EXPOSE 8080
+EXPOSE 3000
 
 CMD ["go", "run", "main.go"]
 
@@ -32,5 +32,5 @@ ENV ROOT=/go/src/app
 WORKDIR ${ROOT}
 COPY --from=builder ${ROOT}/binary ${ROOT}
 
-EXPOSE 8080
+EXPOSE 3000
 CMD ["/go/src/app/binary"]

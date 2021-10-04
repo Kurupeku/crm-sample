@@ -14,15 +14,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const defaultPort = "3000"
+const port = "3000"
 
 func main() {
 	env_load()
-
-	port := os.Getenv("STAFF_API_PORT")
-	if port == "" {
-		port = defaultPort
-	}
 
 	db, err := database.Connect()
 	if err != nil {
@@ -31,8 +26,8 @@ func main() {
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{DB: db}}))
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	http.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
+	http.Handle("/graphql", srv)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))

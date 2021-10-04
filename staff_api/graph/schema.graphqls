@@ -2,7 +2,7 @@
 #
 # https://gqlgen.com/getting-started/
 
-type Staff {
+type Staff @key(fields: "id") {
   id: ID!
   name: String!
   email: String!
@@ -11,7 +11,11 @@ type Staff {
   updatedAt: String!
 }
 
-type PageInfo {
+extend type Progress @key(fields: "id") {
+  id: ID! @external
+}
+
+type StaffPageInfo {
   currentPage: Int!
   recordCount: Int!
   pageCount: Int!
@@ -19,7 +23,7 @@ type PageInfo {
 }
 
 type StaffList {
-  pageInfo: PageInfo!
+  pageInfo: StaffPageInfo!
   staffs: [Staff!]!
 }
 
