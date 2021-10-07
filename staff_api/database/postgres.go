@@ -14,6 +14,8 @@ import (
 
 const database = "postgres"
 
+var d *gorm.DB
+
 type Meta struct {
 	host     string
 	user     string
@@ -31,12 +33,18 @@ func Connect() (*gorm.DB, error) {
 		return nil, err
 	}
 
+	d = db
+
 	err = db.AutoMigrate(&entity.Staff{})
 	if err != nil {
 		return nil, err
 	}
 
 	return db, nil
+}
+
+func GetDB() *gorm.DB {
+	return d
 }
 
 func (m *Meta) Init() {
