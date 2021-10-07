@@ -39,7 +39,7 @@ services:
     depends_on:
       - staff_api
       - federation
-    command: tail- f /dev/null
+    command: tail -f /dev/null
 
   federation:
     build:

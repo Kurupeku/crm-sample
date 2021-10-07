@@ -20,10 +20,6 @@ func PostInquiriesHandler(c *gin.Context) {
 	proxyHandler(c, "http://inquiry_api:3000/inquiries")
 }
 
-func PostLoginHandler(c *gin.Context) {
-
-}
-
 func PostGraphqlHandler(c *gin.Context) {
 	proxyHandler(c, "http://federation:3000")
 }
@@ -42,6 +38,7 @@ func proxyHandler(c *gin.Context, urlString string) {
 		req.URL.Scheme = "http"
 		req.URL.Host = target.Host
 		req.URL.Path = target.Path
+		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Accept", "application/json")
 	}
 
