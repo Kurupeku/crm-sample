@@ -39,7 +39,6 @@ services:
     depends_on:
       - staff_api
       - federation
-    command: tail -f /dev/null
 
   federation:
     build:
@@ -73,6 +72,7 @@ services:
       - ./staff_api:/go/src/app
     ports:
       - 3001:3000
+      - 50051:50051
     depends_on:
       - db
 

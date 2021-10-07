@@ -4,22 +4,33 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
 
 	"gateway/handlers"
 	"gateway/middleware"
+	"gateway/proto"
 )
 
-func main() {
-	engine := gin.Default()
+var staffGrpcHost = "staff_api:50051"
 
-	routerSetup(engine)
+func main() {
+	conn, err := grpc.Dial(staffGrpcHost, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("did not connect staff_api tcp: %v", err)
+	}
+	defer conn.Close()
+
+	client := proto.NewAuthClient(conn)
+
+	engine := gin.Default()
+	routerSetup(engine, client)
 	engine.Run(":3000")
 }
 
-func routerSetup(r *gin.Engine) {
+func routerSetup(r *gin.Engine, cc proto.AuthClient) {
 	r.GET("/", handlers.GetClientHandler)
 
-	authMiddleware, err := middleware.AuthMiddleware()
+	authMiddleware, err := middleware.AuthMiddleware(cc)
 	if err != nil {
 		log.Fatal("JWT Error:" + err.Error())
 	}
@@ -39,6 +50,7 @@ func routerSetup(r *gin.Engine) {
 		{
 			auth.GET("/refresh_token", authMiddleware.RefreshHandler)
 			auth.Use(authMiddleware.MiddlewareFunc())
+			auth.GET("/graphql", handlers.GetPlayGroundHandler)
 			auth.POST("/graphql", handlers.PostGraphqlHandler)
 		}
 	}

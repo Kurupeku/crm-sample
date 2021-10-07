@@ -1,8 +1,11 @@
 package middleware
 
 import (
+	"context"
 	"log"
 	"time"
+
+	"gateway/proto"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
@@ -21,7 +24,7 @@ type Staff struct {
 	PasswordDigest []byte
 }
 
-func AuthMiddleware() (*jwt.GinJWTMiddleware, error) {
+func AuthMiddleware(ac proto.AuthClient) (*jwt.GinJWTMiddleware, error) {
 	return jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "query server",
 		Key:         []byte(secretKey),
@@ -48,13 +51,17 @@ func AuthMiddleware() (*jwt.GinJWTMiddleware, error) {
 			if err := c.ShouldBind(&params); err != nil {
 				return "", jwt.ErrMissingLoginValues
 			}
-			log.Print(params)
 			email := params.Email
 			password := params.Password
 
-			if email == "email@email.com" && password == "password" {
+			req := &proto.AuthenticateRequest{
+				Email:    email,
+				Password: password,
+			}
+			res, _ := ac.Authenticate(context.Background(), req)
+			if res.Authenticated {
 				return &Staff{
-					Email: "email@email.com",
+					Email: email,
 				}, nil
 			}
 
