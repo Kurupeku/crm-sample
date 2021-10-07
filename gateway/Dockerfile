@@ -6,6 +6,7 @@ ENV CGO_ENABLED 0
 ENV GO111MODULE on
 WORKDIR ${ROOT}
 
+RUN apt-get update -qq && apt-get install -y protobuf-compiler
 COPY . ${ROOT}
 RUN go mod download
 RUN go get github.com/uudashr/gopkgs/v2/cmd/gopkgs \
