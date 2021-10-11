@@ -1,8 +1,11 @@
 FROM golang:1.17.1 AS dev
 
+ENV GOPAHT=/go
 ENV ROOT=/go/src/app
 ENV CGO_ENABLED 0
+ENV GO111MODULE on
 WORKDIR ${ROOT}
+
 RUN apt-get update -qq && apt-get install -y protobuf-compiler
 COPY . ${ROOT}
 RUN go mod download
@@ -23,16 +26,16 @@ CMD ["go", "run", "main.go"]
 
 FROM golang:1.17.1 AS builder
 
+ENV GOPAHT=/go
 ENV ROOT=/go/src/app
 ENV CGO_ENABLED=0
 ENV GOOS=linux
 
 WORKDIR ${ROOT}
 
-COPY go.mod go.sum ./
+COPY . ${ROOT}
 RUN go mod download
 
-COPY . ${ROOT}
 RUN go build -o $ROOT/binary
 
 
