@@ -25,6 +25,21 @@ services:
       - ./client:/app
       - /app/node_modules
 
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+      target: dev
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./gateway:/go/src/app
+    ports:
+      - 2000:3000
+    depends_on:
+      - staff_api
+      - federation
+
   federation:
     build:
       context: ./federation
@@ -57,6 +72,7 @@ services:
       - ./staff_api:/go/src/app
     ports:
       - 3001:3000
+      - 50051:50051
     depends_on:
       - db
 
@@ -113,18 +129,6 @@ services:
     depends_on:
       - db
     restart: always
-
-  auth_api:
-    build:
-      context: ./auth_api
-      dockerfile: Dockerfile
-      target: dev
-    tty: true
-    stdin_open: true
-    volumes:
-      - ./auth_api:/go/src/app
-    ports:
-      - 3004:3000
 
 volumes:
   postgres-data:
