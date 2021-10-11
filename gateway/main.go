@@ -2,8 +2,10 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 
 	"gateway/handlers"
@@ -14,6 +16,8 @@ import (
 var staffGrpcHost = "staff_api:50051"
 
 func main() {
+	envLoad()
+
 	conn, err := grpc.Dial(staffGrpcHost, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("did not connect staff_api tcp: %v", err)
@@ -54,6 +58,12 @@ func routerSetup(r *gin.Engine, cc proto.AuthClient) {
 			auth.POST("/graphql", handlers.PostGraphqlHandler)
 		}
 	}
+}
 
-	// r.NoRoute(handlers.GetClientHandler)
+func envLoad() {
+	if os.Getenv("GO_ENV") == "" {
+		os.Setenv("GO_ENV", "development")
+	}
+
+	godotenv.Load()
 }

@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"fmt"
+	"os"
+
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -8,24 +11,26 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const defaultPort = "3000"
+
 func GetClientHandler(c *gin.Context) {
-	proxyHandler(c, "http://client:3000")
+	proxyHandler(c, parseURL(os.Getenv("CLIENT_HOST"), defaultPort, ""))
 }
 
 func GetMenusHandler(c *gin.Context) {
-	proxyHandler(c, "http://inquiry_api:3000/menus")
+	proxyHandler(c, parseURL(os.Getenv("INQUIRY_API_HOST"), defaultPort, "/menus"))
 }
 
 func PostInquiriesHandler(c *gin.Context) {
-	proxyHandler(c, "http://inquiry_api:3000/inquiries")
+	proxyHandler(c, parseURL(os.Getenv("INQUIRY_API_HOST"), defaultPort, "/inquiries"))
 }
 
 func PostGraphqlHandler(c *gin.Context) {
-	proxyHandler(c, "http://federation:3000")
+	proxyHandler(c, parseURL(os.Getenv("FEDERATION_HOST"), defaultPort, ""))
 }
 
 func GetPlayGroundHandler(c *gin.Context) {
-	target, err := url.Parse("http://federation:3000")
+	target, err := url.Parse(parseURL(os.Getenv("FEDERATION_HOST"), defaultPort, ""))
 	if err != nil {
 		panic(err)
 	}
@@ -62,4 +67,8 @@ func proxyHandler(c *gin.Context, urlString string) {
 	}
 
 	proxy.ServeHTTP(c.Writer, c.Request)
+}
+
+func parseURL(host string, port string, path string) string {
+	return fmt.Sprintf("http://%s:%s%s", host, port, path)
 }
