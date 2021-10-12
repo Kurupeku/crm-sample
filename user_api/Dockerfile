@@ -1,37 +1,66 @@
-# FROM node:14-buster as node
+FROM ruby:3.0.2-alpine AS base
 
-FROM ruby:3-buster
+ENV WORKDIR="/usr/src/app"
+ENV LANG=ja_JP.UTF-8
+ENV TZ=Asia/Tokyo
 
-ENV TZ Asia/Tokyo
-ENV LANG C.UTF-8
+ENV GEM_HOME /bundle
+ENV BUNDLE_PATH $GEM_HOME
+ENV BUNDLE_BIN $BUNDLE_PATH/bin
+ENV PATH $BUNDLE_BIN:$PATH
 
-# COPY --from=node /usr/local/bin/ /usr/local/bin/
-# COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
+ENV RUNTIME_PACKAGES bash gcc linux-headers musl-dev libxml2-dev make tzdata imagemagick nodejs yarn postgresql-dev
+ENV DEV_PACKAGES build-base curl-dev
 
-WORKDIR /usr/src/app
 
-RUN apt-get update -qq \
-  && apt-get install -yq postgresql-client
+WORKDIR ${WORKDIR}
 
-# RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-#     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
-#     && apt install -yq yarn
+RUN apk update && apk upgrade && \
+  apk add --no-cache ${RUNTIME_PACKAGES} && \
+  apk add --virtual build-dependencies --no-cache ${DEV_PACKAGES}
 
-COPY Gemfile ./
-COPY Gemfile.lock ./
-RUN bundle install
-
-COPY . ./
-
+# COPY package.json yarn.lock ${WORKDIR}
 # RUN yarn install
-
-# # use only production image
-# RUN rails assets:precompile RAILS_ENV=production
 
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
+
+# ---------------------------------------------------------
+
+FROM base AS dev
+
+COPY Gemfile* ${WORKDIR}
+
+RUN bundle install -j4
+
+COPY . ${WORKDIR}
 
 EXPOSE 3000
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
 
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+# ---------------------------------------------------------
+
+FROM base AS prod
+
+ENV NODE_ENV production
+ENV RAILS_ENV production
+ENV BUNDLE_WITHOUT development:test
+
+COPY Gemfile* ${WORKDIR}
+
+RUN bundle config set --local deployment 'true' && \
+  bundle config set --local path "${BUNDLE_PATH}" && \
+  bundle install -j4 && \
+  rm -rf /usr/local/bundle/cache/* /usr/local/share/.cache/* /var/cache/* /tmp/* && \
+  apk del build-dependencies
+
+# Require SECRET_KEY_BASE
+# RUN bundle exec rails assets:precompile \
+#   && yarn cache clean \
+#   && rm -rf node_modules tmp/cache
+
+COPY . ${WORKDIR}
+
+EXPOSE 3000
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000", "-e", "production"]

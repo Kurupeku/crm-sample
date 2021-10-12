@@ -12,7 +12,7 @@ defaults:
     working-directory: ./inquiry_api
 
 jobs:
-  build:
+  test-inquiry-api:
     runs-on: ubuntu-latest
 
     services:
@@ -31,7 +31,6 @@ jobs:
         DB_USER: postgres
         DB_PASSWORD: postgres
         DB_PORT: 5432
-        INQUIRY_DB_NAME: inquiry
         TZ: Asia/Tokyo
         LANG: C.UTF-8
 
@@ -49,8 +48,7 @@ jobs:
 
       - name: Create and setup Database
         run: |
-          bundle exec rails db:create
-          bundle exec rails db:migrate
+          bundle exec rails db:setup
 
       - name: Run Rspec
         run: |
