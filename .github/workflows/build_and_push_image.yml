@@ -1,0 +1,108 @@
+name: Build And Deploy
+
+on:
+  workflow_dispatch:
+
+  release:
+    types: [published]
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract gateway metadata
+        id: gateway-meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-gateway
+          flavor: |
+            latest=auto
+
+      - name: Build and push gateway image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./gateway
+          push: true
+          tags: ${{ steps.gateway-meta.outputs.tags }}
+          labels: ${{ steps.gateway-meta.outputs.labels }}
+
+      - name: Extract federation metadata
+        id: federation-meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-federation
+          flavor: |
+            latest=auto
+
+      - name: Build and push staff_api image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./federation
+          push: true
+          tags: ${{ steps.federation-meta.outputs.tags }}
+          labels: ${{ steps.federation-meta.outputs.labels }}
+
+      - name: Extract staff_api metadata
+        id: staff-api-meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-staff-api
+          flavor: |
+            latest=auto
+
+      - name: Build and push staff_api image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./staff_api
+          push: true
+          tags: ${{ steps.staff-api-meta.outputs.tags }}
+          labels: ${{ steps.staff-api-meta.outputs.labels }}
+
+      - name: Extract user_api metadata
+        id: user-api-meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-user-api
+          flavor: |
+            latest=auto
+
+      - name: Build and push user_api image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./user_api
+          push: true
+          tags: ${{ steps.user-api-meta.outputs.tags }}
+          labels: ${{ steps.user-api-meta.outputs.labels }}
+
+      - name: Extract inquiry_api metadata
+        id: inquiry-api-meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-inquiry-api
+          flavor: |
+            latest=auto
+
+      - name: Build and push inquiry_api image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./inquiry_api
+          push: true
+          tags: ${{ steps.inquiry-api-meta.outputs.tags }}
+          labels: ${{ steps.inquiry-api-meta.outputs.labels }}
