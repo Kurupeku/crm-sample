@@ -8,12 +8,12 @@ default: &default
 
 development:
   <<: *default
-  database: <%= ENV['INQUIRY_DB_NAME'] + '_test' %>
+  database: inquiry_development
 
 test:
   <<: *default
-  database: <%= ENV['INQUIRY_DB_NAME'] + '_test' %>
+  database: inquiry_test
 
 production:
   <<: *default
-  database: <%= ENV['INQUIRY_DB_NAME'] + '_production' %>
+  database: inquiry_production
