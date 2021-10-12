@@ -2,7 +2,7 @@
 #
 # https://gqlgen.com/getting-started/
 
-type Staff {
+type Staff @key(fields: "id") {
   id: ID!
   name: String!
   email: String!
@@ -11,8 +11,25 @@ type Staff {
   updatedAt: String!
 }
 
+extend type Progress @key(fields: "id") {
+  id: ID! @external
+}
+
+type StaffPageInfo {
+  currentPage: Int!
+  recordCount: Int!
+  pageCount: Int!
+  limit: Int!
+}
+
+type StaffList {
+  pageInfo: StaffPageInfo!
+  staffs: [Staff!]!
+}
+
 type Query {
   staffs: [Staff!]!
+  staffList(page: Int, per: Int): StaffList!
   staff(id: ID!): Staff!
 }
 
@@ -26,6 +43,10 @@ input StaffInput {
   id: ID!
   name: String
   email: String
+}
+
+input StaffIDInput {
+  id: ID!
 }
 
 input StaffIconInput {
@@ -43,7 +64,7 @@ type Mutation {
   createStaff(input: NewStaffInput): Staff!
   updateStaff(input: StaffInput): Staff!
   changeStaffPassword(input: StaffChangePasswordInput): Staff!
-  deleteStaff(id: ID!): Staff!
+  deleteStaff(input: StaffIDInput): Staff!
   uploadStaffIcon(input: StaffIconInput): Staff!
-  deleteStaffIcon(id: ID!): Staff!
+  deleteStaffIcon(input: StaffIDInput): Staff!
 }

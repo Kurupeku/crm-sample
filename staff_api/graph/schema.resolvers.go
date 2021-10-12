@@ -5,7 +5,6 @@ package graph
 
 import (
 	"context"
-
 	"staff_api/entity"
 	"staff_api/graph/generated"
 	"staff_api/graph/model"
@@ -84,13 +83,13 @@ func (r *mutationResolver) ChangeStaffPassword(ctx context.Context, input *model
 	return model.StaffFromEntity(&staff), nil
 }
 
-func (r *mutationResolver) DeleteStaff(ctx context.Context, id string) (*model.Staff, error) {
+func (r *mutationResolver) DeleteStaff(ctx context.Context, input *model.StaffIDInput) (*model.Staff, error) {
 	var staff entity.Staff
-	if count := r.DB.First(&staff, id).RowsAffected; count == 0 {
+	if count := r.DB.First(&staff, input.ID).RowsAffected; count == 0 {
 		return nil, gqlerror.Errorf("対象のレコードは存在しません")
 	}
 
-	if err := r.DB.Delete(&staff, id).Error; err != nil {
+	if err := r.DB.Delete(&staff, input.ID).Error; err != nil {
 		return nil, gqlerror.Errorf("レコードの削除に失敗しました")
 	}
 
@@ -114,9 +113,9 @@ func (r *mutationResolver) UploadStaffIcon(ctx context.Context, input *model.Sta
 	return model.StaffFromEntity(&staff), nil
 }
 
-func (r *mutationResolver) DeleteStaffIcon(ctx context.Context, id string) (*model.Staff, error) {
+func (r *mutationResolver) DeleteStaffIcon(ctx context.Context, input *model.StaffIDInput) (*model.Staff, error) {
 	var staff entity.Staff
-	if count := r.DB.First(&staff, id).RowsAffected; count == 0 {
+	if count := r.DB.First(&staff, input.ID).RowsAffected; count == 0 {
 		return nil, gqlerror.Errorf("対象のレコードは存在しません")
 	}
 
@@ -133,12 +132,65 @@ func (r *queryResolver) Staffs(ctx context.Context) ([]*model.Staff, error) {
 		return nil, gqlerror.Errorf("情報を取得できませんでした")
 	}
 
-	var _staffs []*model.Staff
+	var result []*model.Staff
 	for _, staff := range staffs {
-		_staffs = append(_staffs, model.StaffFromEntity(&staff))
+		result = append(result, model.StaffFromEntity(&staff))
 	}
 
-	return _staffs, nil
+	return result, nil
+}
+
+func (r *queryResolver) StaffList(ctx context.Context, page *int, per *int) (*model.StaffList, error) {
+	// panic(fmt.Errorf("not implemented"))
+	var lm, pg int
+	if per == nil {
+		lm = 25
+	} else {
+		lm = *per
+	}
+
+	if page == nil {
+		pg = 1
+	} else {
+		pg = *page
+	}
+
+	offset := lm * (pg - 1)
+
+	var staffAll []entity.Staff
+	if err := r.DB.Find(&staffAll).Error; err != nil {
+		return nil, gqlerror.Errorf("情報を取得できませんでした")
+	}
+
+	var staffs []entity.Staff
+	if err := r.DB.Limit(lm).Offset(offset).Find(&staffs).Error; err != nil {
+		return nil, gqlerror.Errorf("情報を取得できませんでした")
+	}
+
+	var result []*model.Staff
+	for _, staff := range staffs {
+		result = append(result, model.StaffFromEntity(&staff))
+	}
+
+	rc := len(staffAll)
+	pa := rc / lm
+	if pb := rc % lm; pb > 0 {
+		pa = pa + 1
+	}
+
+	pageInfo := &model.StaffPageInfo{
+		CurrentPage: pg,
+		RecordCount: rc,
+		PageCount:   pa,
+		Limit:       lm,
+	}
+
+	data := &model.StaffList{
+		PageInfo: pageInfo,
+		Staffs:   result,
+	}
+
+	return data, nil
 }
 
 func (r *queryResolver) Staff(ctx context.Context, id string) (*model.Staff, error) {

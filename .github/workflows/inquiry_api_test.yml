@@ -1,0 +1,57 @@
+name: Inquiry API Test
+
+on:
+  workflow_dispatch:
+
+  push:
+    paths:
+      - "inquiry_api/**"
+
+defaults:
+  run:
+    working-directory: ./inquiry_api
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:13.4
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_HOST: db
+          POSTGRES_HOST_AUTH_METHOD: trust
+
+    container:
+      image: ruby:3
+      env:
+        DB_HOST: db
+        DB_USER: postgres
+        DB_PASSWORD: postgres
+        DB_PORT: 5432
+        INQUIRY_DB_NAME: inquiry
+        TZ: Asia/Tokyo
+        LANG: C.UTF-8
+
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v2
+
+      - name: Setup postgres client
+        run: |
+          apt-get update -qq
+          apt-get install -yq postgresql-client
+
+      - name: Install bundles
+        run: bundle install -j4
+
+      - name: Create and setup Database
+        run: |
+          bundle exec rails db:create
+          bundle exec rails db:migrate
+
+      - name: Run Rspec
+        run: |
+          bundle exec rspec

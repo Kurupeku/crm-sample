@@ -2,8 +2,9 @@ package model
 
 import (
 	"fmt"
-	"staff_api/entity"
 	"strconv"
+
+	"staff_api/entity"
 )
 
 type Staff struct {
@@ -13,6 +14,20 @@ type Staff struct {
 	Icon      string `json:"icon"`
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
+}
+
+func (Staff) IsEntity() {}
+
+type StaffPageInfo struct {
+	CurrentPage int `json:"currentPage"`
+	RecordCount int `json:"recordCount"`
+	PageCount   int `json:"pageCount"`
+	Limit       int `json:"limit"`
+}
+
+type StaffList struct {
+	PageInfo *StaffPageInfo `json:"pageInfo"`
+	Staffs   []*Staff       `json:"staffs"`
 }
 
 func StaffFromEntity(e *entity.Staff) *Staff {

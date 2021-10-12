@@ -1,0 +1,62 @@
+ja:
+  activerecord:
+    models:
+      inquiry: 問い合わせ
+      progress: 進捗
+      comment: コメント
+      menu: メニュー
+
+    attributes:
+      inquiry:
+        user_id: ユーザーID
+        company_name: 会社名
+        name: 担当者名
+        email: Email
+        tel: 電話番号
+        number_of_users: 利用人数
+        introductory_term: 導入時期
+        detail: 要望
+        progress: 進捗
+
+      progress:
+        inquiry_id: 問い合わせID
+        inquiry: 問い合わせ
+        staff_id: スタッフID
+        rank: 見込みランク
+        contacted_at: 連絡日時
+        reconciled_on: 再連絡日
+        state:
+          waiting: 未着手
+          waiting_recontact: 再度連絡待ち
+          contacting: 連絡中
+          estimating: 見積中
+          archived: 対応済み
+          ordered: 受注済み
+        event:
+          contact: 連絡する
+          recontact: 再度連絡する
+          contacted: 見積を始める
+          archive: 完了する
+          order: 受注へ進む
+
+      comment:
+        inquiry_id: 問い合わせID
+        user_id: ユーザーID
+        content: 内容
+
+      menu:
+        name: メニュー名
+        published_on: 公開日
+
+  enums:
+    progress:
+      rank:
+        a: A
+        b: B
+        c: C
+        d: D
+
+  attributes:
+    id: ID
+    created_at: 作成日時
+    updated_at: 更新日時
