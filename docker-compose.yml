@@ -25,22 +25,83 @@ services:
       - ./client:/app
       - /app/node_modules
 
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+      target: dev
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./gateway:/go/src/app
+    ports:
+      - 2000:3000
+    depends_on:
+      - staff_api
+      - federation
+
+  federation:
+    build:
+      context: ./federation
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./federation:/app
+      - /app/node_modules
+    links:
+      - staff_api:staff_api
+      - user_api:user_api
+      - inquiry_api:inquiry_api
+    depends_on:
+      - staff_api
+      - user_api
+      - inquiry_api
+    command: npm run dev
+
+  staff_api:
+    build:
+      context: ./staff_api
+      dockerfile: Dockerfile
+      target: dev
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./staff_api:/go/src/app
+    ports:
+      - 3001:3000
+      - 50051:50051
+    depends_on:
+      - db
+
+  staff_db_gui:
+    image: sosedoff/pgweb
+    ports:
+      - "3011:8081"
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/staff_development?sslmode=disable
+    depends_on:
+      - db
+    restart: always
+
   user_api:
     build:
       context: ./inquiry_api
       dockerfile: Dockerfile
     volumes:
       - ./user_api:/usr/src/app
+      - user-bundle:/usr/local/bundle
     ports:
-      - "3000:3000"
+      - "3002:3000"
     depends_on:
       - db
-    command: tail -f /dev/null
 
   user_db_gui:
     image: sosedoff/pgweb
     ports:
-      - "3010:8081"
+      - "3012:8081"
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/user_development?sslmode=disable
     depends_on:
@@ -53,56 +114,23 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./inquiry_api:/usr/src/app
+      - inquiry-bundle:/usr/local/bundle
     ports:
-      - "3001:3000"
+      - "3003:3000"
     depends_on:
       - db
 
   inquiry_db_gui:
     image: sosedoff/pgweb
     ports:
-      - "3011:8081"
+      - "3013:8081"
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/inquiry_development?sslmode=disable
     depends_on:
       - db
     restart: always
 
-  staff_api:
-    build:
-      context: ./staff_api
-      dockerfile: Dockerfile
-      target: dev
-    tty: true
-    stdin_open: true
-    volumes:
-      - ./staff_api:/go/src/app
-    ports:
-      - 3002:3000
-    depends_on:
-      - db
-
-  staff_db_gui:
-    image: sosedoff/pgweb
-    ports:
-      - "3012:8081"
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/staff_development?sslmode=disable
-    depends_on:
-      - db
-    restart: always
-
-  auth_api:
-    build:
-      context: ./auth_api
-      dockerfile: Dockerfile
-      target: dev
-    tty: true
-    stdin_open: true
-    volumes:
-      - ./auth_api:/go/src/app
-    ports:
-      - 3003:3000
-
 volumes:
   postgres-data:
+  user-bundle:
+  inquiry-bundle:

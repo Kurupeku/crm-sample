@@ -1,8 +1,8 @@
-name: Rails CI
+name: User API Test
 
 on:
   workflow_dispatch:
-  
+
   push:
     paths:
       - "user_api/**"
@@ -17,7 +17,7 @@ jobs:
 
     services:
       db:
-        image: postgres:latest
+        image: postgres:13.4
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -25,7 +25,7 @@ jobs:
           POSTGRES_HOST_AUTH_METHOD: trust
 
     container:
-      image: ruby:latest
+      image: ruby:3
       env:
         DB_HOST: db
         DB_USER: postgres

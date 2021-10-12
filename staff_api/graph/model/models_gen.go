@@ -8,10 +8,20 @@ type NewStaffInput struct {
 	Password string `json:"password"`
 }
 
+type Progress struct {
+	ID string `json:"id"`
+}
+
+func (Progress) IsEntity() {}
+
 type StaffChangePasswordInput struct {
 	ID          string `json:"id"`
 	Password    string `json:"password"`
 	NewPassword string `json:"newPassword"`
+}
+
+type StaffIDInput struct {
+	ID string `json:"id"`
 }
 
 type StaffIconInput struct {
