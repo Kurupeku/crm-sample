@@ -12,7 +12,7 @@ defaults:
     working-directory: ./user_api
 
 jobs:
-  build:
+  test-user-api:
     runs-on: ubuntu-latest
 
     services:
@@ -31,7 +31,6 @@ jobs:
         DB_USER: postgres
         DB_PASSWORD: postgres
         DB_PORT: 5432
-        USER_DB_NAME: user
 
     steps:
       - name: Check out branch
@@ -47,8 +46,7 @@ jobs:
 
       - name: Create and setup Database
         run: |
-          bundle exec rails db:create
-          bundle exec rails db:migrate
+          bundle exec rails db:setup
 
       - name: Run Rspec
         run: |
