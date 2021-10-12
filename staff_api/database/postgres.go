@@ -52,7 +52,7 @@ func (m *Meta) Init() {
 	m.user = os.Getenv("DB_USER")
 	m.password = os.Getenv("DB_PASSWORD")
 	m.port = os.Getenv("DB_PORT")
-	m.dbname = os.Getenv("STAFF_DB_NAME") + "_" + os.Getenv("GO_ENV")
+	m.dbname = "staff_" + os.Getenv("GO_ENV")
 }
 
 func (m *Meta) PgDsn() string {
