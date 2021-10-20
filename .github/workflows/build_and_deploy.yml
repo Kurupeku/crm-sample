@@ -36,7 +36,7 @@ jobs:
         with:
           context: ./client
           push: true
-          tags: ${{ env.IMAGE_NAME_BASE }}/client:${{ github.sha }}
+          tags: ${{ env.IMAGE_NAME_BASE }}/client:${{ github.sha }},${{ env.IMAGE_NAME_BASE }}/client:latest
 
   build-gateway:
     name: Build Gateway
@@ -61,7 +61,7 @@ jobs:
         with:
           context: ./gateway
           push: true
-          tags: ${{ env.IMAGE_NAME_BASE }}/gateway:${{ github.sha }}
+          tags: ${{ env.IMAGE_NAME_BASE }}/gateway:${{ github.sha }},${{ env.IMAGE_NAME_BASE }}/gateway:latest
 
   build-federation:
     name: Build Federation
@@ -86,7 +86,7 @@ jobs:
         with:
           context: ./federation
           push: true
-          tags: ${{ env.IMAGE_NAME_BASE }}/federation:${{ github.sha }}
+          tags: ${{ env.IMAGE_NAME_BASE }}/federation:${{ github.sha }},${{ env.IMAGE_NAME_BASE }}/federation:latest
 
   build-staff-api:
     name: Build Staff API
@@ -111,7 +111,7 @@ jobs:
         with:
           context: ./staff_api
           push: true
-          tags: ${{ env.IMAGE_NAME_BASE }}/staff-api:${{ github.sha }}
+          tags: ${{ env.IMAGE_NAME_BASE }}/staff-api:${{ github.sha }},${{ env.IMAGE_NAME_BASE }}/staff-api:latest
 
   build-user-api:
     name: Build User API
@@ -136,7 +136,7 @@ jobs:
         with:
           context: ./user_api
           push: true
-          tags: ${{ env.IMAGE_NAME_BASE }}/user-api:${{ github.sha }}
+          tags: ${{ env.IMAGE_NAME_BASE }}/user-api:${{ github.sha }},${{ env.IMAGE_NAME_BASE }}/user-api:latest
 
   build-inquiry-api:
     name: Build Inquiry API
@@ -161,7 +161,7 @@ jobs:
         with:
           context: ./inquiry_api
           push: true
-          tags: ${{ env.IMAGE_NAME_BASE }}/inquiry-api:${{ github.sha }}
+          tags: ${{ env.IMAGE_NAME_BASE }}/inquiry-api:${{ github.sha }},${{ env.IMAGE_NAME_BASE }}/inquiry-api:latest
 
   # -----------------------------------------------------------------------------
 
