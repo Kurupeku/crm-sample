@@ -20,7 +20,7 @@ RUN go get github.com/uudashr/gopkgs/v2/cmd/gopkgs \
   golang.org/x/lint/golint \
   golang.org/x/tools/gopls
 
-EXPOSE 3000
+EXPOSE 3001
 CMD ["go", "run", "main.go"]
 
 # -------------------------------
