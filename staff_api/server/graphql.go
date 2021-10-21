@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-const gqlPort = "3000"
+const gqlPort = "3001"
 
 func RunGraphql(db *gorm.DB) {
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{DB: db}}))
