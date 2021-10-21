@@ -20,7 +20,7 @@ RUN go get github.com/uudashr/gopkgs/v2/cmd/gopkgs \
   golang.org/x/lint/golint \
   golang.org/x/tools/gopls
 
-EXPOSE 3000
+EXPOSE 2000
 CMD ["go", "run", "main.go"]
 
 # -------------------------------
@@ -50,5 +50,5 @@ ENV ROOT=/go/src/app
 WORKDIR ${ROOT}
 COPY --from=builder ${ROOT}/binary ${ROOT}
 
-EXPOSE 3000
+EXPOSE 2000
 CMD ["/go/src/app/binary"]
