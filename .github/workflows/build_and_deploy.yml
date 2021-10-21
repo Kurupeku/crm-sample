@@ -13,31 +13,6 @@ env:
   IMAGE_NAME_BASE: ghcr.io/kurupeku/crm-sample
 
 jobs:
-  build-client:
-    name: Build Client
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Log into registry ${{ env.REGISTRY }}
-        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push client image
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: ./client
-          push: true
-          tags: ${{ env.IMAGE_NAME_BASE }}/client:${{ github.sha }},${{ env.IMAGE_NAME_BASE }}/client:latest
-
   build-gateway:
     name: Build Gateway
     runs-on: ubuntu-latest
@@ -170,7 +145,6 @@ jobs:
   #   runs-on: ubuntu-latest
   #   environment: production
   #   needs:
-  # .   - build-client
   #     - build-gateway
   #     - build-federation
   #     - build-staff-api
@@ -196,20 +170,12 @@ jobs:
   #       run: |
   #         aws ecs describe-task-definition --task-definition my-task-definition-family --query taskDefinition > task-definition.json
 
-  #     - name: Fill in the new client image ID in the Amazon ECS task definition
-  #       id: task-def
-  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
-  #       with:
-  #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
-  #         container-name: ${{ env.CONTAINER_NAME_CLIENT }}
-  #         image: ${{ steps.login-ecr.outputs.registry }}/${{ needs.build-client.outputs.image }
-
   #     - name: Fill in the new gateway image ID in the Amazon ECS task definition
   #       id: task-def
   #       uses: aws-actions/amazon-ecs-render-task-definition@v1
   #       with:
   #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
-  #         container-name: ${{ env.CONTAINER_NAME_CLIENT }}
+  #         container-name: ${{ env.CONTAINER_NAME_GATEWAY }}
   #         image: ${{ steps.login-ecr.outputs.registry }}/${{ needs.build-gateway.outputs.image }}
 
   #     - name: Fill in the new federation image ID in the Amazon ECS task definition
@@ -217,7 +183,7 @@ jobs:
   #       uses: aws-actions/amazon-ecs-render-task-definition@v1
   #       with:
   #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
-  #         container-name: ${{ env.CONTAINER_NAME_CLIENT }}
+  #         container-name: ${{ env.CONTAINER_NAME_FEDERATION }}
   #         image: ${{ steps.login-ecr.outputs.registry }}/${{ needs.build-federation.outputs.image }}}
 
   #     - name: Fill in the new staff api image ID in the Amazon ECS task definition
@@ -225,7 +191,7 @@ jobs:
   #       uses: aws-actions/amazon-ecs-render-task-definition@v1
   #       with:
   #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
-  #         container-name: ${{ env.CONTAINER_NAME_CLIENT }}
+  #         container-name: ${{ env.CONTAINER_NAME_STAFF_API }}
   #         image: ${{ steps.login-ecr.outputs.registry }}/${{ needs.build-staff-api.outputs.image }}}
 
   #     - name: Fill in the new user api image ID in the Amazon ECS task definition
@@ -233,7 +199,7 @@ jobs:
   #       uses: aws-actions/amazon-ecs-render-task-definition@v1
   #       with:
   #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
-  #         container-name: ${{ env.CONTAINER_NAME_CLIENT }}
+  #         container-name: ${{ env.CONTAINER_NAME_USER_API }}
   #         image: ${{ steps.login-ecr.outputs.registry }}/${{ needs.build-user-api.outputs.image }}}
 
   #     - name: Fill in the new inquiry api image ID in the Amazon ECS task definition
@@ -241,7 +207,7 @@ jobs:
   #       uses: aws-actions/amazon-ecs-render-task-definition@v1
   #       with:
   #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
-  #         container-name: ${{ env.CONTAINER_NAME_CLIENT }}
+  #         container-name: ${{ env.CONTAINER_NAME_INQUIRY_API }}
   #         image: ${{ steps.login-ecr.outputs.registry }}/${{ needs.build-inquiry-api.outputs.image }}}
 
   #     - name: Deploy Amazon ECS task definition

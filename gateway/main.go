@@ -12,14 +12,12 @@ import (
 	"gateway/proto"
 )
 
-var staffGrpcHost = "staff_api:50051"
-
 func main() {
 	if os.Getenv("GO_ENV") == "" {
 		os.Setenv("GO_ENV", "development")
 	}
 
-	conn, err := grpc.Dial(staffGrpcHost, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(os.Getenv("STAFF_AUTH_HOST"), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("did not connect staff_api tcp: %v", err)
 	}
@@ -29,12 +27,10 @@ func main() {
 
 	engine := gin.Default()
 	routerSetup(engine, client)
-	engine.Run(":3000")
+	engine.Run(":2000")
 }
 
 func routerSetup(r *gin.Engine, cc proto.AuthClient) {
-	r.GET("/", handlers.GetClientHandler)
-
 	authMiddleware, err := middleware.AuthMiddleware(cc)
 	if err != nil {
 		log.Fatal("JWT Error:" + err.Error())

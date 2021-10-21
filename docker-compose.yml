@@ -13,7 +13,6 @@ services:
       - POSTGRES_HOST_AUTH_METHOD=trust
 
   client:
-    # image: ghcr.io/kurupeku/crm-sample-client:main
     build:
       context: ./client
       dockerfile: Dockerfile
@@ -26,7 +25,6 @@ services:
     env_file: ./.env
 
   gateway:
-    # image: ghcr.io/kurupeku/crm-sample-gateway:main
     build:
       context: ./gateway
       dockerfile: Dockerfile
@@ -36,14 +34,13 @@ services:
     tty: true
     stdin_open: true
     ports:
-      - 2000:3000
+      - 2000:2000
     depends_on:
       - staff_api
       - federation
     env_file: ./.env
 
   federation:
-    # image: ghcr.io/kurupeku/crm-sample-federation:main
     build:
       context: ./federation
       dockerfile: Dockerfile
@@ -64,7 +61,6 @@ services:
     command: npm run dev
 
   staff_api:
-    # image: ghcr.io/kurupeku/crm-sample-staff-api:main
     build:
       context: ./staff_api
       dockerfile: Dockerfile
@@ -74,7 +70,7 @@ services:
     tty: true
     stdin_open: true
     ports:
-      - 3001:3000
+      - 3001:3001
       - 50051:50051
     depends_on:
       - db
@@ -91,7 +87,6 @@ services:
     restart: always
 
   user_api:
-    # image: ghcr.io/kurupeku/crm-sample-user-api:main
     build:
       context: ./user_api
       dockerfile: Dockerfile
@@ -99,7 +94,7 @@ services:
     volumes:
       - ./user_api:/usr/src/app
     ports:
-      - "3002:3000"
+      - "3002:3002"
     depends_on:
       - db
     env_file: ./.env
@@ -115,7 +110,6 @@ services:
     restart: always
 
   inquiry_api:
-    # image: ghcr.io/kurupeku/crm-sample-inquiry-api:main
     build:
       context: ./inquiry_api
       dockerfile: Dockerfile
@@ -123,7 +117,7 @@ services:
     volumes:
       - ./inquiry_api:/usr/src/app
     ports:
-      - "3003:3000"
+      - "3003:3003"
     depends_on:
       - db
     env_file: ./.env
