@@ -41,6 +41,7 @@ func routerSetup(r *gin.Engine, cc proto.AuthClient) {
 		log.Fatal("authMiddleware.MiddlewareInit() Error:" + errInit.Error())
 	}
 
+	r.GET("/health_check", handlers.HealthCheckHandler)
 	api := r.Group("/api")
 	{
 		api.GET("/menus", handlers.GetMenusHandler)
