@@ -25,7 +25,7 @@ CMD ["go", "run", "main.go"]
 
 # -------------------------------
 
-FROM golang:1.17.1-alpine AS builder
+FROM golang:1.17.1-alpine3.14 AS builder
 
 ENV GO_ENV production
 ENV GOPAHT /go
@@ -44,7 +44,7 @@ RUN go mod download
 RUN go build -o ${ROOT}/binary
 
 
-FROM scratch as prod
+FROM alpine:3.14 as prod
 
 ENV ROOT=/go/src/app
 WORKDIR ${ROOT}

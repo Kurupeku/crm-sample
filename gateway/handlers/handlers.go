@@ -11,6 +11,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type Health struct {
+	Status int    `json:"status"`
+	Result string `json:"result"`
+}
+
+func HealthCheckHandler(c *gin.Context) {
+	health := Health{
+		Status: http.StatusOK,
+		Result: "success",
+	}
+	c.JSON(200, health)
+}
+
 func GetMenusHandler(c *gin.Context) {
 	proxyHandler(c, parseURL(os.Getenv("INQUIRY_API_HOST"), "/menus"))
 }
