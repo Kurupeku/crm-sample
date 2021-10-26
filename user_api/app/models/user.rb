@@ -14,7 +14,7 @@
 #
 # Indexes
 #
-#  index_users_on_email  (email) UNIQUE
+#  index_users_on_email  (email)
 #
 class User < ApplicationRecord
   has_one :address, dependent: :destroy
