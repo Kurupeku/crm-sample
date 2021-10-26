@@ -1,10 +1,10 @@
-name,email,password
-上村 陽平,kurupeku@example.com,password
-ゲスト,guest@example.com,password
-佐藤 薫,sato@example.com,password
-杉下 浩一,sugishita@example.com,password
-山内 亮,yamauchi@example.com,password
-椎名 里香,shina@example.com,password
-小阪 裕太,kosaka@example.com,password
-岡本 結衣,okamoto@example.com,password
-安田 和哉,yasuda@example.com,password
+name,email
+上村 陽平,kurupeku@example.com
+ゲスト,guest@example.com
+佐藤 薫,sato@example.com
+杉下 浩一,sugishita@example.com
+山内 亮,yamauchi@example.com
+椎名 里香,shina@example.com
+小阪 裕太,kosaka@example.com
+岡本 結衣,okamoto@example.com
+安田 和哉,yasuda@example.com
