@@ -33,6 +33,24 @@ class Inquiry < ApplicationRecord
   validates :email, format: { with: EMAIL_REGEXP }
   validates :tel, format: { with: PHONE_NUMBER_REGEX }
 
+  scope :company_name_cont, lambda { |word|
+    where 'company_name LIKE ?', "%#{word}%"
+  }
+
+  scope :name_cont, lambda { |word|
+    where 'name LIKE ?', "%#{word}%"
+  }
+
+  scope :email_cont, lambda { |word|
+    where 'email LIKE ?', "%#{word}%"
+  }
+
+  scope :fields_cont, lambda { |word|
+    company_name_cont(word)
+      .or(name_cont(word))
+      .or(email_cont(word))
+  }
+
   private
 
   def init_progress
