@@ -36,9 +36,10 @@ type Comment struct {
 	ID        uint      `gorm:"primaryKey;autoIncrement"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
+	StaffID   uint
 	UserID    uint
 	InquiryID uint
-	Content   string `gorm:"type:text"`
+	Content   string `gorm:"type:text" csv:"content,omitempty"`
 }
 
 type Menu struct {
