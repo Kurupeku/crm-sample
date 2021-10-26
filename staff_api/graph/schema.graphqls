@@ -15,6 +15,10 @@ extend type Progress @key(fields: "id") {
   id: ID! @external
 }
 
+extend type Comment @key(fields: "id") {
+  id: ID! @external
+}
+
 type StaffPageInfo {
   currentPage: Int!
   recordCount: Int!

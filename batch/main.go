@@ -163,6 +163,7 @@ func inquiryInsert(staffIDs []uint, userIDs []uint) {
 		for i, comment := range comments {
 			inqInd := i / roundNum
 			inquiry := inquiries[inqInd]
+			comment.StaffID = staffIDs[rand.Intn(len(staffIDs))]
 			comment.InquiryID = inquiry.ID
 			comment.UserID = inquiry.UserID
 		}
