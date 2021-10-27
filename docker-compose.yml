@@ -132,5 +132,17 @@ services:
       - db
     restart: always
 
+  batch:
+    build:
+      context: ./batch
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./batch:/go/src/app
+    depends_on:
+      - db
+    env_file: ./.env
+    command: tail -f /dev/null
+
 volumes:
   postgres-data:

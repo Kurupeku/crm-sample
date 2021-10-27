@@ -11,7 +11,7 @@ module Types
       object.inquiry
     end
 
-    field :rank, Integer, null: false
+    field :rank, String, null: false
     def rank
       object.rank_i18n
     end

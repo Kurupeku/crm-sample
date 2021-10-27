@@ -18,6 +18,7 @@
 #
 class Inquiry < ApplicationRecord
   before_save :init_progress
+  before_save :ref_user_id_to_comments
 
   has_one :progress, dependent: :delete
   has_many :comments, dependent: :delete_all
@@ -33,9 +34,33 @@ class Inquiry < ApplicationRecord
   validates :email, format: { with: EMAIL_REGEXP }
   validates :tel, format: { with: PHONE_NUMBER_REGEX }
 
+  scope :company_name_cont, lambda { |word|
+    where 'company_name LIKE ?', "%#{word}%"
+  }
+
+  scope :name_cont, lambda { |word|
+    where 'name LIKE ?', "%#{word}%"
+  }
+
+  scope :email_cont, lambda { |word|
+    where 'email LIKE ?', "%#{word}%"
+  }
+
+  scope :fields_cont, lambda { |word|
+    company_name_cont(word)
+      .or(name_cont(word))
+      .or(email_cont(word))
+  }
+
   private
 
   def init_progress
     build_progress if progress.blank?
+  end
+
+  def ref_user_id_to_comments
+    return if user_id.blank? || !user_id_changed?
+
+    comments.update_all user_id: user_id
   end
 end
