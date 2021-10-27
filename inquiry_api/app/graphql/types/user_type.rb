@@ -9,5 +9,10 @@ module Types
     def inquiries
       Inquiry.where user_id: object[:id]
     end
+
+    field :comments, [CommentType], null: false
+    def comments
+      Comment.where user_id: object[:id]
+    end
   end
 end

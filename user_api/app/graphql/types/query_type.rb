@@ -4,17 +4,26 @@ module Types
     include GraphQL::Types::Relay::HasNodeField
     include GraphQL::Types::Relay::HasNodesField
 
-    field :users, [UserType], null: false
-    def users
-      User.all.order created_at: :desc
+    field :users, [UserType], null: false do
+      argument :fields_cont, String, required: false
+      argument :order, String, required: false
+    end
+    def users(fields_cont: nil, order: 'created_at desc')
+      User.then do |r|
+        fields_cont.present? ? r.fields_cont(fields_cont) : r.all
+      end.order(order.underscore)
     end
 
     field :users_list, UsersListType, null: false do
       argument :page, Int, required: false
       argument :per, Int, required: false
+      argument :fields_cont, String, required: false
+      argument :order, String, required: false
     end
-    def users_list(page: 1, per: 25)
-      result = User.all.order(created_at: :desc).page(page).per(per)
+    def users_list(page: 1, per: 25, fields_cont: nil, order: 'created_at desc')
+      result = User.then do |r|
+        fields_cont.present? ? r.fields_cont(fields_cont) : r.all
+      end.order(order.underscore).page(page).per(per)
       parse_connection_payload result, :users
     end
 

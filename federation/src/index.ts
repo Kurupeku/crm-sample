@@ -1,6 +1,5 @@
 import {ApolloServer} from 'apollo-server';
 import {ApolloGateway} from '@apollo/gateway';
-require('dotenv').config();
 
 const port = 3000;
 
@@ -20,9 +19,7 @@ const gateway = new ApolloGateway({
 
 const server = new ApolloServer({
   gateway,
-  // subscriptions: false,
   introspection: true,
-  // playground: true,
 });
 
 server.listen({port}).then(({url}) => {

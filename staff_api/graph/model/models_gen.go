@@ -2,6 +2,12 @@
 
 package model
 
+type Comment struct {
+	ID string `json:"id"`
+}
+
+func (Comment) IsEntity() {}
+
 type NewStaffInput struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
