@@ -13,6 +13,31 @@ env:
   IMAGE_NAME_BASE: ghcr.io/kurupeku/crm-sample
 
 jobs:
+  build-batch:
+    name: Build Batch
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push batch image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./batch
+          push: true
+          tags: ${{ env.IMAGE_NAME_BASE }}/batch:${{ github.sha }},${{ env.IMAGE_NAME_BASE }}/batch:latest
+
   build-gateway:
     name: Build Gateway
     runs-on: ubuntu-latest

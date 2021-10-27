@@ -40,6 +40,7 @@ ja:
           order: 受注へ進む
 
       comment:
+        staff_id: スタッフID
         inquiry_id: 問い合わせID
         user_id: ユーザーID
         content: 内容

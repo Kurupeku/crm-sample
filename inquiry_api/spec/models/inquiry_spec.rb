@@ -122,4 +122,17 @@ RSpec.describe Inquiry, type: :model do
       end
     end
   end
+
+  describe '# ref_user_id_to_comments' do
+    context 'user_idが更新された場合' do
+      let(:inquiry) { create :inquiry }
+      let(:comments) { create_list :comment, 3, inquiry: inquiry }
+
+      it '紐づくCommentすべてのuser_idも連動して変更される' do
+        new_user_id = inquiry.user_id + 1
+        inquiry.update user_id: new_user_id
+        is_asserted_by { comments.map(&:reload).map(&:user_id) == 3.times.map { new_user_id } }
+      end
+    end
+  end
 end
