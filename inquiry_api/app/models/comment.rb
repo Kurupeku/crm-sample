@@ -26,9 +26,9 @@ class Comment < ApplicationRecord
   belongs_to :inquiry
 
   validates :content, presence: true
-  with_options presence: true, numericality: { only_integer: true, greater_than: 0 } do
-    validates :staff_id
-    validates :user_id
+  with_options numericality: { only_integer: true, greater_than: 0 } do
+    validates :staff_id, presence: true
+    validates :user_id, allow_nil: true
   end
 
   private
