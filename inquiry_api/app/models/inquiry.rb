@@ -18,6 +18,7 @@
 #
 class Inquiry < ApplicationRecord
   before_save :init_progress
+  before_save :ref_user_id_to_comments
 
   has_one :progress, dependent: :delete
   has_many :comments, dependent: :delete_all
@@ -55,5 +56,11 @@ class Inquiry < ApplicationRecord
 
   def init_progress
     build_progress if progress.blank?
+  end
+
+  def ref_user_id_to_comments
+    return if user_id.blank? || !user_id_changed?
+
+    comments.update_all user_id: user_id
   end
 end

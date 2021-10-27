@@ -41,28 +41,21 @@ RSpec.describe Comment, type: :model do
     end
 
     context 'user_idが空の場合' do
-      it 'バリデーションに弾かれる' do
-        expected_error = 'ユーザーIDを入力してください'
-
-        comment.user_id = ''
-        comment.valid?
-        is_asserted_by { comment.errors.full_messages.first == expected_error }
-
+      it '関連するInquryからuser_idを補完してくる' do
         comment.user_id = nil
         comment.valid?
-        is_asserted_by { comment.errors.full_messages.first == expected_error }
+        is_asserted_by { comment.user_id == comment.inquiry.user_id }
       end
     end
 
-    context 'user_idが1未満もしくはInteger以外の場合' do
-      it 'バリデーションに弾かれる' do
-        comment.user_id = 0
-        comment.valid?
-        is_asserted_by { comment.errors.full_messages.first == 'ユーザーIDは0より大きい値にしてください' }
+    context '親のInquiryのuser_idが変更になった場合' do
+      it 'そのuser_idを紐づくCommentに反映する' do
+        comment.save
 
-        comment.user_id = 1.1
-        comment.valid?
-        is_asserted_by { comment.errors.full_messages.first == 'ユーザーIDは整数で入力してください' }
+        new_user_id = comment.inquiry.user_id + 1
+        comment.inquiry.update user_id: new_user_id
+        comment.reload
+        is_asserted_by { comment.user_id == new_user_id }
       end
     end
   end
