@@ -141,7 +141,6 @@ func (r *queryResolver) Staffs(ctx context.Context) ([]*model.Staff, error) {
 }
 
 func (r *queryResolver) StaffList(ctx context.Context, page *int, per *int) (*model.StaffList, error) {
-	// panic(fmt.Errorf("not implemented"))
 	var lm, pg int
 	if per == nil {
 		lm = 25
