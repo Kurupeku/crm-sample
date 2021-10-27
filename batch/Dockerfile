@@ -49,6 +49,7 @@ FROM alpine:3.14 as prod
 ENV ROOT=/go/src/app
 WORKDIR ${ROOT}
 COPY --from=builder ${ROOT}/binary ${ROOT}
+COPY --from=builder ${ROOT}/seed/csv/ ${ROOT}/seed/csv/
 
 EXPOSE 2000
 CMD ["/go/src/app/binary"]
