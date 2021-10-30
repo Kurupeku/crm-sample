@@ -1,0 +1,30 @@
+query getUsers($fieldsCont: String, $order: String) {
+  users(fieldsCont: $fieldsCont, order: $order) {
+    id
+    companyName
+    name
+    email
+    tel
+    createdAt
+    updatedAt
+  }
+}
+
+query getUsersWithAddress($fieldsCont: String, $order: String) {
+  users(fieldsCont: $fieldsCont, order: $order) {
+    id
+    companyName
+    name
+    email
+    tel
+    createdAt
+    updatedAt
+    address {
+      postalCode
+      prefecture
+      city
+      street
+      building
+    }
+  }
+}

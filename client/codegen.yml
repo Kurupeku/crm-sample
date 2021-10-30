@@ -1,0 +1,12 @@
+overwrite: true
+schema: "http://federation:3000"
+documents: "./graphql/**/*.graphql"
+generates:
+  graphql/client.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+  ./graphql.schema.json:
+    plugins:
+      - "introspection"

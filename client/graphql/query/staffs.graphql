@@ -1,0 +1,81 @@
+query getStaffs {
+  staffs {
+    id
+    name
+    email
+    icon
+    createdAt
+    updatedAt
+  }
+}
+
+query getStaffById($id: ID!) {
+  staff(id: $id) {
+    id
+    name
+    email
+    icon
+    createdAt
+    updatedAt
+  }
+}
+
+query getStaffWithCommentsById($staffId: ID!) {
+  staff(id: $staffId) {
+    id
+    name
+    email
+    icon
+    createdAt
+    updatedAt
+    comments {
+      id
+      userId
+      inquiryId
+      content
+      createdAt
+      updatedAt
+    }
+  }
+}
+
+query getStaffWithProgressesById($staffId: ID!) {
+  staff(id: $staffId) {
+    id
+    name
+    email
+    icon
+    createdAt
+    updatedAt
+    progresses {
+      id
+      staffId
+      inquiryId
+      rank
+      state
+      recontactedOn
+      contactedAt
+      createdAt
+      updatedAt
+    }
+  }
+}
+
+query getStaffsList($page: Int, $per: Int) {
+  staffList(page: $page, per: $per) {
+    staffs {
+      id
+      name
+      email
+      icon
+      createdAt
+      updatedAt
+    }
+    pageInfo {
+      currentPage
+      limit
+      pageCount
+      recordCount
+    }
+  }
+}
