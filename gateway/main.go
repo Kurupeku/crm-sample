@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 
@@ -24,10 +25,28 @@ func main() {
 	defer conn.Close()
 
 	client := proto.NewAuthClient(conn)
+	corsConf := getCorsConfig()
 
 	engine := gin.Default()
+	engine.Use(cors.New(corsConf))
 	routerSetup(engine, client)
 	engine.Run(":2000")
+}
+
+func getCorsConfig() cors.Config {
+	return cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders: []string{
+			"Access-Control-Allow-Credentials",
+			"Access-Control-Allow-Headers",
+			"Content-Type",
+			"Content-Length",
+			"Accept",
+			"Accept-Encoding",
+			"Authorization",
+		},
+	}
 }
 
 func routerSetup(r *gin.Engine, cc proto.AuthClient) {

@@ -22,10 +22,14 @@ services:
       - /app/node_modules
     ports:
       - "8080:3000"
+    depends_on:
+      gateway: service_healthy
+      federation: service_healthy
     env_file: ./.env
     depends_on:
       gateway:
         condition: service_healthy
+    command: ['tail', '-f', '/dev/null']
 
   gateway:
     build:
@@ -145,7 +149,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 20s
 
   user_db_gui:
     image: sosedoff/pgweb
@@ -178,7 +182,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 20s
 
   inquiry_db_gui:
     image: sosedoff/pgweb
