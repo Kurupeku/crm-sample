@@ -1,115 +1,127 @@
-import React, { useEffect, useState } from "react";
-import clsx from "clsx";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/dist/client/router";
 import { useRecoilState, useResetRecoilState } from "recoil";
 import { sessionState, themeTypeState } from "../modules/atoms";
-import {
-  createStyles,
-  makeStyles,
-  useTheme,
-  Theme,
-} from "@material-ui/core/styles";
-import Box from "@material-ui/core/Box";
-import Drawer from "@material-ui/core/Drawer";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import BrightnessMediumIcon from "@material-ui/icons/BrightnessMedium";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import DrawerMenu from "./drawerMenu";
 import { useCookies } from "react-cookie";
 import { useSnackbar } from "notistack";
+import {
+  styled,
+  Theme,
+  CSSObject,
+  ThemeProvider,
+  createTheme,
+} from "@mui/material/styles";
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import BrightnessMediumIcon from "@mui/icons-material/BrightnessMedium";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import MuiDrawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import CssBaseline from "@mui/material/CssBaseline";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
+import theme, { getTheme } from "../modules/theme";
 
 const drawerWidth = 240;
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: "flex",
-    },
-    appBar: {
-      zIndex: theme.zIndex.drawer + 1,
-      transition: theme.transitions.create(["width", "margin"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-    },
-    appBarShift: {
-      marginLeft: drawerWidth,
-      width: `calc(100% - ${drawerWidth}px)`,
-      transition: theme.transitions.create(["width", "margin"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-    menuButton: {
-      marginRight: 36,
-    },
-    hide: {
-      display: "none",
-    },
-    appBarToolbar: {
-      display: "flex",
-    },
-    appBarTitle: {
-      flexGrow: 1,
-    },
-    drawer: {
-      width: drawerWidth,
-      flexShrink: 0,
-      whiteSpace: "nowrap",
-    },
-    drawerOpen: {
-      width: drawerWidth,
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-    drawerClose: {
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      overflowX: "hidden",
-      width: theme.spacing(7) + 1,
-      [theme.breakpoints.up("sm")]: {
-        width: theme.spacing(9) + 1,
-      },
-    },
-    toolbar: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-end",
-      padding: theme.spacing(0, 1),
-      ...theme.mixins.toolbar,
-    },
-    content: {
-      flexGrow: 1,
-      padding: theme.spacing(3),
-      height: "100vh",
-      backgroundColor:
-        theme.palette.type === "dark"
-          ? "#121212"
-          : theme.palette.background.default,
-    },
-  })
-);
+const openedMixin = (theme: Theme): CSSObject => ({
+  width: drawerWidth,
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: "hidden",
+});
 
-const Layout: React.FC = ({ children }) => {
-  const [open, setOpen] = useState(false);
-  const [themeType, setThemeType] = useRecoilState(themeTypeState);
+const closedMixin = (theme: Theme): CSSObject => ({
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: "hidden",
+  width: `calc(${theme.spacing(7)} + 1px)`,
+  [theme.breakpoints.up("sm")]: {
+    width: `calc(${theme.spacing(9)} + 1px)`,
+  },
+});
+
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+}));
+
+interface AppBarProps extends MuiAppBarProps {
+  open?: boolean;
+}
+
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== "open",
+})<AppBarProps>(({ theme, open }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(["width", "margin"], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+}));
+
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  width: drawerWidth,
+  flexShrink: 0,
+  whiteSpace: "nowrap",
+  boxSizing: "border-box",
+  ...(open && {
+    ...openedMixin(theme),
+    "& .MuiDrawer-paper": openedMixin(theme),
+  }),
+  ...(!open && {
+    ...closedMixin(theme),
+    "& .MuiDrawer-paper": closedMixin(theme),
+  }),
+}));
+
+const Layout: FC = ({ children }) => {
+  // const [themeType, setThemeType] = useRecoilState(themeTypeState);
+  const [mode, setMode] = useState<"light" | "dark">("light");
   const resetSession = useResetRecoilState(sessionState);
-  const classes = useStyles();
-  const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
   const router = useRouter();
   const [_cookies, _setCookie, removeCookie] = useCookies(["jwt"]);
   const { enqueueSnackbar } = useSnackbar();
+
+  const privateTheme: Theme = useMemo(
+    () => createTheme({ palette: { mode } }),
+    [mode]
+  );
+
+  useEffect(() => {
+    const localMode =
+      (localStorage.getItem("mode") as "light" | "dark" | null) || "light";
+    setMode(localMode);
+  }, []);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -120,77 +132,99 @@ const Layout: React.FC = ({ children }) => {
   };
 
   const switchType = () => {
-    const newThemeType = themeType === "light" ? "dark" : "light";
-    localStorage.setItem("type", newThemeType);
-    setThemeType(newThemeType);
+    const newMode = mode === "light" ? "dark" : "light";
+    setMode(newMode);
+    localStorage.setItem("mode", newMode);
   };
 
   const handleLogout = () => {
+    router.replace("/admin/login");
     removeCookie("jwt");
     resetSession();
     enqueueSnackbar("ログアウトしました", { variant: "success" });
-    router.replace("/admin/login");
   };
 
   return (
-    <div className={classes.root}>
-      <AppBar
-        color={themeType == "light" ? "primary" : "default"}
-        position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
-      >
-        <Toolbar className={classes.appBarToolbar}>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            className={clsx(classes.menuButton, {
-              [classes.hide]: open,
-            })}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap className={classes.appBarTitle}>
-            CRM Sample
-          </Typography>
-          <IconButton color="inherit" onClick={switchType}>
-            <BrightnessMediumIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={handleLogout}>
-            <ExitToAppIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="permanent"
-        className={clsx(classes.drawer, {
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
-        })}
-        classes={{
-          paper: clsx({
-            [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open,
-          }),
-        }}
-      >
-        <div className={classes.toolbar}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
-            ) : (
-              <ChevronLeftIcon />
-            )}
-          </IconButton>
-        </div>
-        <Divider />
-        <DrawerMenu />
-      </Drawer>
-      <Box className={classes.content}>{children}</Box>
-    </div>
+    <ThemeProvider theme={privateTheme}>
+      <CssBaseline />
+      <Box sx={{ display: "flex" }}>
+        <AppBar position="fixed" open={open}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                marginRight: "36px",
+                ...(open && { display: "none" }),
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              variant="h6"
+              noWrap
+              sx={{
+                flexGrow: 1,
+              }}
+            >
+              CRM Sample
+            </Typography>
+            <IconButton color="inherit" onClick={switchType}>
+              <BrightnessMediumIcon />
+            </IconButton>
+            <IconButton color="inherit" onClick={handleLogout}>
+              <ExitToAppIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+        <Drawer variant="permanent" open={open}>
+          <DrawerHeader>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === "rtl" ? (
+                <ChevronRightIcon />
+              ) : (
+                <ChevronLeftIcon />
+              )}
+            </IconButton>
+          </DrawerHeader>
+          <Divider />
+          <List>
+            {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon>
+                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+          <List>
+            {["All mail", "Trash", "Spam"].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon>
+                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            backgroundColor: (t) => t.palette.background.default,
+          }}
+        >
+          <DrawerHeader />
+          {children}
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
 };
 

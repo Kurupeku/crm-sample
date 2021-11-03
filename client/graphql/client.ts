@@ -409,8 +409,9 @@ export type Query = {
   progresses: Array<Progress>;
   progressesList: ProgressesList;
   staff: Staff;
-  staffList: StaffList;
+  staffByEmail: Staff;
   staffs: Array<Staff>;
+  staffsList: StaffsList;
   user?: Maybe<User>;
   users: Array<User>;
   usersList: UsersList;
@@ -495,7 +496,12 @@ export type QueryStaffArgs = {
 };
 
 
-export type QueryStaffListArgs = {
+export type QueryStaffByEmailArgs = {
+  email: Scalars['String'];
+};
+
+
+export type QueryStaffsListArgs = {
   page?: Maybe<Scalars['Int']>;
   per?: Maybe<Scalars['Int']>;
 };
@@ -552,18 +558,18 @@ export type StaffInput = {
   name?: Maybe<Scalars['String']>;
 };
 
-export type StaffList = {
-  __typename?: 'StaffList';
-  pageInfo: StaffPageInfo;
-  staffs: Array<Staff>;
-};
-
 export type StaffPageInfo = {
   __typename?: 'StaffPageInfo';
   currentPage: Scalars['Int'];
   limit: Scalars['Int'];
   pageCount: Scalars['Int'];
   recordCount: Scalars['Int'];
+};
+
+export type StaffsList = {
+  __typename?: 'StaffsList';
+  pageInfo: StaffPageInfo;
+  staffs: Array<Staff>;
 };
 
 export type UpdateAddressInput = {
@@ -646,10 +652,39 @@ export type UsersList = {
   users: Array<User>;
 };
 
+export type CreateStaffMutationVariables = Exact<{
+  input?: Maybe<NewStaffInput>;
+}>;
+
+
+export type CreateStaffMutation = { __typename?: 'Mutation', createStaff: { __typename?: 'Staff', id: string } };
+
+export type UpdateStaffMutationVariables = Exact<{
+  input?: Maybe<StaffInput>;
+}>;
+
+
+export type UpdateStaffMutation = { __typename?: 'Mutation', updateStaff: { __typename?: 'Staff', id: string } };
+
+export type DeleteStaffMutationVariables = Exact<{
+  input?: Maybe<StaffIdInput>;
+}>;
+
+
+export type DeleteStaffMutation = { __typename?: 'Mutation', deleteStaff: { __typename?: 'Staff', id: string } };
+
 export type GetStaffsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetStaffsQuery = { __typename?: 'Query', staffs: Array<{ __typename?: 'Staff', id: string, name: string, email: string, icon?: string | null | undefined, createdAt: string, updatedAt: string }> };
+
+export type GetStaffsListQueryVariables = Exact<{
+  page?: Maybe<Scalars['Int']>;
+  per?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type GetStaffsListQuery = { __typename?: 'Query', staffsList: { __typename?: 'StaffsList', staffs: Array<{ __typename?: 'Staff', id: string, name: string, email: string, icon?: string | null | undefined, createdAt: string, updatedAt: string }>, pageInfo: { __typename?: 'StaffPageInfo', currentPage: number, limit: number, pageCount: number, recordCount: number } } };
 
 export type GetStaffByIdQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -658,45 +693,113 @@ export type GetStaffByIdQueryVariables = Exact<{
 
 export type GetStaffByIdQuery = { __typename?: 'Query', staff: { __typename?: 'Staff', id: string, name: string, email: string, icon?: string | null | undefined, createdAt: string, updatedAt: string } };
 
-export type GetStaffWithCommentsByIdQueryVariables = Exact<{
-  staffId: Scalars['ID'];
+export type GetStaffbyEmailQueryVariables = Exact<{
+  email: Scalars['String'];
 }>;
 
 
-export type GetStaffWithCommentsByIdQuery = { __typename?: 'Query', staff: { __typename?: 'Staff', id: string, name: string, email: string, icon?: string | null | undefined, createdAt: string, updatedAt: string, comments: Array<{ __typename?: 'Comment', id: string, userId: number, inquiryId: number, content: string, createdAt: number, updatedAt: number }> } };
-
-export type GetStaffWithProgressesByIdQueryVariables = Exact<{
-  staffId: Scalars['ID'];
-}>;
+export type GetStaffbyEmailQuery = { __typename?: 'Query', staffByEmail: { __typename?: 'Staff', id: string, name: string, email: string, icon?: string | null | undefined, createdAt: string, updatedAt: string } };
 
 
-export type GetStaffWithProgressesByIdQuery = { __typename?: 'Query', staff: { __typename?: 'Staff', id: string, name: string, email: string, icon?: string | null | undefined, createdAt: string, updatedAt: string, progresses: Array<{ __typename?: 'Progress', id: string, staffId?: number | null | undefined, inquiryId: number, rank: string, state?: string | null | undefined, recontactedOn?: string | null | undefined, contactedAt?: number | null | undefined, createdAt: number, updatedAt: number }> } };
+export const CreateStaffDocument = gql`
+    mutation createStaff($input: NewStaffInput) {
+  createStaff(input: $input) {
+    id
+  }
+}
+    `;
+export type CreateStaffMutationFn = Apollo.MutationFunction<CreateStaffMutation, CreateStaffMutationVariables>;
 
-export type GetStaffsListQueryVariables = Exact<{
-  page?: Maybe<Scalars['Int']>;
-  per?: Maybe<Scalars['Int']>;
-}>;
+/**
+ * __useCreateStaffMutation__
+ *
+ * To run a mutation, you first call `useCreateStaffMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateStaffMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createStaffMutation, { data, loading, error }] = useCreateStaffMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateStaffMutation(baseOptions?: Apollo.MutationHookOptions<CreateStaffMutation, CreateStaffMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateStaffMutation, CreateStaffMutationVariables>(CreateStaffDocument, options);
+      }
+export type CreateStaffMutationHookResult = ReturnType<typeof useCreateStaffMutation>;
+export type CreateStaffMutationResult = Apollo.MutationResult<CreateStaffMutation>;
+export type CreateStaffMutationOptions = Apollo.BaseMutationOptions<CreateStaffMutation, CreateStaffMutationVariables>;
+export const UpdateStaffDocument = gql`
+    mutation updateStaff($input: StaffInput) {
+  updateStaff(input: $input) {
+    id
+  }
+}
+    `;
+export type UpdateStaffMutationFn = Apollo.MutationFunction<UpdateStaffMutation, UpdateStaffMutationVariables>;
 
+/**
+ * __useUpdateStaffMutation__
+ *
+ * To run a mutation, you first call `useUpdateStaffMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateStaffMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateStaffMutation, { data, loading, error }] = useUpdateStaffMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateStaffMutation(baseOptions?: Apollo.MutationHookOptions<UpdateStaffMutation, UpdateStaffMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateStaffMutation, UpdateStaffMutationVariables>(UpdateStaffDocument, options);
+      }
+export type UpdateStaffMutationHookResult = ReturnType<typeof useUpdateStaffMutation>;
+export type UpdateStaffMutationResult = Apollo.MutationResult<UpdateStaffMutation>;
+export type UpdateStaffMutationOptions = Apollo.BaseMutationOptions<UpdateStaffMutation, UpdateStaffMutationVariables>;
+export const DeleteStaffDocument = gql`
+    mutation deleteStaff($input: StaffIDInput) {
+  deleteStaff(input: $input) {
+    id
+  }
+}
+    `;
+export type DeleteStaffMutationFn = Apollo.MutationFunction<DeleteStaffMutation, DeleteStaffMutationVariables>;
 
-export type GetStaffsListQuery = { __typename?: 'Query', staffList: { __typename?: 'StaffList', staffs: Array<{ __typename?: 'Staff', id: string, name: string, email: string, icon?: string | null | undefined, createdAt: string, updatedAt: string }>, pageInfo: { __typename?: 'StaffPageInfo', currentPage: number, limit: number, pageCount: number, recordCount: number } } };
-
-export type GetUsersQueryVariables = Exact<{
-  fieldsCont?: Maybe<Scalars['String']>;
-  order?: Maybe<Scalars['String']>;
-}>;
-
-
-export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, companyName?: string | null | undefined, name: string, email: string, tel: string, createdAt: number, updatedAt: number }> };
-
-export type GetUsersWithAddressQueryVariables = Exact<{
-  fieldsCont?: Maybe<Scalars['String']>;
-  order?: Maybe<Scalars['String']>;
-}>;
-
-
-export type GetUsersWithAddressQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, companyName?: string | null | undefined, name: string, email: string, tel: string, createdAt: number, updatedAt: number, address: { __typename?: 'Address', postalCode: string, prefecture: string, city: string, street: string, building?: string | null | undefined } }> };
-
-
+/**
+ * __useDeleteStaffMutation__
+ *
+ * To run a mutation, you first call `useDeleteStaffMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteStaffMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteStaffMutation, { data, loading, error }] = useDeleteStaffMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteStaffMutation(baseOptions?: Apollo.MutationHookOptions<DeleteStaffMutation, DeleteStaffMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteStaffMutation, DeleteStaffMutationVariables>(DeleteStaffDocument, options);
+      }
+export type DeleteStaffMutationHookResult = ReturnType<typeof useDeleteStaffMutation>;
+export type DeleteStaffMutationResult = Apollo.MutationResult<DeleteStaffMutation>;
+export type DeleteStaffMutationOptions = Apollo.BaseMutationOptions<DeleteStaffMutation, DeleteStaffMutationVariables>;
 export const GetStaffsDocument = gql`
     query getStaffs {
   staffs {
@@ -736,148 +839,9 @@ export function useGetStaffsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type GetStaffsQueryHookResult = ReturnType<typeof useGetStaffsQuery>;
 export type GetStaffsLazyQueryHookResult = ReturnType<typeof useGetStaffsLazyQuery>;
 export type GetStaffsQueryResult = Apollo.QueryResult<GetStaffsQuery, GetStaffsQueryVariables>;
-export const GetStaffByIdDocument = gql`
-    query getStaffById($id: ID!) {
-  staff(id: $id) {
-    id
-    name
-    email
-    icon
-    createdAt
-    updatedAt
-  }
-}
-    `;
-
-/**
- * __useGetStaffByIdQuery__
- *
- * To run a query within a React component, call `useGetStaffByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetStaffByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetStaffByIdQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useGetStaffByIdQuery(baseOptions: Apollo.QueryHookOptions<GetStaffByIdQuery, GetStaffByIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetStaffByIdQuery, GetStaffByIdQueryVariables>(GetStaffByIdDocument, options);
-      }
-export function useGetStaffByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetStaffByIdQuery, GetStaffByIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetStaffByIdQuery, GetStaffByIdQueryVariables>(GetStaffByIdDocument, options);
-        }
-export type GetStaffByIdQueryHookResult = ReturnType<typeof useGetStaffByIdQuery>;
-export type GetStaffByIdLazyQueryHookResult = ReturnType<typeof useGetStaffByIdLazyQuery>;
-export type GetStaffByIdQueryResult = Apollo.QueryResult<GetStaffByIdQuery, GetStaffByIdQueryVariables>;
-export const GetStaffWithCommentsByIdDocument = gql`
-    query getStaffWithCommentsById($staffId: ID!) {
-  staff(id: $staffId) {
-    id
-    name
-    email
-    icon
-    createdAt
-    updatedAt
-    comments {
-      id
-      userId
-      inquiryId
-      content
-      createdAt
-      updatedAt
-    }
-  }
-}
-    `;
-
-/**
- * __useGetStaffWithCommentsByIdQuery__
- *
- * To run a query within a React component, call `useGetStaffWithCommentsByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetStaffWithCommentsByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetStaffWithCommentsByIdQuery({
- *   variables: {
- *      staffId: // value for 'staffId'
- *   },
- * });
- */
-export function useGetStaffWithCommentsByIdQuery(baseOptions: Apollo.QueryHookOptions<GetStaffWithCommentsByIdQuery, GetStaffWithCommentsByIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetStaffWithCommentsByIdQuery, GetStaffWithCommentsByIdQueryVariables>(GetStaffWithCommentsByIdDocument, options);
-      }
-export function useGetStaffWithCommentsByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetStaffWithCommentsByIdQuery, GetStaffWithCommentsByIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetStaffWithCommentsByIdQuery, GetStaffWithCommentsByIdQueryVariables>(GetStaffWithCommentsByIdDocument, options);
-        }
-export type GetStaffWithCommentsByIdQueryHookResult = ReturnType<typeof useGetStaffWithCommentsByIdQuery>;
-export type GetStaffWithCommentsByIdLazyQueryHookResult = ReturnType<typeof useGetStaffWithCommentsByIdLazyQuery>;
-export type GetStaffWithCommentsByIdQueryResult = Apollo.QueryResult<GetStaffWithCommentsByIdQuery, GetStaffWithCommentsByIdQueryVariables>;
-export const GetStaffWithProgressesByIdDocument = gql`
-    query getStaffWithProgressesById($staffId: ID!) {
-  staff(id: $staffId) {
-    id
-    name
-    email
-    icon
-    createdAt
-    updatedAt
-    progresses {
-      id
-      staffId
-      inquiryId
-      rank
-      state
-      recontactedOn
-      contactedAt
-      createdAt
-      updatedAt
-    }
-  }
-}
-    `;
-
-/**
- * __useGetStaffWithProgressesByIdQuery__
- *
- * To run a query within a React component, call `useGetStaffWithProgressesByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetStaffWithProgressesByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetStaffWithProgressesByIdQuery({
- *   variables: {
- *      staffId: // value for 'staffId'
- *   },
- * });
- */
-export function useGetStaffWithProgressesByIdQuery(baseOptions: Apollo.QueryHookOptions<GetStaffWithProgressesByIdQuery, GetStaffWithProgressesByIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetStaffWithProgressesByIdQuery, GetStaffWithProgressesByIdQueryVariables>(GetStaffWithProgressesByIdDocument, options);
-      }
-export function useGetStaffWithProgressesByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetStaffWithProgressesByIdQuery, GetStaffWithProgressesByIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetStaffWithProgressesByIdQuery, GetStaffWithProgressesByIdQueryVariables>(GetStaffWithProgressesByIdDocument, options);
-        }
-export type GetStaffWithProgressesByIdQueryHookResult = ReturnType<typeof useGetStaffWithProgressesByIdQuery>;
-export type GetStaffWithProgressesByIdLazyQueryHookResult = ReturnType<typeof useGetStaffWithProgressesByIdLazyQuery>;
-export type GetStaffWithProgressesByIdQueryResult = Apollo.QueryResult<GetStaffWithProgressesByIdQuery, GetStaffWithProgressesByIdQueryVariables>;
 export const GetStaffsListDocument = gql`
     query getStaffsList($page: Int, $per: Int) {
-  staffList(page: $page, per: $per) {
+  staffsList(page: $page, per: $per) {
     staffs {
       id
       name
@@ -924,14 +888,13 @@ export function useGetStaffsListLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetStaffsListQueryHookResult = ReturnType<typeof useGetStaffsListQuery>;
 export type GetStaffsListLazyQueryHookResult = ReturnType<typeof useGetStaffsListLazyQuery>;
 export type GetStaffsListQueryResult = Apollo.QueryResult<GetStaffsListQuery, GetStaffsListQueryVariables>;
-export const GetUsersDocument = gql`
-    query getUsers($fieldsCont: String, $order: String) {
-  users(fieldsCont: $fieldsCont, order: $order) {
+export const GetStaffByIdDocument = gql`
+    query getStaffById($id: ID!) {
+  staff(id: $id) {
     id
-    companyName
     name
     email
-    tel
+    icon
     createdAt
     updatedAt
   }
@@ -939,79 +902,69 @@ export const GetUsersDocument = gql`
     `;
 
 /**
- * __useGetUsersQuery__
+ * __useGetStaffByIdQuery__
  *
- * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetStaffByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetStaffByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetUsersQuery({
+ * const { data, loading, error } = useGetStaffByIdQuery({
  *   variables: {
- *      fieldsCont: // value for 'fieldsCont'
- *      order: // value for 'order'
+ *      id: // value for 'id'
  *   },
  * });
  */
-export function useGetUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+export function useGetStaffByIdQuery(baseOptions: Apollo.QueryHookOptions<GetStaffByIdQuery, GetStaffByIdQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+        return Apollo.useQuery<GetStaffByIdQuery, GetStaffByIdQueryVariables>(GetStaffByIdDocument, options);
       }
-export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+export function useGetStaffByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetStaffByIdQuery, GetStaffByIdQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+          return Apollo.useLazyQuery<GetStaffByIdQuery, GetStaffByIdQueryVariables>(GetStaffByIdDocument, options);
         }
-export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
-export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
-export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
-export const GetUsersWithAddressDocument = gql`
-    query getUsersWithAddress($fieldsCont: String, $order: String) {
-  users(fieldsCont: $fieldsCont, order: $order) {
+export type GetStaffByIdQueryHookResult = ReturnType<typeof useGetStaffByIdQuery>;
+export type GetStaffByIdLazyQueryHookResult = ReturnType<typeof useGetStaffByIdLazyQuery>;
+export type GetStaffByIdQueryResult = Apollo.QueryResult<GetStaffByIdQuery, GetStaffByIdQueryVariables>;
+export const GetStaffbyEmailDocument = gql`
+    query getStaffbyEmail($email: String!) {
+  staffByEmail(email: $email) {
     id
-    companyName
     name
     email
-    tel
+    icon
     createdAt
     updatedAt
-    address {
-      postalCode
-      prefecture
-      city
-      street
-      building
-    }
   }
 }
     `;
 
 /**
- * __useGetUsersWithAddressQuery__
+ * __useGetStaffbyEmailQuery__
  *
- * To run a query within a React component, call `useGetUsersWithAddressQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUsersWithAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetStaffbyEmailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetStaffbyEmailQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetUsersWithAddressQuery({
+ * const { data, loading, error } = useGetStaffbyEmailQuery({
  *   variables: {
- *      fieldsCont: // value for 'fieldsCont'
- *      order: // value for 'order'
+ *      email: // value for 'email'
  *   },
  * });
  */
-export function useGetUsersWithAddressQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersWithAddressQuery, GetUsersWithAddressQueryVariables>) {
+export function useGetStaffbyEmailQuery(baseOptions: Apollo.QueryHookOptions<GetStaffbyEmailQuery, GetStaffbyEmailQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUsersWithAddressQuery, GetUsersWithAddressQueryVariables>(GetUsersWithAddressDocument, options);
+        return Apollo.useQuery<GetStaffbyEmailQuery, GetStaffbyEmailQueryVariables>(GetStaffbyEmailDocument, options);
       }
-export function useGetUsersWithAddressLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersWithAddressQuery, GetUsersWithAddressQueryVariables>) {
+export function useGetStaffbyEmailLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetStaffbyEmailQuery, GetStaffbyEmailQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUsersWithAddressQuery, GetUsersWithAddressQueryVariables>(GetUsersWithAddressDocument, options);
+          return Apollo.useLazyQuery<GetStaffbyEmailQuery, GetStaffbyEmailQueryVariables>(GetStaffbyEmailDocument, options);
         }
-export type GetUsersWithAddressQueryHookResult = ReturnType<typeof useGetUsersWithAddressQuery>;
-export type GetUsersWithAddressLazyQueryHookResult = ReturnType<typeof useGetUsersWithAddressLazyQuery>;
-export type GetUsersWithAddressQueryResult = Apollo.QueryResult<GetUsersWithAddressQuery, GetUsersWithAddressQueryVariables>;
+export type GetStaffbyEmailQueryHookResult = ReturnType<typeof useGetStaffbyEmailQuery>;
+export type GetStaffbyEmailLazyQueryHookResult = ReturnType<typeof useGetStaffbyEmailLazyQuery>;
+export type GetStaffbyEmailQueryResult = Apollo.QueryResult<GetStaffbyEmailQuery, GetStaffbyEmailQueryVariables>;

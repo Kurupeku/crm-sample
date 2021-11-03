@@ -1,5 +1,13 @@
 import { atom } from "recoil";
 import { recoilPersist } from "recoil-persist";
+import {
+  GetStaffbyEmailQuery,
+  GetStaffbyEmailQueryResult,
+  GetStaffByIdQueryResult,
+  GetStaffsQuery,
+  GetStaffsQueryResult,
+  Staff,
+} from "../graphql/client";
 
 const { persistAtom } = recoilPersist();
 
@@ -26,15 +34,16 @@ export const sessionState = atom<Session | null>({
   effects_UNSTABLE: [persistAtom],
 });
 
-interface Staff {
-  id: String;
-  name: String;
-  email: String;
-  icon: String;
-}
-
-export const currentStaffState = atom<Staff | null>({
+export const currentStaffState = atom<
+  GetStaffbyEmailQuery["staffByEmail"] | null
+>({
   key: "sessionStaff",
   default: null,
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const staffsState = atom<GetStaffsQuery["staffs"]>({
+  key: "staffs",
+  default: [],
   effects_UNSTABLE: [persistAtom],
 });

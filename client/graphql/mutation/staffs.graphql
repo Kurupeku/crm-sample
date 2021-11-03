@@ -1,0 +1,17 @@
+mutation createStaff($input: NewStaffInput) {
+  createStaff(input: $input) {
+    id
+  }
+}
+
+mutation updateStaff($input: StaffInput) {
+  updateStaff(input: $input) {
+    id
+  }
+}
+
+mutation deleteStaff($input: StaffIDInput) {
+  deleteStaff(input: $input) {
+    id
+  }
+}

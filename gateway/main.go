@@ -25,9 +25,9 @@ func main() {
 	defer conn.Close()
 
 	client := proto.NewAuthClient(conn)
-	corsConf := getCorsConfig()
 
 	engine := gin.Default()
+	corsConf := getCorsConfig()
 	engine.Use(cors.New(corsConf))
 	routerSetup(engine, client)
 	engine.Run(":2000")
@@ -35,8 +35,9 @@ func main() {
 
 func getCorsConfig() cors.Config {
 	return cors.Config{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"GET", "POST", "OPTIONS"},
+		AllowAllOrigins:  true,
+		AllowCredentials: true,
+		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
 		AllowHeaders: []string{
 			"Access-Control-Allow-Credentials",
 			"Access-Control-Allow-Headers",
