@@ -5,52 +5,22 @@ import { useCookies } from "react-cookie";
 import { useRecoilState } from "recoil";
 import { globalLoadingState, sessionState } from "../../modules/atoms";
 import { useSnackbar } from "notistack";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import CircleProgress from "@material-ui/core/CircularProgress";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import CircleProgress from "@mui/material/CircularProgress";
 import { generateSessionData, AuthResponseData } from "../../modules/jwt";
+import { createTheme, ThemeProvider } from "@mui/material";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    height: "100vh",
-  },
-  image: {
-    backgroundImage: "url(https://source.unsplash.com/random)",
-    backgroundRepeat: "no-repeat",
-    backgroundColor:
-      theme.palette.type === "light"
-        ? theme.palette.grey[50]
-        : theme.palette.grey[900],
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  },
-  paper: {
-    margin: theme.spacing(8, 4),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+const publickTheme = createTheme();
 
-export default function SignInSide() {
+export default function Login() {
   const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -58,7 +28,6 @@ export default function SignInSide() {
   const [_session, setSession] = useRecoilState(sessionState);
   const [globalLoading, setGlobalLoading] = useRecoilState(globalLoadingState);
   const router = useRouter();
-  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -127,61 +96,81 @@ export default function SignInSide() {
       .finally(() => setLoading(false));
   };
 
-  return globalLoading ? null : (
-    <Grid container component="main" className={classes.root}>
-      <CssBaseline />
-      <Grid item xs={false} sm={4} md={7} className={classes.image} />
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            CRM Sample System
-          </Typography>
-          <div className={classes.form}>
-            <TextField
-              value={email}
-              onChange={handleEmail}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="メールアドレス"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              value={password}
-              onChange={handlePassword}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="パスワード"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <Button
-              onClick={handleSubmit}
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              disabled={email === "" || password === "" || loading}
-              startIcon={
-                loading ? <CircleProgress size={20} color="inherit" /> : null
-              }
-            >
-              ログイン
-            </Button>
-          </div>
-        </div>
+  return (
+    <ThemeProvider theme={publickTheme}>
+      <Grid container component="main" sx={{ height: "100vh" }}>
+        <CssBaseline />
+        <Grid
+          item
+          xs={false}
+          sm={4}
+          md={7}
+          sx={{
+            backgroundImage: "url(https://source.unsplash.com/random)",
+            backgroundRepeat: "no-repeat",
+            backgroundColor: (t) =>
+              t.palette.mode === "light"
+                ? t.palette.grey[50]
+                : t.palette.grey[900],
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+          <Box
+            sx={{
+              my: 8,
+              mx: 4,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign in
+            </Typography>
+            <Box component="div" sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="メールアドレス"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                value={email}
+                onChange={handleEmail}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="パスワード"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={handlePassword}
+              />
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                onClick={handleSubmit}
+                disabled={loading}
+                startIcon={loading && <CircleProgress />}
+              >
+                サインイン
+              </Button>
+            </Box>
+          </Box>
+        </Grid>
       </Grid>
-    </Grid>
+    </ThemeProvider>
   );
 }

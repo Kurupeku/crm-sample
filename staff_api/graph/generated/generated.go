@@ -69,8 +69,9 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Staff              func(childComplexity int, id string) int
-		StaffList          func(childComplexity int, page *int, per *int) int
+		StaffByEmail       func(childComplexity int, email string) int
 		Staffs             func(childComplexity int) int
+		StaffsList         func(childComplexity int, page *int, per *int) int
 		__resolve__service func(childComplexity int) int
 		__resolve_entities func(childComplexity int, representations []map[string]interface{}) int
 	}
@@ -84,16 +85,16 @@ type ComplexityRoot struct {
 		UpdatedAt func(childComplexity int) int
 	}
 
-	StaffList struct {
-		PageInfo func(childComplexity int) int
-		Staffs   func(childComplexity int) int
-	}
-
 	StaffPageInfo struct {
 		CurrentPage func(childComplexity int) int
 		Limit       func(childComplexity int) int
 		PageCount   func(childComplexity int) int
 		RecordCount func(childComplexity int) int
+	}
+
+	StaffsList struct {
+		PageInfo func(childComplexity int) int
+		Staffs   func(childComplexity int) int
 	}
 
 	Service struct {
@@ -114,8 +115,9 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	Staffs(ctx context.Context) ([]*model.Staff, error)
-	StaffList(ctx context.Context, page *int, per *int) (*model.StaffList, error)
+	StaffsList(ctx context.Context, page *int, per *int) (*model.StaffsList, error)
 	Staff(ctx context.Context, id string) (*model.Staff, error)
+	StaffByEmail(ctx context.Context, email string) (*model.Staff, error)
 }
 
 type executableSchema struct {
@@ -243,17 +245,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Staff(childComplexity, args["id"].(string)), true
 
-	case "Query.staffList":
-		if e.complexity.Query.StaffList == nil {
+	case "Query.staffByEmail":
+		if e.complexity.Query.StaffByEmail == nil {
 			break
 		}
 
-		args, err := ec.field_Query_staffList_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_staffByEmail_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.StaffList(childComplexity, args["page"].(*int), args["per"].(*int)), true
+		return e.complexity.Query.StaffByEmail(childComplexity, args["email"].(string)), true
 
 	case "Query.staffs":
 		if e.complexity.Query.Staffs == nil {
@@ -261,6 +263,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Staffs(childComplexity), true
+
+	case "Query.staffsList":
+		if e.complexity.Query.StaffsList == nil {
+			break
+		}
+
+		args, err := ec.field_Query_staffsList_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.StaffsList(childComplexity, args["page"].(*int), args["per"].(*int)), true
 
 	case "Query._service":
 		if e.complexity.Query.__resolve__service == nil {
@@ -323,20 +337,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Staff.UpdatedAt(childComplexity), true
 
-	case "StaffList.pageInfo":
-		if e.complexity.StaffList.PageInfo == nil {
-			break
-		}
-
-		return e.complexity.StaffList.PageInfo(childComplexity), true
-
-	case "StaffList.staffs":
-		if e.complexity.StaffList.Staffs == nil {
-			break
-		}
-
-		return e.complexity.StaffList.Staffs(childComplexity), true
-
 	case "StaffPageInfo.currentPage":
 		if e.complexity.StaffPageInfo.CurrentPage == nil {
 			break
@@ -364,6 +364,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.StaffPageInfo.RecordCount(childComplexity), true
+
+	case "StaffsList.pageInfo":
+		if e.complexity.StaffsList.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.StaffsList.PageInfo(childComplexity), true
+
+	case "StaffsList.staffs":
+		if e.complexity.StaffsList.Staffs == nil {
+			break
+		}
+
+		return e.complexity.StaffsList.Staffs(childComplexity), true
 
 	case "_Service.sdl":
 		if e.complexity.Service.SDL == nil {
@@ -464,15 +478,16 @@ type StaffPageInfo {
   limit: Int!
 }
 
-type StaffList {
+type StaffsList {
   pageInfo: StaffPageInfo!
   staffs: [Staff!]!
 }
 
 type Query {
   staffs: [Staff!]!
-  staffList(page: Int, per: Int): StaffList!
+  staffsList(page: Int, per: Int): StaffsList!
   staff(id: ID!): Staff!
+  staffByEmail(email: String!): Staff!
 }
 
 input NewStaffInput {
@@ -682,7 +697,37 @@ func (ec *executionContext) field_Query__entities_args(ctx context.Context, rawA
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_staffList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_staffByEmail_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["email"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["email"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_staff_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_staffsList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *int
@@ -703,21 +748,6 @@ func (ec *executionContext) field_Query_staffList_args(ctx context.Context, rawA
 		}
 	}
 	args["per"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_staff_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
 	return args, nil
 }
 
@@ -1158,7 +1188,7 @@ func (ec *executionContext) _Query_staffs(ctx context.Context, field graphql.Col
 	return ec.marshalNStaff2ᚕᚖstaff_apiᚋgraphᚋmodelᚐStaffᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_staffList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_staffsList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1175,7 +1205,7 @@ func (ec *executionContext) _Query_staffList(ctx context.Context, field graphql.
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_staffList_args(ctx, rawArgs)
+	args, err := ec.field_Query_staffsList_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -1183,7 +1213,7 @@ func (ec *executionContext) _Query_staffList(ctx context.Context, field graphql.
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().StaffList(rctx, args["page"].(*int), args["per"].(*int))
+		return ec.resolvers.Query().StaffsList(rctx, args["page"].(*int), args["per"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1195,9 +1225,9 @@ func (ec *executionContext) _Query_staffList(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.StaffList)
+	res := resTmp.(*model.StaffsList)
 	fc.Result = res
-	return ec.marshalNStaffList2ᚖstaff_apiᚋgraphᚋmodelᚐStaffList(ctx, field.Selections, res)
+	return ec.marshalNStaffsList2ᚖstaff_apiᚋgraphᚋmodelᚐStaffsList(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_staff(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1226,6 +1256,48 @@ func (ec *executionContext) _Query_staff(ctx context.Context, field graphql.Coll
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().Staff(rctx, args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Staff)
+	fc.Result = res
+	return ec.marshalNStaff2ᚖstaff_apiᚋgraphᚋmodelᚐStaff(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_staffByEmail(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_staffByEmail_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().StaffByEmail(rctx, args["email"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1597,76 +1669,6 @@ func (ec *executionContext) _Staff_updatedAt(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _StaffList_pageInfo(ctx context.Context, field graphql.CollectedField, obj *model.StaffList) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "StaffList",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PageInfo, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.StaffPageInfo)
-	fc.Result = res
-	return ec.marshalNStaffPageInfo2ᚖstaff_apiᚋgraphᚋmodelᚐStaffPageInfo(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _StaffList_staffs(ctx context.Context, field graphql.CollectedField, obj *model.StaffList) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "StaffList",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Staffs, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Staff)
-	fc.Result = res
-	return ec.marshalNStaff2ᚕᚖstaff_apiᚋgraphᚋmodelᚐStaffᚄ(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _StaffPageInfo_currentPage(ctx context.Context, field graphql.CollectedField, obj *model.StaffPageInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1805,6 +1807,76 @@ func (ec *executionContext) _StaffPageInfo_limit(ctx context.Context, field grap
 	res := resTmp.(int)
 	fc.Result = res
 	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _StaffsList_pageInfo(ctx context.Context, field graphql.CollectedField, obj *model.StaffsList) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "StaffsList",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.StaffPageInfo)
+	fc.Result = res
+	return ec.marshalNStaffPageInfo2ᚖstaff_apiᚋgraphᚋmodelᚐStaffPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _StaffsList_staffs(ctx context.Context, field graphql.CollectedField, obj *model.StaffsList) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "StaffsList",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Staffs, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Staff)
+	fc.Result = res
+	return ec.marshalNStaff2ᚕᚖstaff_apiᚋgraphᚋmodelᚐStaffᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) __Service_sdl(ctx context.Context, field graphql.CollectedField, obj *fedruntime.Service) (ret graphql.Marshaler) {
@@ -3349,7 +3421,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "staffList":
+		case "staffsList":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -3357,7 +3429,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_staffList(ctx, field)
+				res = ec._Query_staffsList(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -3372,6 +3444,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_staff(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "staffByEmail":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_staffByEmail(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -3469,38 +3555,6 @@ func (ec *executionContext) _Staff(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
-var staffListImplementors = []string{"StaffList"}
-
-func (ec *executionContext) _StaffList(ctx context.Context, sel ast.SelectionSet, obj *model.StaffList) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, staffListImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("StaffList")
-		case "pageInfo":
-			out.Values[i] = ec._StaffList_pageInfo(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "staffs":
-			out.Values[i] = ec._StaffList_staffs(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var staffPageInfoImplementors = []string{"StaffPageInfo"}
 
 func (ec *executionContext) _StaffPageInfo(ctx context.Context, sel ast.SelectionSet, obj *model.StaffPageInfo) graphql.Marshaler {
@@ -3529,6 +3583,38 @@ func (ec *executionContext) _StaffPageInfo(ctx context.Context, sel ast.Selectio
 			}
 		case "limit":
 			out.Values[i] = ec._StaffPageInfo_limit(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var staffsListImplementors = []string{"StaffsList"}
+
+func (ec *executionContext) _StaffsList(ctx context.Context, sel ast.SelectionSet, obj *model.StaffsList) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, staffsListImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("StaffsList")
+		case "pageInfo":
+			out.Values[i] = ec._StaffsList_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "staffs":
+			out.Values[i] = ec._StaffsList_staffs(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -3920,20 +4006,6 @@ func (ec *executionContext) marshalNStaff2ᚖstaff_apiᚋgraphᚋmodelᚐStaff(c
 	return ec._Staff(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNStaffList2staff_apiᚋgraphᚋmodelᚐStaffList(ctx context.Context, sel ast.SelectionSet, v model.StaffList) graphql.Marshaler {
-	return ec._StaffList(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNStaffList2ᚖstaff_apiᚋgraphᚋmodelᚐStaffList(ctx context.Context, sel ast.SelectionSet, v *model.StaffList) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._StaffList(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNStaffPageInfo2ᚖstaff_apiᚋgraphᚋmodelᚐStaffPageInfo(ctx context.Context, sel ast.SelectionSet, v *model.StaffPageInfo) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -3942,6 +4014,20 @@ func (ec *executionContext) marshalNStaffPageInfo2ᚖstaff_apiᚋgraphᚋmodel�
 		return graphql.Null
 	}
 	return ec._StaffPageInfo(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNStaffsList2staff_apiᚋgraphᚋmodelᚐStaffsList(ctx context.Context, sel ast.SelectionSet, v model.StaffsList) graphql.Marshaler {
+	return ec._StaffsList(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNStaffsList2ᚖstaff_apiᚋgraphᚋmodelᚐStaffsList(ctx context.Context, sel ast.SelectionSet, v *model.StaffsList) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._StaffsList(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

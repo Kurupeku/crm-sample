@@ -70,8 +70,10 @@ func proxyHandler(c *gin.Context, urlString string) {
 		req.URL.Host = target.Host
 		req.URL.Path = target.Path
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Accept", "application/json")
+		// req.Header.Set("Accept", "application/json")
 	}
+
+	c.Writer.Header().Del("Access-Control-Allow-Origin")
 
 	proxy.ServeHTTP(c.Writer, c.Request)
 }

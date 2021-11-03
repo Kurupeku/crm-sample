@@ -1,54 +1,44 @@
 import { FC, useEffect, useMemo } from "react";
 import { useRouter } from "next/dist/client/router";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   themeTypeState,
   globalLoadingState,
   sessionState,
+  currentStaffState,
 } from "../modules/atoms";
 import { useCookies } from "react-cookie";
 import axios from "axios";
-import { createTheme } from "@material-ui/core";
-import {
-  ThemeProvider,
-  makeStyles,
-  createStyles,
-  Theme,
-} from "@material-ui/core/styles";
-import { Backdrop } from "@material-ui/core";
+import { Backdrop } from "@mui/material";
 import Loader from "react-loader-spinner";
-import overrideColors from "../modules/overrideColors";
 import { generateSessionData, AuthResponseData } from "../modules/jwt";
 import { useSnackbar } from "notistack";
+import { useGetStaffbyEmailQuery } from "../graphql/client";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    backdrop: {
-      zIndex: theme.zIndex.drawer + 2,
-      color: "#fff",
+const fetchRefreshToken = (token: string) => {
+  const url = `${process.env.NEXT_PUBLIC_API_HOST}/api/refresh_token`;
+  return axios.request<AuthResponseData>({
+    url,
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-  })
-);
+  });
+};
 
 const GlobalStateProvider: FC = ({ children }) => {
-  const [themeType, setThemeType] = useRecoilState(themeTypeState);
   const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
+  const [themeType, setThemeType] = useRecoilState(themeTypeState);
   const [loading, setLoading] = useRecoilState(globalLoadingState);
-  const [_session, setSession] = useRecoilState(sessionState);
+  const [session, setSession] = useRecoilState(sessionState);
+  const setCurrentStaff = useSetRecoilState(currentStaffState);
   const router = useRouter();
-  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          ...overrideColors,
-          type: themeType,
-        },
-      }),
-    [themeType]
-  );
+  const { data, error } = useGetStaffbyEmailQuery({
+    variables: { email: session?.email || "" },
+    skip: !session,
+  });
 
   useEffect(() => {
     const localType =
@@ -57,51 +47,45 @@ const GlobalStateProvider: FC = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    const newCurrentStaff = data?.staffByEmail;
+    if (newCurrentStaff) setCurrentStaff(newCurrentStaff);
+    else if (error)
+      enqueueSnackbar("セッションからユーザー情報を取得できませんでした", {
+        variant: "error",
+      });
+  }, [data, error]);
+
+  useEffect(() => {
     const jwt = cookies.jwt as string | null;
-    if (!jwt) router.replace("/admin/login");
-    const url = `${process.env.NEXT_PUBLIC_API_HOST}/api/refresh_token`;
-    axios
-      .request<AuthResponseData>({
-        url,
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-      })
+    if (!jwt) {
+      router.replace("/admin/login");
+      return;
+    }
+    fetchRefreshToken(jwt)
       .then((response) => {
         removeCookie("jwt");
         setCookie("jwt", response.data.token, { path: "/" });
-        const sessionData = generateSessionData(response.data);
-        setSession(sessionData);
+        setSession(generateSessionData(response.data));
       })
       .catch((err) => {
-        enqueueSnackbar("セッションが切れています", { variant: "error" });
-        console.error(err);
         removeCookie("jwt");
-        setSession(null);
         router.replace("/admin/login");
+        console.error(err);
+        enqueueSnackbar("セッションが切れています", { variant: "error" });
+        setSession(null);
       })
       .finally(() => setLoading(false));
   }, []);
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       {children}
       {loading ? (
-        <Backdrop className={classes.backdrop} open={loading}>
-          <Loader
-            type="MutatingDots"
-            color={theme.palette.primary[themeType]}
-            secondaryColor={theme.palette.secondary[themeType]}
-            height={100}
-            width={100}
-          />
+        <Backdrop open={loading}>
+          <Loader type="MutatingDots" height={100} width={100} />
         </Backdrop>
-      ) : (
-        <></>
-      )}
-    </ThemeProvider>
+      ) : null}
+    </>
   );
 };
 
