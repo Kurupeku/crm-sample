@@ -4133,7 +4133,7 @@
             "deprecationReason": null
           },
           {
-            "name": "recordCount",
+            "name": "recordsCount",
             "description": null,
             "args": [],
             "type": {

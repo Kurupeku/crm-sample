@@ -1,0 +1,35 @@
+mutation createStaff($input: NewStaffInput) {
+  createStaff(input: $input) {
+    id
+  }
+}
+
+mutation updateStaff($input: StaffInput) {
+  updateStaff(input: $input) {
+    id
+  }
+}
+
+mutation deleteStaff($input: StaffIDInput) {
+  deleteStaff(input: $input) {
+    id
+  }
+}
+
+mutation createUser($input: CreateUserInput!) {
+  createUser(input: $input) {
+    id
+  }
+}
+
+mutation updateUser($input: UpdateUserInput!) {
+  updateUser(input: $input) {
+    id
+  }
+}
+
+mutation deleteUser($input: DeleteUserInput!) {
+  deleteUser(input: $input) {
+    id
+  }
+}

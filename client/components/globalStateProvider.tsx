@@ -2,7 +2,6 @@ import { FC, useEffect, useMemo } from "react";
 import { useRouter } from "next/dist/client/router";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  themeTypeState,
   globalLoadingState,
   sessionState,
   currentStaffState,
@@ -29,7 +28,6 @@ const fetchRefreshToken = (token: string) => {
 
 const GlobalStateProvider: FC = ({ children }) => {
   const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
-  const [themeType, setThemeType] = useRecoilState(themeTypeState);
   const [loading, setLoading] = useRecoilState(globalLoadingState);
   const [session, setSession] = useRecoilState(sessionState);
   const setCurrentStaff = useSetRecoilState(currentStaffState);
@@ -39,12 +37,6 @@ const GlobalStateProvider: FC = ({ children }) => {
     variables: { email: session?.email || "" },
     skip: !session,
   });
-
-  useEffect(() => {
-    const localType =
-      (localStorage.getItem("type") as "light" | "dark" | null) || "light";
-    setThemeType(localType);
-  }, []);
 
   useEffect(() => {
     const newCurrentStaff = data?.staffByEmail;
@@ -59,22 +51,47 @@ const GlobalStateProvider: FC = ({ children }) => {
     const jwt = cookies.jwt as string | null;
     if (!jwt) {
       router.replace("/admin/login");
-      return;
+    } else {
+      fetchRefreshToken(jwt)
+        .then((response) => {
+          removeCookie("jwt");
+          setCookie("jwt", response.data.token, { path: "/" });
+          setSession(generateSessionData(response.data));
+        })
+        .catch((err) => {
+          removeCookie("jwt");
+          router.replace("/admin/login");
+          console.error(err);
+          enqueueSnackbar("セッションが切れています", { variant: "error" });
+          setSession(null);
+        })
+        .finally(() => setLoading(false));
     }
-    fetchRefreshToken(jwt)
-      .then((response) => {
-        removeCookie("jwt");
-        setCookie("jwt", response.data.token, { path: "/" });
-        setSession(generateSessionData(response.data));
-      })
-      .catch((err) => {
-        removeCookie("jwt");
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      const jwt = cookies.jwt as string | null;
+      if (!jwt) {
         router.replace("/admin/login");
-        console.error(err);
-        enqueueSnackbar("セッションが切れています", { variant: "error" });
-        setSession(null);
-      })
-      .finally(() => setLoading(false));
+      } else {
+        fetchRefreshToken(jwt)
+          .then((response) => {
+            console.log(response.data);
+            removeCookie("jwt");
+            setCookie("jwt", response.data.token, { path: "/" });
+            setSession(generateSessionData(response.data));
+          })
+          .catch((err) => {
+            removeCookie("jwt");
+            router.replace("/admin/login");
+            console.error(err);
+            enqueueSnackbar("セッションが切れています", { variant: "error" });
+            setSession(null);
+          });
+      }
+    }, 300000);
+    return () => clearInterval(id);
   }, []);
 
   return (

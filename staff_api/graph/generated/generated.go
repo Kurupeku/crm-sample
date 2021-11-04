@@ -86,10 +86,10 @@ type ComplexityRoot struct {
 	}
 
 	StaffPageInfo struct {
-		CurrentPage func(childComplexity int) int
-		Limit       func(childComplexity int) int
-		PageCount   func(childComplexity int) int
-		RecordCount func(childComplexity int) int
+		CurrentPage  func(childComplexity int) int
+		Limit        func(childComplexity int) int
+		PageCount    func(childComplexity int) int
+		RecordsCount func(childComplexity int) int
 	}
 
 	StaffsList struct {
@@ -358,12 +358,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.StaffPageInfo.PageCount(childComplexity), true
 
-	case "StaffPageInfo.recordCount":
-		if e.complexity.StaffPageInfo.RecordCount == nil {
+	case "StaffPageInfo.recordsCount":
+		if e.complexity.StaffPageInfo.RecordsCount == nil {
 			break
 		}
 
-		return e.complexity.StaffPageInfo.RecordCount(childComplexity), true
+		return e.complexity.StaffPageInfo.RecordsCount(childComplexity), true
 
 	case "StaffsList.pageInfo":
 		if e.complexity.StaffsList.PageInfo == nil {
@@ -473,7 +473,7 @@ extend type Comment @key(fields: "id") {
 
 type StaffPageInfo {
   currentPage: Int!
-  recordCount: Int!
+  recordsCount: Int!
   pageCount: Int!
   limit: Int!
 }
@@ -1704,7 +1704,7 @@ func (ec *executionContext) _StaffPageInfo_currentPage(ctx context.Context, fiel
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _StaffPageInfo_recordCount(ctx context.Context, field graphql.CollectedField, obj *model.StaffPageInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _StaffPageInfo_recordsCount(ctx context.Context, field graphql.CollectedField, obj *model.StaffPageInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1722,7 +1722,7 @@ func (ec *executionContext) _StaffPageInfo_recordCount(ctx context.Context, fiel
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.RecordCount, nil
+		return obj.RecordsCount, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3571,8 +3571,8 @@ func (ec *executionContext) _StaffPageInfo(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "recordCount":
-			out.Values[i] = ec._StaffPageInfo_recordCount(ctx, field, obj)
+		case "recordsCount":
+			out.Values[i] = ec._StaffPageInfo_recordsCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

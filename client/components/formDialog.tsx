@@ -95,7 +95,9 @@ const ReactableInput: FC<ReactableInputProps> = (props) => {
             onChange={(e) => onChange(data.name, e.target.value)}
           >
             {data.choices?.map((choice) => (
-              <MenuItem value={choice.value}>{choice.label}</MenuItem>
+              <MenuItem key={choice.value} value={choice.value}>
+                {choice.label}
+              </MenuItem>
             )) || null}
           </Select>
         </FormControl>
@@ -168,8 +170,10 @@ const FormDialog: FC<FormDialogProps> = (props) => {
         ))}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onCancel}>{cancelLabel || "キャンセル"}</Button>
-        <Button onClick={onSubmit}>
+        <Button onClick={onCancel} color="inherit">
+          {cancelLabel || "キャンセル"}
+        </Button>
+        <Button onClick={onSubmit} color="primary">
           {submitLabel || (data && !data.id ? "作成" : "更新")}
         </Button>
       </DialogActions>

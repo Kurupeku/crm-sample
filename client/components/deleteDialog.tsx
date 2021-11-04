@@ -12,7 +12,7 @@ interface Record {
 
 interface Props {
   id: string | null;
-  data: Record[];
+  data?: Record[];
   displayKey?: string;
   onSubmit: () => void;
   onCancel: () => void;
@@ -26,6 +26,8 @@ const DeleteDialog: FC<Props> = (props) => {
     props;
 
   useEffect(() => {
+    if (!data) return;
+
     const newTarget = data.find((d) => d.id === id);
     if (newTarget) setTarget(newTarget);
   }, [id, data]);
@@ -40,7 +42,9 @@ const DeleteDialog: FC<Props> = (props) => {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onCancel}>{cancelLabel || "キャンセル"}</Button>
+        <Button onClick={onCancel} color="inherit">
+          {cancelLabel || "キャンセル"}
+        </Button>
         <Button onClick={onSubmit} color="error">
           {submitLabel || "削除"}
         </Button>

@@ -128,7 +128,7 @@ func (r *mutationResolver) DeleteStaffIcon(ctx context.Context, input *model.Sta
 
 func (r *queryResolver) Staffs(ctx context.Context) ([]*model.Staff, error) {
 	var staffs []entity.Staff
-	if err := r.DB.Order("created_at").Find(&staffs).Error; err != nil {
+	if err := r.DB.Order("id").Find(&staffs).Error; err != nil {
 		return nil, gqlerror.Errorf("情報を取得できませんでした")
 	}
 
@@ -162,7 +162,7 @@ func (r *queryResolver) StaffsList(ctx context.Context, page *int, per *int) (*m
 	}
 
 	var staffs []entity.Staff
-	if err := r.DB.Order("created_at").Limit(lm).Offset(offset).Find(&staffs).Error; err != nil {
+	if err := r.DB.Order("id").Limit(lm).Offset(offset).Find(&staffs).Error; err != nil {
 		return nil, gqlerror.Errorf("情報を取得できませんでした")
 	}
 
@@ -178,10 +178,10 @@ func (r *queryResolver) StaffsList(ctx context.Context, page *int, per *int) (*m
 	}
 
 	pageInfo := &model.StaffPageInfo{
-		CurrentPage: pg,
-		RecordCount: rc,
-		PageCount:   pa,
-		Limit:       lm,
+		CurrentPage:  pg,
+		RecordsCount: rc,
+		PageCount:    pa,
+		Limit:        lm,
 	}
 
 	data := &model.StaffsList{
@@ -218,61 +218,3 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *queryResolver) StaffList(ctx context.Context, page *int, per *int) (*model.StaffList, error) {
-	var lm, pg int
-	if per == nil {
-		lm = 25
-	} else {
-		lm = *per
-	}
-
-	if page == nil {
-		pg = 1
-	} else {
-		pg = *page
-	}
-
-	offset := lm * (pg - 1)
-
-	var staffAll []entity.Staff
-	if err := r.DB.Find(&staffAll).Error; err != nil {
-		return nil, gqlerror.Errorf("情報を取得できませんでした")
-	}
-
-	var staffs []entity.Staff
-	if err := r.DB.Limit(lm).Offset(offset).Find(&staffs).Error; err != nil {
-		return nil, gqlerror.Errorf("情報を取得できませんでした")
-	}
-
-	var result []*model.Staff
-	for _, staff := range staffs {
-		result = append(result, model.StaffFromEntity(&staff))
-	}
-
-	rc := len(staffAll)
-	pa := rc / lm
-	if pb := rc % lm; pb > 0 {
-		pa = pa + 1
-	}
-
-	pageInfo := &model.StaffPageInfo{
-		CurrentPage: pg,
-		RecordCount: rc,
-		PageCount:   pa,
-		Limit:       lm,
-	}
-
-	data := &model.StaffList{
-		PageInfo: pageInfo,
-		Staffs:   result,
-	}
-
-	return data, nil
-}

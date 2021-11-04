@@ -29,6 +29,7 @@ import InputBase from "@mui/material/InputBase";
 import AddIcon from "@mui/icons-material/Add";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { visuallyHidden } from "@mui/utils";
+import { getProperty } from "../modules/parser";
 
 export interface ColumnProps {
   label: string;
@@ -69,7 +70,6 @@ export interface DataRowProps {
   columns: ColumnProps[];
   row: RowProps;
   path: string;
-  actionButtonsColor: "default" | "inherit" | "primary" | "secondary";
   onEditButtonClick?: (id: string) => void;
   onDeleteButtonClick?: (id: string) => void;
 }
@@ -87,10 +87,10 @@ export interface DataTableProps {
   orderBy?: string;
   order?: "asc" | "desc";
   addButtonColor?: "default" | "inherit" | "primary" | "secondary";
-  actionButtonsColor?: "default" | "inherit" | "primary" | "secondary";
   disableSearch?: boolean;
   searchLabel?: string;
   linkColumnWidth?: string | number;
+  naked?: boolean;
   customLinksFunc?: (row: RowProps) => ReactNode;
   onPerChange?: (value: number) => void;
   onPageChange?: (value: number) => void;
@@ -234,7 +234,7 @@ const HeadRow: FC<HeadRowProps> = (props) => {
 const DataCell = (props: DataCellProps) => {
   const { column, row } = props;
   const { key, type, width, format: f } = column;
-  const value = row[key];
+  const value = getProperty(row, key);
 
   if (!value) return <TableCell key={`${key}`}></TableCell>;
 
@@ -290,14 +290,7 @@ const DataCell = (props: DataCellProps) => {
 };
 
 const DataRow: FC<DataRowProps> = (props) => {
-  const {
-    columns,
-    row,
-    path,
-    actionButtonsColor,
-    onEditButtonClick,
-    onDeleteButtonClick,
-  } = props;
+  const { columns, row, path, onEditButtonClick, onDeleteButtonClick } = props;
 
   return (
     <TableRow hover>
@@ -307,20 +300,20 @@ const DataRow: FC<DataRowProps> = (props) => {
       <TableCell padding="none" align="center">
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Link href={`${path}/${row.id}`}>
-            <IconButton size="small" color={actionButtonsColor}>
+            <IconButton size="small" color="default">
               <InfoOutlinedIcon />
             </IconButton>
           </Link>
           <IconButton
             size="small"
-            color={actionButtonsColor}
+            color="default"
             onClick={() => onEditButtonClick && onEditButtonClick(row.id)}
           >
             <EditIcon />
           </IconButton>
           <IconButton
             size="small"
-            color={actionButtonsColor}
+            color="default"
             onClick={() => onDeleteButtonClick && onDeleteButtonClick(row.id)}
           >
             <DeleteIcon />
@@ -329,6 +322,10 @@ const DataRow: FC<DataRowProps> = (props) => {
       </TableCell>
     </TableRow>
   );
+};
+
+const Wrapper: FC<{ naked?: boolean }> = ({ children, naked }) => {
+  return naked ? <>{children}</> : <Paper>{children}</Paper>;
 };
 
 const DataTable: FC<DataTableProps> = (props) => {
@@ -347,7 +344,7 @@ const DataTable: FC<DataTableProps> = (props) => {
     searchLabel,
     disableSearch,
     addButtonColor,
-    actionButtonsColor,
+    naked,
     onOrderClick,
     onSearchSubmit,
     onPageChange,
@@ -375,7 +372,7 @@ const DataTable: FC<DataTableProps> = (props) => {
   };
 
   return (
-    <Paper>
+    <Wrapper naked={naked}>
       <Toolbar>
         {title ? (
           <Typography variant="h5" component="h2" sx={{ flexGrow: 1 }}>
@@ -396,6 +393,12 @@ const DataTable: FC<DataTableProps> = (props) => {
               inputProps={{ "aria-label": "search" }}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key == "Enter") {
+                  e.preventDefault();
+                  handleSearchSubmit();
+                }
+              }}
             />
           </Search>
         )}
@@ -428,7 +431,9 @@ const DataTable: FC<DataTableProps> = (props) => {
               <TableRow>
                 <TableCell colSpan={colSpan} align="center">
                   <Typography variant="inherit">
-                    {errorMessage || "データの取得に失敗しました"}
+                    {error?.message ||
+                      errorMessage ||
+                      "データの取得に失敗しました"}
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -439,7 +444,6 @@ const DataTable: FC<DataTableProps> = (props) => {
                   columns={columns}
                   row={row}
                   path={currentPath}
-                  actionButtonsColor={actionButtonsColor || "default"}
                   onEditButtonClick={onEditButtonClick}
                   onDeleteButtonClick={onDeleteButtonClick}
                 />
@@ -463,7 +467,7 @@ const DataTable: FC<DataTableProps> = (props) => {
           </TableFooter>
         </Table>
       </TableContainer>
-    </Paper>
+    </Wrapper>
   );
 };
 

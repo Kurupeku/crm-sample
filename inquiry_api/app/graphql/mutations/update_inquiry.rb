@@ -25,7 +25,7 @@ module Mutations
     def resolve(id:, **args)
       inquiry = Inquiry.find(id)
       inquiry.assign_attributes inquiry_params(args)
-      inquiry.progress.assign_attributes progress_params(args)
+      inquiry.progress.assign_attributes progress_params(args[:progress]) if args[:progress].present?
       inquiry.save! && inquiry
     end
 
@@ -37,10 +37,12 @@ module Mutations
       end
     end
 
-    def progress_params(args)
-      params(args).fetch(:progress)&.reject do |_, value|
-        value.blank?
-      end
+    def progress_params(progress)
+      %i[rank state staff_id].map do |key|
+        [key, progress.send(key)]
+      end.reject do |_, val|
+        val.blank?
+      end.to_h
     end
   end
 end
