@@ -1,6 +1,8 @@
 overwrite: true
 schema: "http://federation:3000"
-documents: "./graphql/**/*.graphql"
+documents:
+  - "./graphql/query.graphql"
+  - "./graphql/mutation.graphql"
 generates:
   graphql/client.ts:
     plugins:

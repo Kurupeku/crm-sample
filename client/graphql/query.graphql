@@ -1,0 +1,102 @@
+query getStaffs {
+  staffs {
+    id
+    name
+    email
+    icon
+    createdAt
+    updatedAt
+  }
+}
+
+query getStaffsList($page: Int, $per: Int) {
+  staffsList(page: $page, per: $per) {
+    staffs {
+      id
+      name
+      email
+      icon
+      createdAt
+      updatedAt
+    }
+    pageInfo {
+      currentPage
+      limit
+      pageCount
+      recordsCount
+    }
+  }
+}
+
+query getStaffById($id: ID!) {
+  staff(id: $id) {
+    id
+    name
+    email
+    icon
+    createdAt
+    updatedAt
+  }
+}
+
+query getStaffbyEmail($email: String!) {
+  staffByEmail(email: $email) {
+    id
+    name
+    email
+    icon
+    createdAt
+    updatedAt
+  }
+}
+
+query getUsersList($fieldsCont: String, $order: String, $page: Int, $per: Int) {
+  usersList(fieldsCont: $fieldsCont, order: $order, page: $page, per: $per) {
+    pageInfo {
+      currentPage
+      limit
+      pagesCount
+      recordsCount
+    }
+    users {
+      id
+      companyName
+      name
+      email
+      tel
+      createdAt
+      updatedAt
+      address {
+        postalCode
+        prefecture
+        city
+        street
+        building
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+
+query getUserById($userId: Int!) {
+  user(id: $userId) {
+    id
+    companyName
+    name
+    email
+    tel
+    createdAt
+    updatedAt
+    address {
+      id
+      postalCode
+      prefecture
+      city
+      street
+      building
+      createdAt
+      updatedAt
+    }
+  }
+}

@@ -22,8 +22,8 @@ module Mutations
 
     def resolve(id:, **args)
       user = User.find id
-      user.assign_attributes user_params(args)
-      user.address.assign_attributes address_params(args[:address]) if args[:address].present?
+      user.assign_attributes(user_params(args))
+      user.build_address address_params(args[:address]) if args[:address].present?
       user.save! && user
     end
 
@@ -35,10 +35,11 @@ module Mutations
       end
     end
 
-    def address_params(args)
-      address_args = args[:address]
+    def address_params(address)
       %i[postal_code prefecture city street building].map do |key|
-        [key, address_args.send(key)]
+        [key, address.send(key)]
+      end.reject do |_, value|
+        value.blank?
       end.to_h
     end
   end

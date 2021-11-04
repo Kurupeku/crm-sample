@@ -38,4 +38,12 @@ class Address < ApplicationRecord
   def full_address_with_postal_code
     [postal_code, full_address].join ' '
   end
+
+  def created_at_unix
+    created_at&.to_i
+  end
+
+  def updated_at_unix
+    updated_at&.to_i
+  end
 end

@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/dist/client/router";
-import { useRecoilState, useResetRecoilState } from "recoil";
-import { sessionState, themeTypeState } from "../modules/atoms";
+import { useResetRecoilState } from "recoil";
+import { sessionState } from "../modules/atoms";
 import { useCookies } from "react-cookie";
 import { useSnackbar } from "notistack";
 import {
@@ -104,7 +104,6 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 const Layout: FC = ({ children }) => {
-  // const [themeType, setThemeType] = useRecoilState(themeTypeState);
   const [mode, setMode] = useState<"light" | "dark">("light");
   const resetSession = useResetRecoilState(sessionState);
   const [open, setOpen] = React.useState(false);
@@ -169,7 +168,7 @@ const Layout: FC = ({ children }) => {
                 flexGrow: 1,
               }}
             >
-              CRM Sample
+              CRM Sample App
             </Typography>
             <IconButton color="inherit" onClick={switchType}>
               <BrightnessMediumIcon />

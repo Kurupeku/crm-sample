@@ -11,12 +11,6 @@ import {
 
 const { persistAtom } = recoilPersist();
 
-export const themeTypeState = atom<"light" | "dark">({
-  key: "themeType",
-  default: "light",
-  effects_UNSTABLE: [persistAtom],
-});
-
 export const globalLoadingState = atom<boolean>({
   key: "globalLoading",
   default: true,
