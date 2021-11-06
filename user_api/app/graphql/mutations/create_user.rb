@@ -28,16 +28,14 @@ module Mutations
     private
 
     def user_params(args)
-      args.select do |key, value|
-        key != :address && value.present?
+      args.reject do |key, _|
+        key == :address
       end
     end
 
     def address_params(address)
       %i[postal_code prefecture city street building].map do |key|
         [key, address.send(key)]
-      end.reject do |_, value|
-        value.blank?
       end.to_h
     end
   end

@@ -22,7 +22,7 @@ extend type Comment @key(fields: "id") {
 type StaffPageInfo {
   currentPage: Int!
   recordsCount: Int!
-  pageCount: Int!
+  pagesCount: Int!
   limit: Int!
 }
 

@@ -88,7 +88,7 @@ type ComplexityRoot struct {
 	StaffPageInfo struct {
 		CurrentPage  func(childComplexity int) int
 		Limit        func(childComplexity int) int
-		PageCount    func(childComplexity int) int
+		PagesCount   func(childComplexity int) int
 		RecordsCount func(childComplexity int) int
 	}
 
@@ -351,12 +351,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.StaffPageInfo.Limit(childComplexity), true
 
-	case "StaffPageInfo.pageCount":
-		if e.complexity.StaffPageInfo.PageCount == nil {
+	case "StaffPageInfo.pagesCount":
+		if e.complexity.StaffPageInfo.PagesCount == nil {
 			break
 		}
 
-		return e.complexity.StaffPageInfo.PageCount(childComplexity), true
+		return e.complexity.StaffPageInfo.PagesCount(childComplexity), true
 
 	case "StaffPageInfo.recordsCount":
 		if e.complexity.StaffPageInfo.RecordsCount == nil {
@@ -474,7 +474,7 @@ extend type Comment @key(fields: "id") {
 type StaffPageInfo {
   currentPage: Int!
   recordsCount: Int!
-  pageCount: Int!
+  pagesCount: Int!
   limit: Int!
 }
 
@@ -1739,7 +1739,7 @@ func (ec *executionContext) _StaffPageInfo_recordsCount(ctx context.Context, fie
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _StaffPageInfo_pageCount(ctx context.Context, field graphql.CollectedField, obj *model.StaffPageInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _StaffPageInfo_pagesCount(ctx context.Context, field graphql.CollectedField, obj *model.StaffPageInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1757,7 +1757,7 @@ func (ec *executionContext) _StaffPageInfo_pageCount(ctx context.Context, field 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.PageCount, nil
+		return obj.PagesCount, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3576,8 +3576,8 @@ func (ec *executionContext) _StaffPageInfo(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "pageCount":
-			out.Values[i] = ec._StaffPageInfo_pageCount(ctx, field, obj)
+		case "pagesCount":
+			out.Values[i] = ec._StaffPageInfo_pagesCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

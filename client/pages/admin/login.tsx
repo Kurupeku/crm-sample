@@ -163,7 +163,7 @@ export default function Login() {
                 sx={{ mt: 3, mb: 2 }}
                 onClick={handleSubmit}
                 disabled={loading}
-                startIcon={loading && <CircleProgress />}
+                startIcon={loading && <CircleProgress size={20} />}
               >
                 サインイン
               </Button>

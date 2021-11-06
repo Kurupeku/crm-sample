@@ -1,11 +1,14 @@
-query getStaffs {
+query getMenusOnlyName {
+  menus {
+    id
+    name
+  }
+}
+
+query getStaffsOnlyName {
   staffs {
     id
     name
-    email
-    icon
-    createdAt
-    updatedAt
   }
 }
 
@@ -22,7 +25,7 @@ query getStaffsList($page: Int, $per: Int) {
     pageInfo {
       currentPage
       limit
-      pageCount
+      pagesCount
       recordsCount
     }
   }
@@ -97,6 +100,116 @@ query getUserById($userId: Int!) {
       building
       createdAt
       updatedAt
+    }
+  }
+}
+
+query getInquiriesList(
+  $per: Int
+  $page: Int
+  $order: String
+  $fieldsCont: String
+  $staffId: Int
+  $state: ProgressStateEnum
+) {
+  inquiriesList(
+    per: $per
+    page: $page
+    order: $order
+    fieldsCont: $fieldsCont
+    staffId: $staffId
+    state: $state
+  ) {
+    inquiries {
+      id
+      userId
+      companyName
+      name
+      email
+      tel
+      numberOfUsers
+      introductoryTerm
+      detail
+      createdAt
+      updatedAt
+      progress {
+        id
+        inquiryId
+        staffId
+        rank
+        state
+        recontactedOn
+        contactedAt
+        staff {
+          name
+        }
+      }
+      menus {
+        id
+        name
+      }
+    }
+    pageInfo {
+      currentPage
+      limit
+      pagesCount
+      recordsCount
+    }
+  }
+}
+
+query getInquiryById($inquiryId: ID!) {
+  inquiry(id: $inquiryId) {
+    id
+    userId
+    companyName
+    name
+    email
+    tel
+    numberOfUsers
+    introductoryTerm
+    detail
+    createdAt
+    updatedAt
+    progress {
+      id
+      inquiryId
+      staffId
+      rank
+      state
+      recontactedOn
+      contactedAt
+      selectableEvents {
+        event
+        label
+      }
+      staff {
+        id
+        name
+        icon
+      }
+    }
+    menus {
+      id
+      name
+    }
+    user {
+      id
+      companyName
+      name
+      email
+      tel
+      address {
+        fullAddress
+      }
+      comments {
+        id
+        content
+        staff {
+          name
+          icon
+        }
+      }
     }
   }
 }
