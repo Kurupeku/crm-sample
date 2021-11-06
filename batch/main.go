@@ -108,6 +108,9 @@ func inquiryInsert(staffIDs []uint, userIDs []uint) {
 
 	// Create Menus
 	mr := db.Create(&menus)
+	for _, menu := range menus {
+		menu.PublishedOn = time.Now().Format("2006-01-02")
+	}
 	fmt.Printf("created %d menus\n", mr.RowsAffected)
 
 	// Create Inquiries

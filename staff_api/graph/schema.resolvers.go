@@ -180,7 +180,7 @@ func (r *queryResolver) StaffsList(ctx context.Context, page *int, per *int) (*m
 	pageInfo := &model.StaffPageInfo{
 		CurrentPage:  pg,
 		RecordsCount: rc,
-		PageCount:    pa,
+		PagesCount:   pa,
 		Limit:        lm,
 	}
 

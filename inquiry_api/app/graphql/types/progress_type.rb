@@ -23,12 +23,12 @@ module Types
 
     field :recontacted_on, String, null: true
     def recontacted_on
-      object.recontacted_on.strftime
+      object.recontacted_on&.strftime
     end
 
     field :contacted_at, Int, null: true
     def contacted_at
-      object.contacted_at.to_i
+      object.contacted_at.to_i if object.contacted_at.present?
     end
 
     field :created_at, Int, null: false
@@ -46,8 +46,10 @@ module Types
       object.selectable_events
     end
 
-    field :staff, StaffType, null: false
+    field :staff, StaffType, null: true
     def staff
+      return nil if object.staff_id.nil?
+
       { __typename: StaffType, id: object.staff_id }
     end
 

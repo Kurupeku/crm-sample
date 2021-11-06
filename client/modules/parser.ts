@@ -6,14 +6,14 @@ const getProperty = (
 
   let result = object;
   const propertyArray = propertyPath.split(".");
-  for (let i = 0; i <= propertyArray.length - 1; i += 1) {
-    if (propertyArray[i] === "") {
-      return undefined;
-    }
-    if (typeof result[propertyArray[i]] === "undefined") {
-      return undefined;
-    }
-    result = result[propertyArray[i]];
+  for (let i = 0; i < propertyArray.length; i++) {
+    if (propertyArray[i] === "") return undefined;
+
+    const currentValue = result[propertyArray[i]];
+    if (typeof currentValue === "undefined") return undefined;
+    else if (currentValue === null) return null;
+
+    result = currentValue;
   }
   return result;
 };

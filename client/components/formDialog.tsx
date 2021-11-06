@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -20,7 +19,7 @@ interface FormRequireData {
 }
 
 export interface FormData extends FormRequireData {
-  [name: string]: string | number | boolean | null;
+  [name: string]: string | string[] | number | number[] | boolean | null;
 }
 
 export interface Choice {
@@ -49,7 +48,7 @@ export interface InputOption {
 
 interface ReactableInputProps {
   data: InputOption;
-  value: string | number | boolean | null;
+  value: string | string[] | number | number[] | boolean | null;
   onChange: (key: string, value: unknown) => void;
 }
 
@@ -156,15 +155,15 @@ const FormDialog: FC<FormDialogProps> = (props) => {
     onCancel,
   } = props;
 
-  return (
+  return !data ? null : (
     <Dialog open={!!data} onClose={onCancel} maxWidth={maxWidth}>
-      {title ? <DialogTitle>Subscribe</DialogTitle> : null}
+      {title ? <DialogTitle>{title}</DialogTitle> : null}
       <DialogContent>
         {options.map((opt, i) => (
           <ReactableInput
             key={opt.name + i}
             data={opt}
-            value={!data || !data[opt.name] ? "" : data[opt.name]}
+            value={!data[opt.name] ? "" : data[opt.name]}
             onChange={onChange}
           />
         ))}
@@ -174,7 +173,7 @@ const FormDialog: FC<FormDialogProps> = (props) => {
           {cancelLabel || "キャンセル"}
         </Button>
         <Button onClick={onSubmit} color="primary">
-          {submitLabel || (data && !data.id ? "作成" : "更新")}
+          {submitLabel || (!data?.id ? "作成" : "更新")}
         </Button>
       </DialogActions>
     </Dialog>

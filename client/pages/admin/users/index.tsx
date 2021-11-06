@@ -89,7 +89,6 @@ const columns: ColumnProps[] = [
   { key: "email", label: "Email", type: "string" },
   { key: "tel", label: "TEL", type: "string" },
   { key: "createdAt", label: "作成日時", type: "datetime" },
-  { key: "updatedAt", label: "更新日時", type: "datetime" },
 ];
 
 const inputOptions: InputOption[] = [

@@ -157,6 +157,7 @@ const StaffsIndex: FC = () => {
         error={error}
         per={per}
         page={page}
+        perOptions={[5, 10, 25]}
         recordCount={count}
         onPerChange={handlePer}
         onPageChange={handlePage}

@@ -46,8 +46,8 @@ type Menu struct {
 	ID          uint      `gorm:"primaryKey;autoIncrement"`
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
-	Name        string    `gorm:"not null"`
-	PublishedOn time.Time `gorm:"type:date"`
+	Name        string    `gorm:"not null" csv:"name"`
+	PublishedOn string    `gorm:"type:date" csv:"published_on"`
 }
 
 type MenuInquiryAttachment struct {

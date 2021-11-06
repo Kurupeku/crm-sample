@@ -39,6 +39,8 @@ module Types
 
     field :user, UserType, null: true
     def user
+      return nil if object.user_id.nil?
+
       { __typename: UserType, id: object.user_id }
     end
 

@@ -33,3 +33,21 @@ mutation deleteUser($input: DeleteUserInput!) {
     id
   }
 }
+
+mutation createInquiry($input: CreateInquiryInput!) {
+  createInquiry(input: $input) {
+    id
+  }
+}
+
+mutation updateInquiry($input: UpdateInquiryInput!) {
+  updateInquiry(input: $input) {
+    id
+  }
+}
+
+mutation deleteInquiry($input: DeleteInquiryInput!) {
+  deleteInquiry(input: $input) {
+    id
+  }
+}

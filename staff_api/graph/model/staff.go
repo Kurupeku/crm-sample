@@ -21,7 +21,7 @@ func (Staff) IsEntity() {}
 type StaffPageInfo struct {
 	CurrentPage  int `json:"currentPage"`
 	RecordsCount int `json:"recordCount"`
-	PageCount    int `json:"pageCount"`
+	PagesCount    int `json:"pageCount"`
 	Limit        int `json:"limit"`
 }
 

@@ -7,7 +7,7 @@ module Mutations
     type Types::CommentType
 
     def resolve(**args)
-      Comment.create! params(args)
+      Comment.create! args
     end
   end
 end

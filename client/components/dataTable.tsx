@@ -34,6 +34,7 @@ import { getProperty } from "../modules/parser";
 export interface ColumnProps {
   label: string;
   key: string;
+  orderKey?: string;
   type: "string" | "integer" | "float" | "date" | "datetime" | "avatar";
   format?: string;
   width?: number | string;
@@ -82,6 +83,7 @@ export interface DataTableProps {
   error?: ApolloError;
   errorMessage?: string;
   per: number;
+  perOptions?: number[];
   page: number;
   recordCount?: number;
   orderBy?: string;
@@ -143,12 +145,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const HeadCell: FC<HeadCellProps> = (props) => {
   const { column, orderBy, order, colSpan, onOrderClick } = props;
-  const { label, key, type, width, disableSort } = column;
+  const { label, key, orderKey, type, width, disableSort } = column;
   const [align, setAlign] = useState<
     "left" | "right" | "inherit" | "center" | "justify"
   >("left");
   const sortable = !disableSort && onOrderClick && type !== "avatar";
-  const direction = orderBy === key ? order : false;
+  const isSortActive = orderBy === key || orderBy === orderKey;
+  const direction = isSortActive ? order : false;
   const nextDirection = !direction || order === "desc" ? "asc" : "desc";
   const span = colSpan || 1;
 
@@ -172,7 +175,8 @@ const HeadCell: FC<HeadCellProps> = (props) => {
   const handleOrder = () => {
     if (!onOrderClick) return;
 
-    onOrderClick(key, nextDirection);
+    const targetKey = orderKey || key;
+    onOrderClick(targetKey, nextDirection);
   };
 
   return sortable ? (
@@ -183,15 +187,15 @@ const HeadCell: FC<HeadCellProps> = (props) => {
       key={`head-${key}`}
       width={width}
       align={align}
-      sortDirection={orderBy === key ? order : false}
+      sortDirection={isSortActive ? order : false}
     >
       <TableSortLabel
-        active={orderBy === key}
-        direction={orderBy === key ? order : "asc"}
+        active={isSortActive}
+        direction={isSortActive ? order : "asc"}
         onClick={handleOrder}
       >
         {label}
-        {orderBy === key ? (
+        {isSortActive ? (
           <Box component="span" sx={visuallyHidden}>
             {order === "desc" ? "sorted descending" : "sorted ascending"}
           </Box>
@@ -338,6 +342,7 @@ const DataTable: FC<DataTableProps> = (props) => {
     errorMessage,
     per,
     page,
+    perOptions,
     orderBy,
     order,
     recordCount,
@@ -411,7 +416,7 @@ const DataTable: FC<DataTableProps> = (props) => {
       </Toolbar>
       <TableContainer>
         <Table style={{ width: "100%" }}>
-          <TableHead>
+          <TableHead sx={{ position: "relative" }}>
             <HeadRow
               columns={columns}
               orderBy={orderBy}
@@ -419,11 +424,9 @@ const DataTable: FC<DataTableProps> = (props) => {
               onOrderClick={onOrderClick}
             />
             {loading && (
-              <TableRow>
-                <TableCell colSpan={colSpan} padding="none">
-                  <LinerProgress />
-                </TableCell>
-              </TableRow>
+              <Box sx={{ position: "absolute", width: "100%" }}>
+                <LinerProgress />
+              </Box>
             )}
           </TableHead>
           <TableBody>
@@ -453,7 +456,7 @@ const DataTable: FC<DataTableProps> = (props) => {
           <TableFooter>
             <TablePagination
               colSpan={colSpan}
-              rowsPerPageOptions={[5, 10, 25]}
+              rowsPerPageOptions={perOptions || [25, 50, 100]}
               count={recordCount || 0}
               rowsPerPage={per}
               page={page - 1}

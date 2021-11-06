@@ -3,8 +3,7 @@
 module Mutations
   class UpdateInquiry < BaseMutation
     class UpdateProgressInput < Types::BaseInputObject
-      argument :rank, Integer, required: false
-      argument :state, String, required: false
+      argument :rank, Integer, required: true
       argument :staff_id, Integer, required: false
     end
 
@@ -24,25 +23,25 @@ module Mutations
 
     def resolve(id:, **args)
       inquiry = Inquiry.find(id)
-      inquiry.assign_attributes inquiry_params(args)
-      inquiry.progress.assign_attributes progress_params(args[:progress]) if args[:progress].present?
-      inquiry.save! && inquiry
+      inquiry.transaction do
+        inquiry.assign_attributes inquiry_params(args)
+        inquiry.progress.update! progress_params(args[:progress]) if args[:progress].present?
+        inquiry.save! && inquiry
+      end
     end
 
     private
 
     def inquiry_params(args)
-      params(args).reject do |key, _|
+      args.reject do |key, _|
         key == :progress
       end
     end
 
     def progress_params(progress)
-      %i[rank state staff_id].map do |key|
+      %i[rank staff_id].map do |key|
         [key, progress.send(key)]
-      end.reject do |_, val|
-        val.blank?
-      end.to_h
+      end.reject(&:blank?).to_h
     end
   end
 end
