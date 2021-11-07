@@ -23,14 +23,9 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import BrightnessMediumIcon from "@mui/icons-material/BrightnessMedium";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import MuiDrawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import theme, { getTheme } from "../modules/theme";
+import { grey } from "@mui/material/colors";
+import theme from "../modules/theme";
 import DrawerMenu from "./drawerMenu";
 
 const drawerWidth = 240;
@@ -115,7 +110,10 @@ const Layout: FC = ({ children }) => {
   const privateTheme: Theme = useMemo(
     () =>
       createTheme({
-        palette: { mode, ...(mode === "light" ? {} : {}) },
+        palette: {
+          mode,
+          ...(mode === "light" ? { background: { default: grey[200] } } : {}),
+        },
         typography: { fontSize: 12 },
       }),
     [mode]
