@@ -6,13 +6,10 @@ import {
   useUpdateInquiryMutation,
   useDeleteInquiryMutation,
   ProgressStateEnum,
-} from "../../../graphql/client";
-import DataTable, { ColumnProps } from "../../../components/dataTable";
-import InquiryFormDialog, {
-  FormData,
-  RankMap,
-} from "../../../components/inquiryFormDialog";
-import DeleteDialog from "../../../components/deleteDialog";
+} from "../graphql/client";
+import DataTable, { ColumnProps } from "./dataTable";
+import InquiryFormDialog, { FormData, RankMap } from "./inquiryFormDialog";
+import DeleteDialog from "./deleteDialog";
 
 interface Inquiry {
   id: string;
@@ -44,6 +41,8 @@ interface Inquiry {
 
 interface Props {
   state?: ProgressStateEnum;
+  staffId?: number;
+  title?: string;
 }
 
 const columns: ColumnProps[] = [
@@ -73,7 +72,7 @@ const columns: ColumnProps[] = [
   { key: "createdAt", label: "作成日時", type: "datetime" },
 ];
 
-const InquiriesIndexBase: FC<Props> = ({ state }) => {
+const InquiriesIndexBase: FC<Props> = ({ state, staffId, title }) => {
   const [rows, setRows] = useState<Inquiry[]>([]);
   const [count, setCount] = useState(0);
   const [fieldsCont, setFieldsCont] = useState("");
@@ -92,6 +91,7 @@ const InquiriesIndexBase: FC<Props> = ({ state }) => {
       fieldsCont,
       order: `${orderBy} ${order}`,
       state,
+      staffId: staffId || undefined,
     },
   });
 
@@ -118,8 +118,9 @@ const InquiriesIndexBase: FC<Props> = ({ state }) => {
       enqueueSnackbar("問い合わせを作成しました", { variant: "success" });
     },
     onError: (error) => {
-      console.log(error.stack);
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -147,7 +148,9 @@ const InquiriesIndexBase: FC<Props> = ({ state }) => {
       enqueueSnackbar("問い合わせ内容を更新しました", { variant: "success" });
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -161,7 +164,9 @@ const InquiriesIndexBase: FC<Props> = ({ state }) => {
       enqueueSnackbar("問い合わせを削除しました", { variant: "success" });
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -259,7 +264,7 @@ const InquiriesIndexBase: FC<Props> = ({ state }) => {
   return (
     <>
       <DataTable
-        title="問い合わせ一覧"
+        title={title || "問い合わせ一覧"}
         columns={columns}
         rows={rows}
         loading={loading}

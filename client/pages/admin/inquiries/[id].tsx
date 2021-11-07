@@ -1,10 +1,6 @@
 import { FC, useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { useSnackbar } from "notistack";
-import format from "date-fns/format";
-import fromUnixTime from "date-fns/fromUnixTime";
-import ja from "date-fns/locale/ja";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -13,8 +9,6 @@ import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
-import TextField from "@mui/material/TextField";
-import DatePicker from "@mui/lab/DatePicker";
 import {
   useGetInquiryByIdQuery,
   useUpdateInquiryMutation,
@@ -104,7 +98,9 @@ const InquiryShow: FC = () => {
       enqueueSnackbar("問い合わせ内容を更新しました", { variant: "success" });
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -117,7 +113,9 @@ const InquiryShow: FC = () => {
       enqueueSnackbar("問い合わせを削除しました", { variant: "success" });
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -148,15 +146,6 @@ const InquiryShow: FC = () => {
   };
 
   const handleDelete = () => setDeleteId(id as string);
-
-  const handleRecontactedOn = (newValue: Date | null) => {
-    let dateStr = "";
-    if (newValue)
-      dateStr = format(newValue, "yyyy-MM-dd", {
-        locale: ja,
-      });
-    console.log(dateStr);
-  };
 
   useEffect(() => {
     if (!data || !data.inquiry) return;
@@ -238,7 +227,7 @@ const InquiryShow: FC = () => {
                 <Grid item xs={8} key={`value-menus`}>
                   {data?.inquiry
                     ? data.inquiry.menus.map(({ id, name }) => (
-                        <Chip key={id} label={name} />
+                        <Chip key={id} label={name} sx={{ mr: 1 }} />
                       ))
                     : null}
                 </Grid>

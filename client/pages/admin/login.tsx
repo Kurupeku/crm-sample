@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
 import axios from "axios";
 import { useCookies } from "react-cookie";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { globalLoadingState, sessionState } from "../../modules/atoms";
 import { useSnackbar } from "notistack";
 import Avatar from "@mui/material/Avatar";
@@ -25,8 +25,8 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
-  const [_session, setSession] = useRecoilState(sessionState);
-  const [globalLoading, setGlobalLoading] = useRecoilState(globalLoadingState);
+  const setSession = useSetRecoilState(sessionState);
+  const setGlobalLoading = useSetRecoilState(globalLoadingState);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -53,7 +53,6 @@ export default function Login() {
           router.replace("/admin");
         })
         .catch((err) => {
-          console.error(err);
           removeCookie("jwt");
           setSession(null);
         })
@@ -87,8 +86,7 @@ export default function Login() {
         setSession(sessionData);
         router.replace("/admin");
       })
-      .catch((reasen) => {
-        console.error(reasen);
+      .catch(() => {
         enqueueSnackbar("メールアドレスまたはパスワードが一致しません", {
           variant: "error",
         });

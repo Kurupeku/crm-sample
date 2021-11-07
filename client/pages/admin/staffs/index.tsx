@@ -71,7 +71,9 @@ const StaffsIndex: FC = () => {
       enqueueSnackbar("スタッフを作成しました", { variant: "success" });
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -89,7 +91,9 @@ const StaffsIndex: FC = () => {
       enqueueSnackbar("スタッフを作成しました", { variant: "success" });
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -103,7 +107,9 @@ const StaffsIndex: FC = () => {
       enqueueSnackbar("スタッフを削除しました", { variant: "success" });
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
