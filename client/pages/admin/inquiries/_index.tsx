@@ -1,5 +1,4 @@
 import { FC, useState, useEffect } from "react";
-import Container from "@mui/material/Container";
 import { useSnackbar } from "notistack";
 import {
   useGetInquiriesListQuery,
@@ -14,12 +13,6 @@ import InquiryFormDialog, {
   RankMap,
 } from "../../../components/inquiryFormDialog";
 import DeleteDialog from "../../../components/deleteDialog";
-import Breads from "../../../components/breadcrumbs";
-import AppBar from "@mui/material/AppBar";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Paper from "@mui/material/Paper";
-import Toolbar from "@mui/material/Toolbar";
 
 interface Inquiry {
   id: string;

@@ -786,7 +786,7 @@ export type GetInquiryByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetInquiryByIdQuery = { __typename?: 'Query', inquiry?: { __typename?: 'Inquiry', id: string, userId?: number | null | undefined, companyName?: string | null | undefined, name: string, email: string, tel: string, numberOfUsers: number, introductoryTerm: string, detail?: string | null | undefined, createdAt: number, updatedAt: number, progress: { __typename?: 'Progress', id: string, inquiryId: number, staffId?: number | null | undefined, rank: string, state?: string | null | undefined, recontactedOn?: string | null | undefined, contactedAt?: number | null | undefined, selectableEvents: Array<{ __typename?: 'ProgressEvent', event: string, label: string }>, staff?: { __typename?: 'Staff', id: string, name: string, icon?: string | null | undefined } | null | undefined }, menus: Array<{ __typename?: 'Menu', id: string, name: string }>, user?: { __typename?: 'User', id: string, companyName?: string | null | undefined, name: string, email: string, tel: string, address: { __typename?: 'Address', fullAddress: string }, comments: Array<{ __typename?: 'Comment', id: string, content: string, staff?: { __typename?: 'Staff', name: string, icon?: string | null | undefined } | null | undefined }> } | null | undefined } | null | undefined };
+export type GetInquiryByIdQuery = { __typename?: 'Query', inquiry?: { __typename?: 'Inquiry', id: string, userId?: number | null | undefined, companyName?: string | null | undefined, name: string, email: string, tel: string, numberOfUsers: number, introductoryTerm: string, detail?: string | null | undefined, createdAt: number, updatedAt: number, progress: { __typename?: 'Progress', id: string, inquiryId: number, staffId?: number | null | undefined, rank: string, state?: string | null | undefined, recontactedOn?: string | null | undefined, contactedAt?: number | null | undefined, selectableEvents: Array<{ __typename?: 'ProgressEvent', event: string, label: string }>, staff?: { __typename?: 'Staff', id: string, name: string, icon?: string | null | undefined } | null | undefined }, menus: Array<{ __typename?: 'Menu', id: string, name: string }>, user?: { __typename?: 'User', id: string, companyName?: string | null | undefined, name: string, email: string, tel: string, address: { __typename?: 'Address', postalCode: string, prefecture: string, city: string, street: string, building?: string | null | undefined, createdAt: number, updatedAt: number }, comments: Array<{ __typename?: 'Comment', id: string, content: string, staff?: { __typename?: 'Staff', name: string, icon?: string | null | undefined } | null | undefined }> } | null | undefined } | null | undefined };
 
 
 export const CreateStaffDocument = gql`
@@ -1521,7 +1521,13 @@ export const GetInquiryByIdDocument = gql`
       email
       tel
       address {
-        fullAddress
+        postalCode
+        prefecture
+        city
+        street
+        building
+        createdAt
+        updatedAt
       }
       comments {
         id

@@ -24,12 +24,16 @@ module Types
 
     field :user, UserType, null: true
     def user
+      return nil if object.user_id.nil?
+
       { __typename: UserType, id: object.user_id }
     end
 
     field :staff, StaffType, null: true
     def staff
-      { __typename: StaffType, id: object.user_id }
+      return nil if object.staff_id.nil?
+
+      { __typename: StaffType, id: object.staff_id }
     end
 
     def self.resolve_reference(reference, _context)
