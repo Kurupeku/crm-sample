@@ -271,7 +271,7 @@ const UsersIndex: FC = () => {
   const handleDelete = (id: string) => setDeleteId(id);
 
   return (
-    <Container>
+    <Container sx={{ marginTop: 2 }}>
       <Breads />
       <DataTable
         title="スタッフ一覧"

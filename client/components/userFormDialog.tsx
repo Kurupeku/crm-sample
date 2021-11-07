@@ -1,38 +1,30 @@
-import { FC, useState, useEffect } from "react";
-import Link from "next/link";
+import { FC, useState, useEffect, forwardRef } from "react";
 import { useSnackbar } from "notistack";
 import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import TextField from "@mui/material/TextField";
 import AppBar from "@mui/material/AppBar";
+import Paper from "@mui/material/Paper";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
+import Slide from "@mui/material/Slide";
+import { TransitionProps } from "@mui/material/transitions";
 import {
-  useGetInquiryByIdQuery,
   useUpdateInquiryMutation,
-  useDeleteInquiryMutation,
   useCreateUserMutation,
   useUpdateUserMutation,
   useGetUsersListQuery,
-  CreateUserInput,
   GetInquiryByIdQuery,
-  GetUsersListQuery,
 } from "../graphql/client";
 
 interface Layout {
@@ -85,6 +77,15 @@ const newFormProp: UserForm = {
   street: "",
   building: "",
 };
+
+const Transition = forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement;
+  },
+  ref: React.Ref<unknown>
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const UserFormDialog: FC<UserFormProps> = (props) => {
   const { open, userId, inquiry, defaultSearchValue, refetchFunc, onClose } =
@@ -200,7 +201,13 @@ const UserFormDialog: FC<UserFormProps> = (props) => {
   };
 
   return !inquiry ? null : (
-    <Dialog open={open} onClose={onClose} fullScreen>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullScreen
+      TransitionComponent={Transition}
+      PaperProps={{ sx: { bgcolor: "background.default" } }}
+    >
       <DialogContent>
         <Container maxWidth="md">
           <AppBar position="static" color="default" elevation={0}>
@@ -216,103 +223,107 @@ const UserFormDialog: FC<UserFormProps> = (props) => {
               <Tab label={userId ? "登録内容更新" : "新規登録"} tabIndex={1} />
             </Tabs>
           </AppBar>
-          {index === 0 ? (
-            <>
-              <TextField
-                autoFocus
-                id="search"
-                type="search"
-                label="検索キーワード"
-                placeholder="会社名/顧客名/Emailなどで検索"
-                variant="standard"
-                fullWidth
-                margin="normal"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell variant="head">ID</TableCell>
-                    <TableCell variant="head">会社名</TableCell>
-                    <TableCell variant="head">顧客名</TableCell>
-                    <TableCell variant="head">Email</TableCell>
-                    <TableCell variant="head"></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {loading ? (
+          <Paper sx={{ p: 2 }}>
+            {index === 0 ? (
+              <>
+                <TextField
+                  autoFocus
+                  id="search"
+                  type="search"
+                  label="検索キーワード"
+                  placeholder="会社名/顧客名/Emailなどで検索"
+                  variant="standard"
+                  fullWidth
+                  margin="normal"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <Table>
+                  <TableHead>
                     <TableRow>
-                      <TableCell colSpan={5} align="center">
-                        検索中...
-                      </TableCell>
+                      <TableCell variant="head">ID</TableCell>
+                      <TableCell variant="head">会社名</TableCell>
+                      <TableCell variant="head">顧客名</TableCell>
+                      <TableCell variant="head">Email</TableCell>
+                      <TableCell variant="head"></TableCell>
                     </TableRow>
-                  ) : !usersData || usersData.usersList.users.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} align="center">
-                        検索ワードを入力してください
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    usersData.usersList.users.map((user) => (
+                  </TableHead>
+                  <TableBody>
+                    {loading ? (
                       <TableRow>
-                        <TableCell>{user.id}</TableCell>
-                        <TableCell>{user.companyName}</TableCell>
-                        <TableCell>{user.name}</TableCell>
-                        <TableCell>{user.email}</TableCell>
-                        <TableCell>
-                          <Button
-                            onClick={() =>
-                              updateInquiry({
-                                variables: {
-                                  input: {
-                                    id: inquiry.id,
-                                    userId: parseInt(user.id, 10),
-                                  },
-                                },
-                              })
-                            }
-                          >
-                            割当
-                          </Button>
+                        <TableCell colSpan={5} align="center">
+                          検索中...
                         </TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-                <TableFooter>
-                  <TablePagination
-                    colSpan={5}
-                    count={usersData?.usersList.pageInfo.recordsCount || 0}
-                    rowsPerPage={25}
-                    page={page - 1}
-                    labelRowsPerPage="表示件数:"
-                    labelDisplayedRows={({ from, to, count }) =>
-                      count > 0 ? `${count}件中${from}~${to}件を表示中` : "0件"
-                    }
-                    onPageChange={(_, p) => setPage(p + 1)}
-                    onRowsPerPageChange={(e) =>
-                      setPer(parseInt(e.target.value, 10))
-                    }
-                  />
-                </TableFooter>
-              </Table>
-            </>
-          ) : (
-            userFormLayouts.map((layout, i) => (
-              <TextField
-                autoFocus={i === 0}
-                id={layout.key}
-                label={layout.label}
-                type={layout.key === "email" ? "email" : "text"}
-                fullWidth
-                variant="standard"
-                value={form[layout.key] || ""}
-                margin="normal"
-                onChange={(e) => handleChange(layout.key, e.target.value)}
-              />
-            ))
-          )}
+                    ) : !usersData || usersData.usersList.users.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={5} align="center">
+                          検索ワードを入力してください
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      usersData.usersList.users.map((user) => (
+                        <TableRow>
+                          <TableCell>{user.id}</TableCell>
+                          <TableCell>{user.companyName}</TableCell>
+                          <TableCell>{user.name}</TableCell>
+                          <TableCell>{user.email}</TableCell>
+                          <TableCell>
+                            <Button
+                              onClick={() =>
+                                updateInquiry({
+                                  variables: {
+                                    input: {
+                                      id: inquiry.id,
+                                      userId: parseInt(user.id, 10),
+                                    },
+                                  },
+                                })
+                              }
+                            >
+                              割当
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                  <TableFooter>
+                    <TablePagination
+                      colSpan={5}
+                      count={usersData?.usersList.pageInfo.recordsCount || 0}
+                      rowsPerPage={25}
+                      page={page - 1}
+                      labelRowsPerPage="表示件数:"
+                      labelDisplayedRows={({ from, to, count }) =>
+                        count > 0
+                          ? `${count}件中${from}~${to}件を表示中`
+                          : "0件"
+                      }
+                      onPageChange={(_, p) => setPage(p + 1)}
+                      onRowsPerPageChange={(e) =>
+                        setPer(parseInt(e.target.value, 10))
+                      }
+                    />
+                  </TableFooter>
+                </Table>
+              </>
+            ) : (
+              userFormLayouts.map((layout, i) => (
+                <TextField
+                  autoFocus={i === 0}
+                  id={layout.key}
+                  label={layout.label}
+                  type={layout.key === "email" ? "email" : "text"}
+                  fullWidth
+                  variant="standard"
+                  value={form[layout.key] || ""}
+                  margin="normal"
+                  onChange={(e) => handleChange(layout.key, e.target.value)}
+                />
+              ))
+            )}
+          </Paper>
         </Container>
       </DialogContent>
       <DialogActions>

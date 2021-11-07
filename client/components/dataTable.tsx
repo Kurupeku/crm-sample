@@ -221,7 +221,7 @@ const HeadRow: FC<HeadRowProps> = (props) => {
 
   return (
     <TableRow>
-      {columns.map((column, i) => (
+      {columns.map((column) => (
         <HeadCell
           key={column.key}
           column={column}

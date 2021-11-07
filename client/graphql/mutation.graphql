@@ -51,3 +51,47 @@ mutation deleteInquiry($input: DeleteInquiryInput!) {
     id
   }
 }
+
+mutation changeProgressStaff($input: ChangeProgressStaffInput!) {
+  changeProgressStaff(input: $input) {
+    id
+  }
+}
+
+mutation changeProgressRank($input: ChangeProgressRankInput!) {
+  changeProgressRank(input: $input) {
+    id
+  }
+}
+
+mutation changeProgressState($input: ChangeProgressStateInput!) {
+  changeProgressState(input: $input) {
+    id
+  }
+}
+
+mutation createComment($input: CreateCommentInput!) {
+  createComment(input: $input) {
+    id
+  }
+}
+
+mutation updateComment($input: UpdateCommentInput!) {
+  updateComment(input: $input) {
+    id
+  }
+}
+
+mutation deleteComment($input: DeleteCommentInput!) {
+  deleteComment(input: $input) {
+    id
+  }
+}
+
+mutation changeProgressRecontactedOn(
+  $input: ChangeProgressRecontactedOnInput!
+) {
+  changeProgressRecontactedOn(input: $input) {
+    id
+  }
+}

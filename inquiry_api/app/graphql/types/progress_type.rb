@@ -12,14 +12,10 @@ module Types
     end
 
     field :rank, String, null: false
-    def rank
-      object.rank_i18n
-    end
+    field :rank_i18n, String, null: false
 
     field :state, String, null: true
-    def state
-      object.state_i18n
-    end
+    field :state_i18n, String, null: true
 
     field :recontacted_on, String, null: true
     def recontacted_on

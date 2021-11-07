@@ -137,7 +137,9 @@ query getInquiriesList(
         inquiryId
         staffId
         rank
+        rankI18n
         state
+        stateI18n
         recontactedOn
         contactedAt
         staff {
@@ -176,7 +178,9 @@ query getInquiryById($inquiryId: ID!) {
       inquiryId
       staffId
       rank
+      rankI18n
       state
+      stateI18n
       recontactedOn
       contactedAt
       selectableEvents {
@@ -208,14 +212,31 @@ query getInquiryById($inquiryId: ID!) {
         createdAt
         updatedAt
       }
-      comments {
-        id
-        content
-        staff {
-          name
-          icon
-        }
-      }
+    }
+  }
+}
+
+query getProgressStateAndEvents($progressId: ID!) {
+  progress(id: $progressId) {
+    id
+    state
+    stateI18n
+    selectableEvents {
+      event
+      label
+    }
+  }
+}
+
+query getComments($inquiryId: Int, $order: String) {
+  comments(inquiryId: $inquiryId, order: $order) {
+    id
+    content
+    createdAt
+    staff {
+      id
+      name
+      icon
     }
   }
 }

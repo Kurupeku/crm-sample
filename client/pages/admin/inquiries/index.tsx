@@ -25,7 +25,7 @@ const InquiriesIndex: FC = () => {
   const state: ProgressStateEnum | undefined = stateMap[index];
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" sx={{ marginTop: 2 }}>
       <Breads />
       <Paper>
         <AppBar color="primary" elevation={0} position="static">

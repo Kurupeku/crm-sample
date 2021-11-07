@@ -25,7 +25,6 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import MuiDrawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import { grey } from "@mui/material/colors";
-import theme from "../modules/theme";
 import DrawerMenu from "./drawerMenu";
 
 const drawerWidth = 240;
@@ -184,7 +183,7 @@ const Layout: FC = ({ children }) => {
         <Drawer variant="permanent" open={open}>
           <DrawerHeader>
             <IconButton onClick={handleDrawerClose}>
-              {theme.direction === "rtl" ? (
+              {privateTheme.direction === "rtl" ? (
                 <ChevronRightIcon />
               ) : (
                 <ChevronLeftIcon />
@@ -198,7 +197,8 @@ const Layout: FC = ({ children }) => {
           component="main"
           sx={{
             flexGrow: 1,
-            p: 3,
+            p: 0,
+            pb: 4,
             backgroundColor: (t) => t.palette.background.default,
           }}
         >
