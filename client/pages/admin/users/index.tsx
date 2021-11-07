@@ -147,7 +147,9 @@ const UsersIndex: FC = () => {
       enqueueSnackbar("ユーザーを登録しました", { variant: "success" });
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -174,7 +176,9 @@ const UsersIndex: FC = () => {
       enqueueSnackbar("ユーザー情報を更新しました", { variant: "success" });
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -188,7 +192,9 @@ const UsersIndex: FC = () => {
       enqueueSnackbar("スタッフを削除しました", { variant: "success" });
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 

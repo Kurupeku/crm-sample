@@ -5,16 +5,23 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import MoveToInboxIcon from "@mui/icons-material/MoveToInbox";
+import AssignmentReturnedIcon from "@mui/icons-material/AssignmentReturned";
 
 const DrawerMenu: React.FC = () => {
   return (
     <>
       <List>
+        <Link href="/admin">
+          <ListItem button>
+            <ListItemIcon>
+              <AssignmentReturnedIcon />
+            </ListItemIcon>
+            <ListItemText primary="担当案件一覧" />
+          </ListItem>
+        </Link>
         <Link href="/admin/inquiries">
           <ListItem button>
             <ListItemIcon>

@@ -61,7 +61,6 @@ const GlobalStateProvider: FC = ({ children }) => {
         .catch((err) => {
           removeCookie("jwt");
           router.replace("/admin/login");
-          console.error(err);
           enqueueSnackbar("セッションが切れています", { variant: "error" });
           setSession(null);
         })
@@ -77,7 +76,6 @@ const GlobalStateProvider: FC = ({ children }) => {
       } else {
         fetchRefreshToken(jwt)
           .then((response) => {
-            console.log(response.data);
             removeCookie("jwt");
             setCookie("jwt", response.data.token, { path: "/" });
             setSession(generateSessionData(response.data));
@@ -85,7 +83,6 @@ const GlobalStateProvider: FC = ({ children }) => {
           .catch((err) => {
             removeCookie("jwt");
             router.replace("/admin/login");
-            console.error(err);
             enqueueSnackbar("セッションが切れています", { variant: "error" });
             setSession(null);
           });

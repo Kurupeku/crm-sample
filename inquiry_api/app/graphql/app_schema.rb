@@ -3,6 +3,21 @@ class AppSchema < GraphQL::Schema
   mutation(Types::MutationType)
   query(Types::QueryType)
 
+  rescue_from(ActiveRecord::RecordInvalid) do |error|
+    GraphQL::ExecutionError.new(
+      error.record.errors.full_messages.join(','),
+      extensions: {
+        code: 'RECORD_INVALID',
+        record: {
+          model: error.record.class.name,
+          id: error.record.id,
+          errors: error.record.errors.messages.transform_keys { |k| k.to_s.camelize(:lower) },
+          messages: error.record.errors.full_messages
+        }
+      }
+    )
+  end
+
   # Union and Interface Resolution
   def self.resolve_type(_abstract_type, _obj, _ctx)
     # TODO: Implement this function

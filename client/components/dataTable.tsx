@@ -1,4 +1,4 @@
-import { Fragment, FC, useState, useEffect, ReactNode } from "react";
+import { FC, useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { ApolloError } from "@apollo/client";

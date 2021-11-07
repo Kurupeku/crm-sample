@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import InquiriesIndexBase from "./_index";
+import InquiriesIndexBase from "../../../components/inquiriesIndexBase";
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import AppBar from "@mui/material/AppBar";

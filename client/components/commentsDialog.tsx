@@ -14,13 +14,9 @@ import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
 import Fab from "@mui/material/Fab";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import EditIcon from "@mui/icons-material/Edit";
@@ -29,18 +25,14 @@ import Slide from "@mui/material/Slide";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import TextField from "@mui/material/TextField";
-import Alert from "@mui/material/Alert";
 import { TransitionProps } from "@mui/material/transitions";
 import {
   useGetCommentsQuery,
   useCreateCommentMutation,
   useUpdateCommentMutation,
   useDeleteCommentMutation,
-  useCreateUserMutation,
 } from "../graphql/client";
 import someoneAvatar from "../modules/avatar";
-import { bgcolor } from "@mui/system";
-import { Comment, KeyboardReturnTwoTone } from "@mui/icons-material";
 
 interface Comment {
   id: string;
@@ -79,7 +71,9 @@ const CommentItem: FC<ItemProps> = (props) => {
       refetchFunc();
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -161,7 +155,9 @@ const CommentsDialog: FC<Props> = (props) => {
       refetch();
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -173,7 +169,9 @@ const CommentsDialog: FC<Props> = (props) => {
       refetch();
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 

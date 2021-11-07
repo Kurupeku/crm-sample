@@ -5,7 +5,6 @@ import { useSnackbar } from "notistack";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import {
   useGetUserByIdQuery,
@@ -150,7 +149,9 @@ const UserShow: FC = (props) => {
       enqueueSnackbar("情報を更新しました", { variant: "success" });
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -163,7 +164,9 @@ const UserShow: FC = (props) => {
       enqueueSnackbar("スタッフを削除しました", { variant: "success" });
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 

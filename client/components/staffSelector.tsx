@@ -32,7 +32,9 @@ const StaffSelector: FC<Props> = (props) => {
       refetchFunc();
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 

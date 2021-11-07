@@ -64,7 +64,9 @@ const StaffShow: FC = (props) => {
       enqueueSnackbar("情報を更新しました", { variant: "success" });
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -77,7 +79,9 @@ const StaffShow: FC = (props) => {
       enqueueSnackbar("スタッフを削除しました", { variant: "success" });
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 

@@ -44,7 +44,7 @@ export default function MyApp(props: MyAppProps) {
 
       <RecoilRoot>
         <CookiesProvider>
-          <SnackbarProvider maxSnack={3}>
+          <SnackbarProvider maxSnack={10}>
             <LocalizationProvider dateAdapter={AdapterDateFns} locale={ja}>
               {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
               {isMatchLoginPath(router) ? (

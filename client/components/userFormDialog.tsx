@@ -128,7 +128,9 @@ const UserFormDialog: FC<UserFormProps> = (props) => {
       onClose();
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -155,7 +157,9 @@ const UserFormDialog: FC<UserFormProps> = (props) => {
       onClose();
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
@@ -166,7 +170,9 @@ const UserFormDialog: FC<UserFormProps> = (props) => {
       onClose();
     },
     onError: (error) => {
-      enqueueSnackbar(error.message, { variant: "error" });
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
     },
   });
 
