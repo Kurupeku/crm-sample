@@ -4,10 +4,11 @@ module Types
     include GraphQL::Types::Relay::HasNodesField
 
     field :comments, [CommentType], null: false do
+      argument :inquiry_id, Int, required: false
       argument :order, String, required: false
     end
-    def comments(order: 'created_at desc')
-      Comment.all.order order.underscore
+    def comments(inquiry_id: nil, order: 'created_at desc')
+      Comment.inquiry_id_eq(inquiry_id).order order.underscore
     end
 
     field :comments_list, CommentsListType, null: false do

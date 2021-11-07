@@ -2,6 +2,9 @@ import { FC, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useSnackbar } from "notistack";
+import format from "date-fns/format";
+import fromUnixTime from "date-fns/fromUnixTime";
+import ja from "date-fns/locale/ja";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -9,16 +12,13 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
+import Chip from "@mui/material/Chip";
+import TextField from "@mui/material/TextField";
+import DatePicker from "@mui/lab/DatePicker";
 import {
   useGetInquiryByIdQuery,
   useUpdateInquiryMutation,
   useDeleteInquiryMutation,
-  useCreateUserMutation,
-  useUpdateUserMutation,
-  useGetUsersListQuery,
-  CreateUserInput,
-  GetInquiryByIdQuery,
-  GetUsersListQuery,
 } from "../../../graphql/client";
 import Breads from "../../../components/breadcrumbs";
 import InquiryFormDialog, {
@@ -27,6 +27,11 @@ import InquiryFormDialog, {
 } from "../../../components/inquiryFormDialog";
 import UserFormDialog from "../../../components/userFormDialog";
 import DeleteDialog from "../../../components/deleteDialog";
+import CommentsDialog from "../../../components/commentsDialog";
+import StaffSelector from "../../../components/staffSelector";
+import RankSelector from "../../../components/rankSelector";
+import StateChanger from "../../../components/stateChanger";
+import RecontactedOnPicker from "../../../components/recontactedOnPicker";
 import { getProperty } from "../../../modules/parser";
 
 interface Layout {
@@ -65,6 +70,7 @@ const InquiryShow: FC = () => {
   const [form, setForm] = useState<FormData | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [userModalOpen, setUserModalOpen] = useState<boolean>(false);
+  const [progressId, setProgressId] = useState<string | null>(null);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const { id } = router.query;
@@ -143,127 +149,175 @@ const InquiryShow: FC = () => {
 
   const handleDelete = () => setDeleteId(id as string);
 
+  const handleRecontactedOn = (newValue: Date | null) => {
+    let dateStr = "";
+    if (newValue)
+      dateStr = format(newValue, "yyyy-MM-dd", {
+        locale: ja,
+      });
+    console.log(dateStr);
+  };
+
+  useEffect(() => {
+    if (!data || !data.inquiry) return;
+
+    setProgressId(data.inquiry.progress.id);
+  }, [data?.inquiry]);
+
   return (
-    <Grid container>
-      <Grid item xs={12} lg={9}>
-        <Container maxWidth="xl">
-          <Box sx={{ marginBottom: 2, display: "flex" }}>
-            <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
-              <Breads naked />
-            </Box>
-            <Box>
-              <Button onClick={handleEdit} sx={{ marginRight: 1 }}>
-                編集
-              </Button>
-              <Button onClick={handleDelete} color="error">
-                削除
-              </Button>
-            </Box>
+    <>
+      <Container maxWidth="xl" sx={{ marginTop: 2 }}>
+        <Box sx={{ marginBottom: 2, display: "flex" }}>
+          <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
+            <Breads naked />
           </Box>
-          <Grid container spacing={4} alignItems="stretch">
-            <Grid item xs={12} lg={6}>
-              <Paper sx={{ padding: 4, height: "100%" }}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <Typography variant="h5" component="h3">
-                      基本情報
-                    </Typography>
-                  </Grid>
+          <Box>
+            <Button color="inherit" onClick={() => router.back()}>
+              戻る
+            </Button>
+            <Button onClick={handleEdit} sx={{ marginRight: 1 }}>
+              編集
+            </Button>
+            <Button onClick={handleDelete} color="error">
+              削除
+            </Button>
+          </Box>
+        </Box>
+        <Grid container spacing={4} alignItems="stretch">
+          <Grid item xs={12}>
+            <Paper sx={{ padding: 2, display: "flex", alignItems: "center" }}>
+              <Typography variant="h5" component="h3" sx={{ flexGrow: 1 }}>
+                進捗状況
+              </Typography>
+              {progressId ? (
+                <>
+                  <StaffSelector
+                    progressId={progressId}
+                    currentStaffId={
+                      data?.inquiry ? String(data.inquiry.progress.staffId) : ""
+                    }
+                    refetchFunc={refetch}
+                  />
+                  <RankSelector
+                    progressId={progressId}
+                    currentRank={data?.inquiry?.progress.rank}
+                    refetchFunc={refetch}
+                  />
+                  <StateChanger progressId={progressId} refetchFunc={refetch} />
+                  <RecontactedOnPicker
+                    progress={data?.inquiry?.progress}
+                    refetchFunc={refetch}
+                  />
+                </>
+              ) : null}
+            </Paper>
+          </Grid>
+          <Grid item xs={12} lg={6}>
+            <Paper sx={{ padding: 4, height: "100%" }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Typography variant="h5" component="h3">
+                    基本情報
+                  </Typography>
+                </Grid>
+                {data?.inquiry
+                  ? baseLayouts.map(({ label, key }) => (
+                      <>
+                        <Grid item xs={4} key={`label-${key}`}>
+                          {label}
+                        </Grid>
+                        <Grid item xs={8} key={`value-${key}`}>
+                          {getProperty(data.inquiry, key)}
+                        </Grid>
+                      </>
+                    ))
+                  : null}
+                <Grid item xs={4} key={`label-menus`}>
+                  問い合わせ項目
+                </Grid>
+                <Grid item xs={8} key={`value-menus`}>
                   {data?.inquiry
-                    ? baseLayouts.map(({ label, key }) => (
-                        <>
-                          <Grid item xs={4}>
-                            {label}
-                          </Grid>
-                          <Grid item xs={8}>
-                            {getProperty(data.inquiry, key)}
-                          </Grid>
-                        </>
+                    ? data.inquiry.menus.map(({ id, name }) => (
+                        <Chip key={id} label={name} />
                       ))
                     : null}
                 </Grid>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} lg={6}>
-              <Paper sx={{ padding: 4, height: "100%" }}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <Box sx={{ width: "100%", display: "flex" }}>
-                      <Typography
-                        variant="h5"
-                        component="h3"
-                        sx={{ flexGrow: 1 }}
-                      >
-                        ユーザー情報
-                      </Typography>
-                      <Button
-                        color="primary"
-                        onClick={() => setUserModalOpen(true)}
-                      >
-                        {data?.inquiry?.user ? "ユーザー編集" : "ユーザー登録"}
-                      </Button>
-                    </Box>
-                  </Grid>
-                  {data?.inquiry?.user ? (
-                    <>
-                      {userLayouts.map(({ label, key }) => (
+              </Grid>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} lg={6}>
+            <Paper sx={{ padding: 4, height: "100%" }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Box sx={{ width: "100%", display: "flex" }}>
+                    <Typography
+                      variant="h5"
+                      component="h3"
+                      sx={{ flexGrow: 1 }}
+                    >
+                      ユーザー情報
+                    </Typography>
+                    <Button
+                      color="primary"
+                      onClick={() => setUserModalOpen(true)}
+                    >
+                      {data?.inquiry?.user ? "ユーザー編集" : "ユーザー登録"}
+                    </Button>
+                  </Box>
+                </Grid>
+                {data?.inquiry?.user ? (
+                  <>
+                    {userLayouts.map(({ label, key }) => (
+                      <>
+                        <Grid item xs={4} key={`label-${key}`}>
+                          {label}
+                        </Grid>
+                        <Grid item xs={8} key={`value-${key}`}>
+                          {getProperty(data?.inquiry?.user, key)}
+                        </Grid>
+                      </>
+                    ))}
+                    <Grid item xs={12}>
+                      <Divider />
+                    </Grid>
+                    {data?.inquiry?.user?.address ? (
+                      addressLayouts.map(({ label, key }) => (
                         <>
-                          <Grid item xs={4}>
+                          <Grid item xs={4} key={`label-${key}`}>
                             {label}
                           </Grid>
-                          <Grid item xs={8}>
-                            {getProperty(data?.inquiry?.user, key)}
+                          <Grid item xs={8} key={`value-${key}`}>
+                            {getProperty(data?.inquiry?.user?.address, key)}
                           </Grid>
                         </>
-                      ))}
+                      ))
+                    ) : (
                       <Grid item xs={12}>
-                        <Divider />
+                        住所未登録
                       </Grid>
-                      {data?.inquiry?.user?.address ? (
-                        addressLayouts.map(({ label, key }) => (
-                          <>
-                            <Grid item xs={4}>
-                              {label}
-                            </Grid>
-                            <Grid item xs={8}>
-                              {getProperty(data?.inquiry?.user?.address, key)}
-                            </Grid>
-                          </>
-                        ))
-                      ) : (
-                        <Grid item xs={12}>
-                          住所未登録
-                        </Grid>
-                      )}
-                    </>
-                  ) : (
-                    <Grid item xs={12}>
-                      <Typography>ユーザー未登録</Typography>
-                    </Grid>
-                  )}
-                </Grid>
-              </Paper>
-            </Grid>
+                    )}
+                  </>
+                ) : (
+                  <Grid item xs={12}>
+                    <Typography>ユーザー未登録</Typography>
+                  </Grid>
+                )}
+              </Grid>
+            </Paper>
           </Grid>
-          <Box sx={{ display: "flex", justifyContent: "end", marginTop: 2 }}>
-            <Link href="/admin/inquiries">
-              <Button color="inherit">一覧に戻る</Button>
-            </Link>
-          </Box>
-          <InquiryFormDialog
-            data={form}
-            onCancel={() => setForm(null)}
-            onChange={handleFormChange}
-            onSubmit={updateAction}
-          />
-          <DeleteDialog
-            id={deleteId}
-            onSubmit={deleteAction}
-            onCancel={() => setDeleteId(null)}
-          />
-        </Container>
-      </Grid>
-      <Grid item xs={12} lg={3}></Grid>
+        </Grid>
+        <InquiryFormDialog
+          data={form}
+          onCancel={() => setForm(null)}
+          onChange={handleFormChange}
+          onSubmit={updateAction}
+        />
+        <DeleteDialog
+          id={deleteId}
+          onSubmit={deleteAction}
+          onCancel={() => setDeleteId(null)}
+        />
+      </Container>
       <UserFormDialog
         open={userModalOpen}
         inquiry={data?.inquiry}
@@ -272,7 +326,8 @@ const InquiryShow: FC = () => {
         refetchFunc={refetch}
         onClose={() => setUserModalOpen(false)}
       />
-    </Grid>
+      <CommentsDialog inquiryId={id as string | undefined} />
+    </>
   );
 };
 

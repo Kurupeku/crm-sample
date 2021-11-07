@@ -31,7 +31,9 @@ interface Inquiry {
     id: string;
     staffId?: number | null;
     rank: string;
+    rankI18n: string;
     state?: string | null;
+    stateI18n?: string | null;
     recontactedOn?: string | null;
     contactedAt?: number | null;
     staff?: {
@@ -55,13 +57,13 @@ const columns: ColumnProps[] = [
     disableSort: true,
   },
   {
-    key: "progress.rank",
+    key: "progress.rankI18n",
     orderKey: "progresses.rank",
     label: "見込みランク",
     type: "string",
   },
   {
-    key: "progress.state",
+    key: "progress.stateI18n",
     orderKey: "progresses.state",
     label: "ステータス",
     type: "string",
@@ -183,7 +185,9 @@ const InquiriesIndexBase: FC<Props> = ({ state }) => {
         id: r.progress.id,
         staffId: r.progress.staffId,
         rank: r.progress.rank,
+        rankI18n: r.progress.rankI18n,
         state: r.progress.state,
+        stateI18n: r.progress.stateI18n,
         recontactedOn: r.progress.recontactedOn,
         contactedAt: r.progress.contactedAt,
         staff: r.progress.staff ? { name: r.progress.staff.name } : null,

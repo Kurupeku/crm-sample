@@ -195,7 +195,7 @@ const UserShow: FC = (props) => {
   const handleDelete = () => setDeleteId(id as string);
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" sx={{ marginTop: 2 }}>
       <Box sx={{ marginBottom: 2, display: "flex" }}>
         <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
           <Breads naked />

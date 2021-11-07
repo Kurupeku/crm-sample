@@ -1,5 +1,6 @@
 module Types
   class MutationType < Types::BaseObject
+    field :change_progress_recontacted_on, mutation: Mutations::ChangeProgressRecontactedOn
     field :change_progress_staff, mutation: Mutations::ChangeProgressStaff
     field :change_progress_rank, mutation: Mutations::ChangeProgressRank
     field :change_progress_state, mutation: Mutations::ChangeProgressState

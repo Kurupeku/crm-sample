@@ -10,7 +10,7 @@ module Mutations
       raise GraphQL::ExecutionError, I18n.t('errors.aasm.invalid_event') unless progress.send("may_#{event}?")
 
       progress.send event
-      progress
+      progress.save! && progress
     end
   end
 end
