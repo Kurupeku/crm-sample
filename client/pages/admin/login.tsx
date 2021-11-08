@@ -17,8 +17,14 @@ import Typography from "@mui/material/Typography";
 import CircleProgress from "@mui/material/CircularProgress";
 import { generateSessionData, AuthResponseData } from "../../modules/jwt";
 import { createTheme, ThemeProvider } from "@mui/material";
+import { teal, pink } from "@mui/material/colors";
 
-const publickTheme = createTheme();
+const publicTheme = createTheme({
+  palette: {
+    primary: { main: teal[500] },
+    secondary: { main: pink["A200"] },
+  },
+});
 
 export default function Login() {
   const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
@@ -79,12 +85,12 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
       })
       .then((response) => {
-        enqueueSnackbar("ログインしました", { variant: "success" });
         removeCookie("jwt");
         setCookie("jwt", response.data.token, { path: "/" });
         const sessionData = generateSessionData(response.data);
         setSession(sessionData);
         router.replace("/admin");
+        enqueueSnackbar("ログインしました", { variant: "success" });
       })
       .catch(() => {
         enqueueSnackbar("メールアドレスまたはパスワードが一致しません", {
@@ -95,7 +101,7 @@ export default function Login() {
   };
 
   return (
-    <ThemeProvider theme={publickTheme}>
+    <ThemeProvider theme={publicTheme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         <Grid

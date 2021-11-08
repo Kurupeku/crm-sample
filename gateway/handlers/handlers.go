@@ -37,22 +37,7 @@ func PostGraphqlHandler(c *gin.Context) {
 }
 
 func GetPlayGroundHandler(c *gin.Context) {
-	target, err := url.Parse(parseURL(os.Getenv("FEDERATION_HOST"), ""))
-	if err != nil {
-		panic(err)
-	}
-
-	proxy := httputil.NewSingleHostReverseProxy(target)
-
-	proxy.Director = func(req *http.Request) {
-		req.Header = c.Request.Header
-		req.Host = target.Host
-		req.URL.Scheme = "http"
-		req.URL.Host = target.Host
-		req.URL.Path = target.Path
-	}
-
-	proxy.ServeHTTP(c.Writer, c.Request)
+	proxyHtmlHandler(c, parseURL(os.Getenv("FEDERATION_HOST"), ""))
 }
 
 func proxyHandler(c *gin.Context, urlString string) {
@@ -70,10 +55,28 @@ func proxyHandler(c *gin.Context, urlString string) {
 		req.URL.Host = target.Host
 		req.URL.Path = target.Path
 		req.Header.Set("Content-Type", "application/json")
-		// req.Header.Set("Accept", "application/json")
 	}
 
 	c.Writer.Header().Del("Access-Control-Allow-Origin")
+
+	proxy.ServeHTTP(c.Writer, c.Request)
+}
+
+func proxyHtmlHandler(c *gin.Context, urlString string) {
+	target, err := url.Parse(urlString)
+	if err != nil {
+		panic(err)
+	}
+
+	proxy := httputil.NewSingleHostReverseProxy(target)
+
+	proxy.Director = func(req *http.Request) {
+		req.Header = c.Request.Header
+		req.Host = target.Host
+		req.URL.Scheme = "http"
+		req.URL.Host = target.Host
+		req.URL.Path = target.Path
+	}
 
 	proxy.ServeHTTP(c.Writer, c.Request)
 }

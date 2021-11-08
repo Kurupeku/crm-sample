@@ -786,6 +786,27 @@ export type ChangeProgressRecontactedOnMutationVariables = Exact<{
 
 export type ChangeProgressRecontactedOnMutation = { __typename?: 'Mutation', changeProgressRecontactedOn?: { __typename?: 'Progress', id: string } | null | undefined };
 
+export type UploadStaffIconMutationVariables = Exact<{
+  input?: Maybe<StaffIconInput>;
+}>;
+
+
+export type UploadStaffIconMutation = { __typename?: 'Mutation', uploadStaffIcon: { __typename?: 'Staff', id: string } };
+
+export type DeleteStaffIconMutationVariables = Exact<{
+  input?: Maybe<StaffIdInput>;
+}>;
+
+
+export type DeleteStaffIconMutation = { __typename?: 'Mutation', deleteStaffIcon: { __typename?: 'Staff', id: string } };
+
+export type ChangeStaffPasswordMutationVariables = Exact<{
+  input?: Maybe<StaffChangePasswordInput>;
+}>;
+
+
+export type ChangeStaffPasswordMutation = { __typename?: 'Mutation', changeStaffPassword: { __typename?: 'Staff', id: string } };
+
 export type GetMenusOnlyNameQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1398,6 +1419,105 @@ export function useChangeProgressRecontactedOnMutation(baseOptions?: Apollo.Muta
 export type ChangeProgressRecontactedOnMutationHookResult = ReturnType<typeof useChangeProgressRecontactedOnMutation>;
 export type ChangeProgressRecontactedOnMutationResult = Apollo.MutationResult<ChangeProgressRecontactedOnMutation>;
 export type ChangeProgressRecontactedOnMutationOptions = Apollo.BaseMutationOptions<ChangeProgressRecontactedOnMutation, ChangeProgressRecontactedOnMutationVariables>;
+export const UploadStaffIconDocument = gql`
+    mutation uploadStaffIcon($input: StaffIconInput) {
+  uploadStaffIcon(input: $input) {
+    id
+  }
+}
+    `;
+export type UploadStaffIconMutationFn = Apollo.MutationFunction<UploadStaffIconMutation, UploadStaffIconMutationVariables>;
+
+/**
+ * __useUploadStaffIconMutation__
+ *
+ * To run a mutation, you first call `useUploadStaffIconMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadStaffIconMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadStaffIconMutation, { data, loading, error }] = useUploadStaffIconMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUploadStaffIconMutation(baseOptions?: Apollo.MutationHookOptions<UploadStaffIconMutation, UploadStaffIconMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadStaffIconMutation, UploadStaffIconMutationVariables>(UploadStaffIconDocument, options);
+      }
+export type UploadStaffIconMutationHookResult = ReturnType<typeof useUploadStaffIconMutation>;
+export type UploadStaffIconMutationResult = Apollo.MutationResult<UploadStaffIconMutation>;
+export type UploadStaffIconMutationOptions = Apollo.BaseMutationOptions<UploadStaffIconMutation, UploadStaffIconMutationVariables>;
+export const DeleteStaffIconDocument = gql`
+    mutation deleteStaffIcon($input: StaffIDInput) {
+  deleteStaffIcon(input: $input) {
+    id
+  }
+}
+    `;
+export type DeleteStaffIconMutationFn = Apollo.MutationFunction<DeleteStaffIconMutation, DeleteStaffIconMutationVariables>;
+
+/**
+ * __useDeleteStaffIconMutation__
+ *
+ * To run a mutation, you first call `useDeleteStaffIconMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteStaffIconMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteStaffIconMutation, { data, loading, error }] = useDeleteStaffIconMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteStaffIconMutation(baseOptions?: Apollo.MutationHookOptions<DeleteStaffIconMutation, DeleteStaffIconMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteStaffIconMutation, DeleteStaffIconMutationVariables>(DeleteStaffIconDocument, options);
+      }
+export type DeleteStaffIconMutationHookResult = ReturnType<typeof useDeleteStaffIconMutation>;
+export type DeleteStaffIconMutationResult = Apollo.MutationResult<DeleteStaffIconMutation>;
+export type DeleteStaffIconMutationOptions = Apollo.BaseMutationOptions<DeleteStaffIconMutation, DeleteStaffIconMutationVariables>;
+export const ChangeStaffPasswordDocument = gql`
+    mutation changeStaffPassword($input: StaffChangePasswordInput) {
+  changeStaffPassword(input: $input) {
+    id
+  }
+}
+    `;
+export type ChangeStaffPasswordMutationFn = Apollo.MutationFunction<ChangeStaffPasswordMutation, ChangeStaffPasswordMutationVariables>;
+
+/**
+ * __useChangeStaffPasswordMutation__
+ *
+ * To run a mutation, you first call `useChangeStaffPasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangeStaffPasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changeStaffPasswordMutation, { data, loading, error }] = useChangeStaffPasswordMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useChangeStaffPasswordMutation(baseOptions?: Apollo.MutationHookOptions<ChangeStaffPasswordMutation, ChangeStaffPasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ChangeStaffPasswordMutation, ChangeStaffPasswordMutationVariables>(ChangeStaffPasswordDocument, options);
+      }
+export type ChangeStaffPasswordMutationHookResult = ReturnType<typeof useChangeStaffPasswordMutation>;
+export type ChangeStaffPasswordMutationResult = Apollo.MutationResult<ChangeStaffPasswordMutation>;
+export type ChangeStaffPasswordMutationOptions = Apollo.BaseMutationOptions<ChangeStaffPasswordMutation, ChangeStaffPasswordMutationVariables>;
 export const GetMenusOnlyNameDocument = gql`
     query getMenusOnlyName {
   menus {

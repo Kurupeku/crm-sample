@@ -93,6 +93,7 @@ export interface DataTableProps {
   searchLabel?: string;
   linkColumnWidth?: string | number;
   naked?: boolean;
+  basePath?: string;
   customLinksFunc?: (row: RowProps) => ReactNode;
   onPerChange?: (value: number) => void;
   onPageChange?: (value: number) => void;
@@ -258,15 +259,20 @@ const DataCell = (props: DataCellProps) => {
       );
 
     case "date":
-    case "datetime":
-      const formatStr: string =
-        f || type === "date" ? "yyyy/MM/dd" : "yyyy/MM/dd HH:mm:ss";
-      const dateStr = format(fromUnixTime(value), formatStr, {
-        locale: ja,
-      });
       return (
         <TableCell key={`body-${key}`} width={width}>
-          {dateStr}
+          {format(new Date(value), "yyyy/MM/dd", {
+            locale: ja,
+          })}
+        </TableCell>
+      );
+
+    case "datetime":
+      return (
+        <TableCell key={`body-${key}`} width={width}>
+          {format(fromUnixTime(value), "yyyy/MM/dd HH:mm:ss", {
+            locale: ja,
+          })}
         </TableCell>
       );
 
@@ -350,6 +356,7 @@ const DataTable: FC<DataTableProps> = (props) => {
     disableSearch,
     addButtonColor,
     naked,
+    basePath,
     onOrderClick,
     onSearchSubmit,
     onPageChange,
@@ -446,7 +453,7 @@ const DataTable: FC<DataTableProps> = (props) => {
                   key={`row-${i}`}
                   columns={columns}
                   row={row}
-                  path={currentPath}
+                  path={basePath || currentPath}
                   onEditButtonClick={onEditButtonClick}
                   onDeleteButtonClick={onDeleteButtonClick}
                 />
