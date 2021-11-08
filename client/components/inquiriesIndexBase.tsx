@@ -67,8 +67,12 @@ const columns: ColumnProps[] = [
     label: "ステータス",
     type: "string",
   },
-  { key: "numberOfUsers", label: "利用想定人数", type: "integer" },
-  { key: "introductoryTerm", label: "導入時期", type: "string" },
+  {
+    key: "progress.recontactedOn",
+    orderKey: "progresses.recontactedOn",
+    label: "再連絡日",
+    type: "date",
+  },
   { key: "createdAt", label: "作成日時", type: "datetime" },
 ];
 
@@ -275,6 +279,7 @@ const InquiriesIndexBase: FC<Props> = ({ state, staffId, title }) => {
         order={order}
         searchLabel="検索"
         naked
+        basePath="/admin/inquiries"
         onOrderClick={handleOrder}
         onSearchSubmit={handleSearch}
         recordCount={count}

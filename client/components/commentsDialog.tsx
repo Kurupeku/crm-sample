@@ -308,7 +308,7 @@ const CommentsDialog: FC<Props> = (props) => {
                   <CommentItem
                     key={comment.id}
                     comment={comment}
-                    owned
+                    owned={currentStaff?.id === comment?.staff?.id}
                     onEditClick={handleEdit}
                     refetchFunc={refetch}
                   />

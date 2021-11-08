@@ -1,16 +1,20 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useSnackbar } from "notistack";
 import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
 import {
   useGetStaffByIdQuery,
   useUpdateStaffMutation,
   useDeleteStaffMutation,
+  useUploadStaffIconMutation,
+  useDeleteStaffIconMutation,
 } from "../../../graphql/client";
 import ShowPanel, { Section } from "../../../components/showPanel";
 import Breads from "../../../components/breadcrumbs";
@@ -20,6 +24,7 @@ import FormDialog, {
 } from "../../../components/formDialog";
 import DeleteDialog from "../../../components/deleteDialog";
 import someoneAvatar from "../../../modules/avatar";
+import ChangePasswordDialog from "../../../components/staffPasswordDialog";
 
 const sections: Section[] = [
   {
@@ -41,8 +46,10 @@ const inputOptions: InputOption[] = [
 const StaffShow: FC = (props) => {
   const [form, setForm] = useState<FormData | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
+  const fileRef = useRef<HTMLInputElement>(null);
   const { id } = router.query;
 
   const { data, refetch } = useGetStaffByIdQuery({
@@ -85,6 +92,35 @@ const StaffShow: FC = (props) => {
     },
   });
 
+  const [uploadIconAction, {}] = useUploadStaffIconMutation({
+    onCompleted: () => {
+      enqueueSnackbar("画像をアップロードしました", { variant: "success" });
+      refetch();
+    },
+    onError: (error) => {
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
+    },
+  });
+
+  const [deleteIconAction, {}] = useDeleteStaffIconMutation({
+    variables: {
+      input: {
+        id: id as string,
+      },
+    },
+    onCompleted: () => {
+      enqueueSnackbar("画像を削除しました", { variant: "success" });
+      refetch();
+    },
+    onError: (error) => {
+      error.message
+        .split(",")
+        .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
+    },
+  });
+
   const handleEdit = () => {
     if (!data) return;
 
@@ -101,6 +137,29 @@ const StaffShow: FC = (props) => {
 
   const handleDelete = () => setDeleteId(id as string);
 
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = function () {
+        if (reader.result)
+          uploadIconAction({
+            variables: {
+              input: {
+                id: id as string,
+                icon: reader.result as string,
+              },
+            },
+          });
+      };
+      reader.onerror = function (error) {
+        enqueueSnackbar("ファイルを読み込めませんでした", { variant: "error" });
+      };
+    }
+  };
+
   return (
     <Container maxWidth="md" sx={{ marginTop: 2 }}>
       <Box sx={{ marginBottom: 2, display: "flex" }}>
@@ -116,20 +175,51 @@ const StaffShow: FC = (props) => {
           </Button>
         </Box>
       </Box>
-      <Paper sx={{ padding: 4 }}>
-        <Box
-          sx={{
-            margin: 2,
-            width: 100,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Avatar src={data?.staff.icon || someoneAvatar} />
-          <Button>画像を変更</Button>
-        </Box>
-        <ShowPanel data={data?.staff || {}} sections={sections} naked />
+      <Paper sx={{ py: 4, px: 2 }}>
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={3}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Avatar src={data?.staff.icon || someoneAvatar} />
+              <ButtonGroup sx={{ mt: 3 }}>
+                <Button
+                  onClick={() => fileRef.current?.click()}
+                  sx={{ width: 80 }}
+                >
+                  変更
+                </Button>
+                {data?.staff.icon ? (
+                  <Button onClick={() => deleteIconAction()} sx={{ width: 80 }}>
+                    削除
+                  </Button>
+                ) : null}
+              </ButtonGroup>
+              <Button
+                variant="outlined"
+                color="error"
+                sx={{ mt: 3, width: 160 }}
+                onClick={() => setChangePasswordOpen(true)}
+              >
+                パスワード変更
+              </Button>
+              <input
+                ref={fileRef}
+                accept="image/*"
+                type="file"
+                style={{ display: "none" }}
+                onChange={handleFile}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={9}>
+            <ShowPanel data={data?.staff || {}} sections={sections} naked />
+          </Grid>
+        </Grid>
       </Paper>
       <Box sx={{ display: "flex", justifyContent: "end", marginTop: 2 }}>
         <Link href="/admin/users">
@@ -147,6 +237,12 @@ const StaffShow: FC = (props) => {
         id={deleteId}
         onSubmit={deleteAction}
         onCancel={() => setDeleteId(null)}
+      />
+      <ChangePasswordDialog
+        open={changePasswordOpen}
+        staffId={data?.staff.id}
+        onClose={() => setChangePasswordOpen(false)}
+        refetchFunc={refetch}
       />
     </Container>
   );

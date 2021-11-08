@@ -48,7 +48,7 @@ const userLayouts: Layout[] = [
   { label: "ID", key: "id" },
   { label: "会社名", key: "companyName" },
   { label: "名前", key: "name" },
-  { label: "email", key: "Email" },
+  { label: "Email", key: "email" },
   { label: "TEL", key: "tel" },
 ];
 
@@ -227,7 +227,7 @@ const InquiryShow: FC = () => {
                 <Grid item xs={8} key={`value-menus`}>
                   {data?.inquiry
                     ? data.inquiry.menus.map(({ id, name }) => (
-                        <Chip key={id} label={name} sx={{ mr: 1 }} />
+                        <Chip key={id} label={name} sx={{ m: 1, mt: 0 }} />
                       ))
                     : null}
                 </Grid>

@@ -1,8 +1,9 @@
 import { FC } from "react";
+import Link from "next/link";
+import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 const Wrapper: FC<{ naked?: boolean }> = ({ children, naked }) => {
@@ -31,7 +32,9 @@ const Breads: FC<{ naked?: boolean }> = (props) => {
             const href = "/" + paths.slice(0, i + 1).join("/");
             return (
               <Link key={i} href={href}>
-                {path}
+                <Button sx={{ p: 0 }} color="inherit">
+                  {path}
+                </Button>
               </Link>
             );
           }

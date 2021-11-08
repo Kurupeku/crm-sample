@@ -95,3 +95,21 @@ mutation changeProgressRecontactedOn(
     id
   }
 }
+
+mutation uploadStaffIcon($input: StaffIconInput) {
+  uploadStaffIcon(input: $input) {
+    id
+  }
+}
+
+mutation deleteStaffIcon($input: StaffIDInput) {
+  deleteStaffIcon(input: $input) {
+    id
+  }
+}
+
+mutation changeStaffPassword($input: StaffChangePasswordInput) {
+  changeStaffPassword(input: $input) {
+    id
+  }
+}

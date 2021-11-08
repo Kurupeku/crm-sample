@@ -22,10 +22,11 @@ const RecontactedOnPicker: FC<Props> = ({ progress, refetchFunc }) => {
       enqueueSnackbar("再連絡日を設定しました", { variant: "success" });
       refetchFunc();
     },
-    onError: (error) =>
+    onError: (error) => {
       error.message
         .split(",")
         .map((msg) => enqueueSnackbar(msg, { variant: "error" }));
+    },
   });
 
   if (!progress || progress.state !== "waiting_recontact") return null;

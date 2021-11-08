@@ -102,10 +102,6 @@ func (r *mutationResolver) UploadStaffIcon(ctx context.Context, input *model.Sta
 		return nil, gqlerror.Errorf("対象のレコードは存在しません")
 	}
 
-	if validator.IsInvalidIcon(input.Icon) {
-		return nil, gqlerror.Errorf("有効な画像ではありません")
-	}
-
 	if err := r.DB.Model(&staff).Update("icon", input.Icon).Error; err != nil {
 		return nil, gqlerror.Errorf("レコードの更新に失敗しました")
 	}

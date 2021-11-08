@@ -25,7 +25,7 @@ import BrightnessMediumIcon from "@mui/icons-material/BrightnessMedium";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import MuiDrawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
-import { grey } from "@mui/material/colors";
+import { grey, teal, pink } from "@mui/material/colors";
 import DrawerMenu from "./drawerMenu";
 
 const drawerWidth = 240;
@@ -112,7 +112,13 @@ const Layout: FC = ({ children }) => {
       createTheme({
         palette: {
           mode,
-          ...(mode === "light" ? { background: { default: grey[200] } } : {}),
+          ...(mode === "light"
+            ? {
+                primary: { main: teal[500] },
+                secondary: { main: pink["A200"] },
+                background: { default: grey[200] },
+              }
+            : {}),
         },
         typography: { fontSize: 12 },
       }),
@@ -140,10 +146,10 @@ const Layout: FC = ({ children }) => {
   };
 
   const handleLogout = () => {
-    router.replace("/admin/login");
     removeCookie("jwt");
     resetSession();
     enqueueSnackbar("ログアウトしました", { variant: "success" });
+    router.replace("/admin/login");
   };
 
   return (

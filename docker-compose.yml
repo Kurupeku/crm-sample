@@ -29,7 +29,6 @@ services:
     depends_on:
       gateway:
         condition: service_healthy
-    command: ['tail', '-f', '/dev/null']
 
   gateway:
     build:
@@ -118,15 +117,15 @@ services:
       retries: 3
       start_period: 5s
 
-  staff_db_gui:
-    image: sosedoff/pgweb
-    ports:
-      - "3011:8081"
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/staff_development?sslmode=disable
-    depends_on:
-      - db
-    restart: always
+  # staff_db_gui:
+  #   image: sosedoff/pgweb
+  #   ports:
+  #     - "3011:8081"
+  #   environment:
+  #     - DATABASE_URL=postgres://postgres:postgres@db:5432/staff_development?sslmode=disable
+  #   depends_on:
+  #     - db
+  #   restart: always
 
   user_api:
     build:
@@ -151,15 +150,15 @@ services:
       retries: 3
       start_period: 20s
 
-  user_db_gui:
-    image: sosedoff/pgweb
-    ports:
-      - "3012:8081"
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/user_development?sslmode=disable
-    depends_on:
-      - db
-    restart: always
+  # user_db_gui:
+  #   image: sosedoff/pgweb
+  #   ports:
+  #     - "3012:8081"
+  #   environment:
+  #     - DATABASE_URL=postgres://postgres:postgres@db:5432/user_development?sslmode=disable
+  #   depends_on:
+  #     - db
+  #   restart: always
 
   inquiry_api:
     build:
@@ -184,15 +183,15 @@ services:
       retries: 3
       start_period: 20s
 
-  inquiry_db_gui:
-    image: sosedoff/pgweb
-    ports:
-      - "3013:8081"
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/inquiry_development?sslmode=disable
-    depends_on:
-      - db
-    restart: always
+  # inquiry_db_gui:
+  #   image: sosedoff/pgweb
+  #   ports:
+  #     - "3013:8081"
+  #   environment:
+  #     - DATABASE_URL=postgres://postgres:postgres@db:5432/inquiry_development?sslmode=disable
+  #   depends_on:
+  #     - db
+  #   restart: always
 
   batch:
     build:
