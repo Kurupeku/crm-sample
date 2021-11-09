@@ -18,7 +18,7 @@ GitHub Actionsを用いてのCI/CDも取り入れています。
 
 ## デモ
 
-![demo](https://github.com/Kurupeku/crm-sample/blob/main/docs/assets/demo.gif?raw=true)
+![demo](https://user-images.githubusercontent.com/22340645/141000816-b2b793c1-b789-4c3d-ae9f-3ca62687b702.gif)
 
 [CRM Sample App](https://www.crm-sample-app.kurupeku.dev/login) からログインできます。
 
