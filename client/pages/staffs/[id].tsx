@@ -1,5 +1,6 @@
 import { FC, useState, useRef } from "react";
 import { useRouter } from "next/router";
+import { useRecoilValue } from "recoil";
 import Link from "next/link";
 import { useSnackbar } from "notistack";
 import Container from "@mui/material/Container";
@@ -9,22 +10,20 @@ import Paper from "@mui/material/Paper";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
+import { currentStaffState } from "../../modules/atoms";
 import {
   useGetStaffByIdQuery,
   useUpdateStaffMutation,
   useDeleteStaffMutation,
   useUploadStaffIconMutation,
   useDeleteStaffIconMutation,
-} from "../../../graphql/client";
-import ShowPanel, { Section } from "../../../components/showPanel";
-import Breads from "../../../components/breadcrumbs";
-import FormDialog, {
-  FormData,
-  InputOption,
-} from "../../../components/formDialog";
-import DeleteDialog from "../../../components/deleteDialog";
-import someoneAvatar from "../../../modules/avatar";
-import ChangePasswordDialog from "../../../components/staffPasswordDialog";
+} from "../../graphql/client";
+import ShowPanel, { Section } from "../../components/showPanel";
+import Breads from "../../components/breadcrumbs";
+import FormDialog, { FormData, InputOption } from "../../components/formDialog";
+import DeleteDialog from "../../components/deleteDialog";
+import someoneAvatar from "../../modules/avatar";
+import ChangePasswordDialog from "../../components/staffPasswordDialog";
 
 const sections: Section[] = [
   {
@@ -47,9 +46,10 @@ const StaffShow: FC = (props) => {
   const [form, setForm] = useState<FormData | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
-  const fileRef = useRef<HTMLInputElement>(null);
+  const currentStaff = useRecoilValue(currentStaffState);
   const { id } = router.query;
 
   const { data, refetch } = useGetStaffByIdQuery({
@@ -82,7 +82,7 @@ const StaffShow: FC = (props) => {
       input: { id: deleteId || "" },
     },
     onCompleted: () => {
-      router.replace("/admin/staffs");
+      router.replace("/staffs");
       enqueueSnackbar("スタッフを削除しました", { variant: "success" });
     },
     onError: (error) => {
@@ -166,14 +166,16 @@ const StaffShow: FC = (props) => {
         <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
           <Breads naked />
         </Box>
-        <Box>
-          <Button onClick={handleEdit} sx={{ marginRight: 1 }}>
-            編集
-          </Button>
-          <Button onClick={handleDelete} color="error">
-            削除
-          </Button>
-        </Box>
+        {currentStaff?.id === id ? (
+          <Box>
+            <Button onClick={handleEdit} sx={{ marginRight: 1 }}>
+              編集
+            </Button>
+            <Button onClick={handleDelete} color="error">
+              削除
+            </Button>
+          </Box>
+        ) : null}
       </Box>
       <Paper sx={{ py: 4, px: 2 }}>
         <Grid container spacing={4}>
@@ -186,34 +188,41 @@ const StaffShow: FC = (props) => {
               }}
             >
               <Avatar src={data?.staff.icon || someoneAvatar} />
-              <ButtonGroup sx={{ mt: 3 }}>
-                <Button
-                  onClick={() => fileRef.current?.click()}
-                  sx={{ width: 80 }}
-                >
-                  変更
-                </Button>
-                {data?.staff.icon ? (
-                  <Button onClick={() => deleteIconAction()} sx={{ width: 80 }}>
-                    削除
+              {currentStaff?.id === id ? (
+                <>
+                  <ButtonGroup sx={{ mt: 3 }}>
+                    <Button
+                      onClick={() => fileRef.current?.click()}
+                      sx={{ width: 80 }}
+                    >
+                      変更
+                    </Button>
+                    {data?.staff.icon ? (
+                      <Button
+                        onClick={() => deleteIconAction()}
+                        sx={{ width: 80 }}
+                      >
+                        削除
+                      </Button>
+                    ) : null}
+                  </ButtonGroup>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    sx={{ mt: 3, width: 160 }}
+                    onClick={() => setChangePasswordOpen(true)}
+                  >
+                    パスワード変更
                   </Button>
-                ) : null}
-              </ButtonGroup>
-              <Button
-                variant="outlined"
-                color="error"
-                sx={{ mt: 3, width: 160 }}
-                onClick={() => setChangePasswordOpen(true)}
-              >
-                パスワード変更
-              </Button>
-              <input
-                ref={fileRef}
-                accept="image/*"
-                type="file"
-                style={{ display: "none" }}
-                onChange={handleFile}
-              />
+                  <input
+                    ref={fileRef}
+                    accept="image/*"
+                    type="file"
+                    style={{ display: "none" }}
+                    onChange={handleFile}
+                  />
+                </>
+              ) : null}
             </Box>
           </Grid>
           <Grid item xs={12} md={9}>
@@ -222,7 +231,7 @@ const StaffShow: FC = (props) => {
         </Grid>
       </Paper>
       <Box sx={{ display: "flex", justifyContent: "end", marginTop: 2 }}>
-        <Link href="/admin/users">
+        <Link href="/staffs">
           <Button color="inherit">一覧に戻る</Button>
         </Link>
       </Box>

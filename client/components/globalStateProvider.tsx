@@ -50,7 +50,7 @@ const GlobalStateProvider: FC = ({ children }) => {
   useEffect(() => {
     const jwt = cookies.jwt as string | null;
     if (!jwt) {
-      router.replace("/admin/login");
+      router.replace("/login");
     } else {
       fetchRefreshToken(jwt)
         .then((response) => {
@@ -60,7 +60,7 @@ const GlobalStateProvider: FC = ({ children }) => {
         })
         .catch((err) => {
           removeCookie("jwt");
-          router.replace("/admin/login");
+          router.replace("/login");
           enqueueSnackbar("セッションが切れています", { variant: "error" });
           setSession(null);
         })
@@ -72,7 +72,7 @@ const GlobalStateProvider: FC = ({ children }) => {
     const id = setInterval(() => {
       const jwt = cookies.jwt as string | null;
       if (!jwt) {
-        router.replace("/admin/login");
+        router.replace("/login");
       } else {
         fetchRefreshToken(jwt)
           .then((response) => {
@@ -82,7 +82,7 @@ const GlobalStateProvider: FC = ({ children }) => {
           })
           .catch((err) => {
             removeCookie("jwt");
-            router.replace("/admin/login");
+            router.replace("/login");
             enqueueSnackbar("セッションが切れています", { variant: "error" });
             setSession(null);
           });

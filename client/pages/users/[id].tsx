@@ -10,14 +10,14 @@ import {
   useGetUserByIdQuery,
   useUpdateUserMutation,
   useDeleteUserMutation,
-} from "../../../graphql/client";
-import ShowPanel, { Section } from "../../../components/showPanel";
-import Breads from "../../../components/breadcrumbs";
+} from "../../graphql/client";
+import ShowPanel, { Section } from "../../components/showPanel";
+import Breads from "../../components/breadcrumbs";
 import FormDialog, {
   FormData,
   InputOption,
-} from "../../../components/formDialog";
-import DeleteDialog from "../../../components/deleteDialog";
+} from "../../components/formDialog";
+import DeleteDialog from "../../components/deleteDialog";
 
 const prefsChoices = [
   "北海道",
@@ -160,7 +160,7 @@ const UserShow: FC = (props) => {
       input: { id: deleteId || "" },
     },
     onCompleted: () => {
-      router.replace("/admin/users");
+      router.replace("/users");
       enqueueSnackbar("スタッフを削除しました", { variant: "success" });
     },
     onError: (error) => {
@@ -221,7 +221,7 @@ const UserShow: FC = (props) => {
         />
       </Paper>
       <Box sx={{ display: "flex", justifyContent: "end", marginTop: 2 }}>
-        <Link href="/admin/users">
+        <Link href="/users">
           <Button color="inherit">一覧に戻る</Button>
         </Link>
       </Box>

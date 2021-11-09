@@ -19,7 +19,7 @@ const NotFound: FC = () => {
       </Typography>
       <Typography variant="body1" sx={{ mt: 4 }}>
         指定のURLのページは見つかりませんでした。
-        <Link href="/admin">Admin Home</Link>
+        <Link href="/">Home</Link>
       </Typography>
     </Container>
   );

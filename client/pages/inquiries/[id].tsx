@@ -13,20 +13,20 @@ import {
   useGetInquiryByIdQuery,
   useUpdateInquiryMutation,
   useDeleteInquiryMutation,
-} from "../../../graphql/client";
-import Breads from "../../../components/breadcrumbs";
+} from "../../graphql/client";
+import Breads from "../../components/breadcrumbs";
 import InquiryFormDialog, {
   FormData,
   RankMap,
-} from "../../../components/inquiryFormDialog";
-import UserFormDialog from "../../../components/userFormDialog";
-import DeleteDialog from "../../../components/deleteDialog";
-import CommentsDialog from "../../../components/commentsDialog";
-import StaffSelector from "../../../components/staffSelector";
-import RankSelector from "../../../components/rankSelector";
-import StateChanger from "../../../components/stateChanger";
-import RecontactedOnPicker from "../../../components/recontactedOnPicker";
-import { getProperty } from "../../../modules/parser";
+} from "../../components/inquiryFormDialog";
+import UserFormDialog from "../../components/userFormDialog";
+import DeleteDialog from "../../components/deleteDialog";
+import CommentsDialog from "../../components/commentsDialog";
+import StaffSelector from "../../components/staffSelector";
+import RankSelector from "../../components/rankSelector";
+import StateChanger from "../../components/stateChanger";
+import RecontactedOnPicker from "../../components/recontactedOnPicker";
+import { getProperty } from "../../modules/parser";
 
 interface Layout {
   label: string;
@@ -109,7 +109,7 @@ const InquiryShow: FC = () => {
       input: { id: deleteId || "" },
     },
     onCompleted: () => {
-      router.replace("/admin/inquiries");
+      router.replace("/inquiries");
       enqueueSnackbar("問い合わせを削除しました", { variant: "success" });
     },
     onError: (error) => {

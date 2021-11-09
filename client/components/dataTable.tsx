@@ -71,6 +71,8 @@ export interface DataRowProps {
   columns: ColumnProps[];
   row: RowProps;
   path: string;
+  editableOwnedOnly?: boolean;
+  ownerId?: string;
   onEditButtonClick?: (id: string) => void;
   onDeleteButtonClick?: (id: string) => void;
 }
@@ -94,6 +96,8 @@ export interface DataTableProps {
   linkColumnWidth?: string | number;
   naked?: boolean;
   basePath?: string;
+  editableOwnedOnly?: boolean;
+  ownerId?: string;
   customLinksFunc?: (row: RowProps) => ReactNode;
   onPerChange?: (value: number) => void;
   onPageChange?: (value: number) => void;
@@ -300,7 +304,15 @@ const DataCell = (props: DataCellProps) => {
 };
 
 const DataRow: FC<DataRowProps> = (props) => {
-  const { columns, row, path, onEditButtonClick, onDeleteButtonClick } = props;
+  const {
+    columns,
+    row,
+    path,
+    editableOwnedOnly,
+    ownerId,
+    onEditButtonClick,
+    onDeleteButtonClick,
+  } = props;
 
   return (
     <TableRow hover>
@@ -308,26 +320,32 @@ const DataRow: FC<DataRowProps> = (props) => {
         <DataCell key={column.key} column={column} row={row} />
       ))}
       <TableCell padding="none" align="center">
-        <div style={{ display: "flex", justifyContent: "center" }}>
+        <div style={{ display: "flex", justifyContent: "start" }}>
           <Link href={`${path}/${row.id}`}>
             <IconButton size="small" color="default">
               <InfoOutlinedIcon />
             </IconButton>
           </Link>
-          <IconButton
-            size="small"
-            color="default"
-            onClick={() => onEditButtonClick && onEditButtonClick(row.id)}
-          >
-            <EditIcon />
-          </IconButton>
-          <IconButton
-            size="small"
-            color="default"
-            onClick={() => onDeleteButtonClick && onDeleteButtonClick(row.id)}
-          >
-            <DeleteIcon />
-          </IconButton>
+          {!editableOwnedOnly || ownerId === String(row.id) ? (
+            <>
+              <IconButton
+                size="small"
+                color="default"
+                onClick={() => onEditButtonClick && onEditButtonClick(row.id)}
+              >
+                <EditIcon />
+              </IconButton>
+              <IconButton
+                size="small"
+                color="default"
+                onClick={() =>
+                  onDeleteButtonClick && onDeleteButtonClick(row.id)
+                }
+              >
+                <DeleteIcon />
+              </IconButton>
+            </>
+          ) : null}
         </div>
       </TableCell>
     </TableRow>
@@ -357,6 +375,8 @@ const DataTable: FC<DataTableProps> = (props) => {
     addButtonColor,
     naked,
     basePath,
+    editableOwnedOnly,
+    ownerId,
     onOrderClick,
     onSearchSubmit,
     onPageChange,
@@ -453,6 +473,8 @@ const DataTable: FC<DataTableProps> = (props) => {
                   key={`row-${i}`}
                   columns={columns}
                   row={row}
+                  editableOwnedOnly={editableOwnedOnly}
+                  ownerId={ownerId}
                   path={basePath || currentPath}
                   onEditButtonClick={onEditButtonClick}
                   onDeleteButtonClick={onDeleteButtonClick}

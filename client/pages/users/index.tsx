@@ -6,14 +6,14 @@ import {
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
-} from "../../../graphql/client";
-import DataTable, { ColumnProps } from "../../../components/dataTable";
+} from "../../graphql/client";
+import DataTable, { ColumnProps } from "../../components/dataTable";
 import FormDialog, {
   FormData,
   InputOption,
-} from "../../../components/formDialog";
-import DeleteDialog from "../../../components/deleteDialog";
-import Breads from "../../../components/breadcrumbs";
+} from "../../components/formDialog";
+import DeleteDialog from "../../components/deleteDialog";
+import Breads from "../../components/breadcrumbs";
 
 interface User {
   id: string;

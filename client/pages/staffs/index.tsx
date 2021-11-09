@@ -1,20 +1,19 @@
 import { FC, useState, useEffect } from "react";
-import Container from "@mui/material/Container";
 import { useSnackbar } from "notistack";
+import Container from "@mui/material/Container";
+import { useRecoilValue } from "recoil";
+import { currentStaffState } from "../../modules/atoms";
 import {
   useGetStaffsListQuery,
   useCreateStaffMutation,
   useUpdateStaffMutation,
   useDeleteStaffMutation,
-} from "../../../graphql/client";
-import DataTable, { ColumnProps } from "../../../components/dataTable";
-import FormDialog, {
-  FormData,
-  InputOption,
-} from "../../../components/formDialog";
-import DeleteDialog from "../../../components/deleteDialog";
-import Breads from "../../../components/breadcrumbs";
-import someoneAvatar from "../../../modules/avatar";
+} from "../../graphql/client";
+import DataTable, { ColumnProps } from "../../components/dataTable";
+import FormDialog, { FormData, InputOption } from "../../components/formDialog";
+import DeleteDialog from "../../components/deleteDialog";
+import Breads from "../../components/breadcrumbs";
+import someoneAvatar from "../../modules/avatar";
 
 interface Staff {
   id: string;
@@ -51,6 +50,7 @@ const StaffsIndex: FC = () => {
   const [page, setPage] = useState(1);
   const [form, setForm] = useState<FormData | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const currentStaff = useRecoilValue(currentStaffState);
   const { enqueueSnackbar } = useSnackbar();
 
   const { data, loading, error, refetch } = useGetStaffsListQuery({
@@ -171,6 +171,8 @@ const StaffsIndex: FC = () => {
         onNewButtonClick={handleNew}
         onEditButtonClick={handleEdit}
         onDeleteButtonClick={handleDelete}
+        editableOwnedOnly
+        ownerId={currentStaff?.id || undefined}
       />
       <FormDialog
         data={form}
