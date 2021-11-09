@@ -183,6 +183,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     needs:
+      - build-batch
       - build-gateway
       - build-federation
       - build-staff-api

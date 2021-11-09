@@ -74,6 +74,7 @@ const ShowPanel: FC<Props> = (props) => {
       <Grid container spacing={6}>
         {sections.map((sec, i) => (
           <Grid
+            key={i}
             item
             xs={12}
             md={mc === 1 ? 12 : 6}

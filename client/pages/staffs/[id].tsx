@@ -231,7 +231,7 @@ const StaffShow: FC = (props) => {
         </Grid>
       </Paper>
       <Box sx={{ display: "flex", justifyContent: "end", marginTop: 2 }}>
-        <Link href="/staffs">
+        <Link href="/staffs" passHref>
           <Button color="inherit">一覧に戻る</Button>
         </Link>
       </Box>
@@ -249,7 +249,7 @@ const StaffShow: FC = (props) => {
       />
       <ChangePasswordDialog
         open={changePasswordOpen}
-        staffId={data?.staff.id}
+        staffId={data?.staff.id || "0"}
         onClose={() => setChangePasswordOpen(false)}
         refetchFunc={refetch}
       />
