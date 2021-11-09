@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, ReactNode } from "react";
+import { FC, useState, useEffect, useMemo, ReactNode } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { ApolloError } from "@apollo/client";
@@ -28,6 +28,7 @@ import LinerProgress from "@mui/material/LinearProgress";
 import InputBase from "@mui/material/InputBase";
 import AddIcon from "@mui/icons-material/Add";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import Skeleton from "@mui/material/Skeleton";
 import { visuallyHidden } from "@mui/utils";
 import { getProperty } from "../modules/parser";
 
@@ -403,6 +404,11 @@ const DataTable: FC<DataTableProps> = (props) => {
     onPageChange && onPageChange(1);
   };
 
+  const rowsRange = useMemo(
+    () => Array.from({ length: per }, (_, k) => k),
+    [per]
+  );
+
   return (
     <Wrapper naked={naked}>
       <Toolbar>
@@ -457,13 +463,19 @@ const DataTable: FC<DataTableProps> = (props) => {
             )}
           </TableHead>
           <TableBody>
-            {error || !rows ? (
+            {loading ? (
+              rowsRange.map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell colSpan={colSpan}>
+                    <Skeleton animation="wave" />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : error || !rows ? (
               <TableRow>
                 <TableCell colSpan={colSpan} align="center">
                   <Typography variant="inherit">
-                    {error?.message ||
-                      errorMessage ||
-                      "データの取得に失敗しました"}
+                    データの取得に失敗しました
                   </Typography>
                 </TableCell>
               </TableRow>
