@@ -156,6 +156,9 @@ export default function Login() {
                 autoFocus
                 value={email}
                 onChange={handleEmail}
+                onKeyPress={(e) => {
+                  if (e.key == "Enter") handleSubmit();
+                }}
               />
               <TextField
                 margin="normal"
@@ -168,6 +171,9 @@ export default function Login() {
                 autoComplete="current-password"
                 value={password}
                 onChange={handlePassword}
+                onKeyPress={(e) => {
+                  if (e.key == "Enter") handleSubmit();
+                }}
               />
               <Button
                 fullWidth
