@@ -12,6 +12,19 @@ env:
   DOCKER_BUILDKIT: 1
   IMAGE_NAME_BASE: ghcr.io/kurupeku/crm-sample
 
+  AWS_REGION: ap-northeast-1
+  ECS_SERVICE: crm-sample-api
+  ECS_CLUSTER: crm-sample-api-cluster
+
+  CONTAINER_NAME_BATCH: batch
+  CONTAINER_NAME_USER_API_MIGRATION: user-api-migration
+  CONTAINER_NAME_INQUIRY_API_MIGRATION: inquiry-api-migration
+  CONTAINER_NAME_GATEWAY: gateway
+  CONTAINER_NAME_FEDERATION: federation
+  CONTAINER_NAME_STAFF_API: staff-api
+  CONTAINER_NAME_USER_API: user-api
+  CONTAINER_NAME_INQUIRY_API: inquiry-api
+
 jobs:
   build-batch:
     name: Build Batch
@@ -165,80 +178,104 @@ jobs:
 
   # -----------------------------------------------------------------------------
 
-  # deploy-to-ecs:
-  #   name: Deploy to ECS
-  #   runs-on: ubuntu-latest
-  #   environment: production
-  #   needs:
-  #     - build-gateway
-  #     - build-federation
-  #     - build-staff-api
-  #     - build-user-api
-  #     - build-inquiry-api
+  deploy-to-ecs:
+    name: Deploy to ECS
+    runs-on: ubuntu-latest
+    environment: production
+    needs:
+      - build-gateway
+      - build-federation
+      - build-staff-api
+      - build-user-api
+      - build-inquiry-api
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-  #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: ${{ env.AWS_REGION }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
-  #     - name: Login to Amazon ECR
-  #       id: login-ecr
-  #       uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
 
-  #     - name: Download task definition
-  #       run: |
-  #         aws ecs describe-task-definition --task-definition my-task-definition-family --query taskDefinition > task-definition.json
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition crm-sample-task-difinitions --query taskDefinition > task-definition.json
 
-  #     - name: Fill in the new gateway image ID in the Amazon ECS task definition
-  #       id: task-def
-  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
-  #       with:
-  #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
-  #         container-name: ${{ env.CONTAINER_NAME_GATEWAY }}
-  #         image: ${{ steps.login-ecr.outputs.registry }}/${{ needs.build-gateway.outputs.image }}
+      - name: Fill in the new batch image ID in the Amazon ECS task definition
+        id: task-def-batch
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_BATCH }}
+          image: ${{ env.IMAGE_NAME_BASE }}/batch:${{ github.sha }}
 
-  #     - name: Fill in the new federation image ID in the Amazon ECS task definition
-  #       id: task-def
-  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
-  #       with:
-  #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
-  #         container-name: ${{ env.CONTAINER_NAME_FEDERATION }}
-  #         image: ${{ steps.login-ecr.outputs.registry }}/${{ needs.build-federation.outputs.image }}}
+      - name: Fill in the new user-api-migration image ID in the Amazon ECS task definition
+        id: task-def-user-api-migration
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_USER_API_MIGRATION }}
+          image: ${{ env.IMAGE_NAME_BASE }}/user-api:${{ github.sha }}
 
-  #     - name: Fill in the new staff api image ID in the Amazon ECS task definition
-  #       id: task-def
-  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
-  #       with:
-  #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
-  #         container-name: ${{ env.CONTAINER_NAME_STAFF_API }}
-  #         image: ${{ steps.login-ecr.outputs.registry }}/${{ needs.build-staff-api.outputs.image }}}
+      - name: Fill in the new inquiry-api-migration image ID in the Amazon ECS task definition
+        id: task-def-inquiry-api-migration
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_INQUIRY_API_MIGRATION }}
+          image: ${{ env.IMAGE_NAME_BASE }}/inquiry-api:${{ github.sha }}
 
-  #     - name: Fill in the new user api image ID in the Amazon ECS task definition
-  #       id: task-def
-  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
-  #       with:
-  #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
-  #         container-name: ${{ env.CONTAINER_NAME_USER_API }}
-  #         image: ${{ steps.login-ecr.outputs.registry }}/${{ needs.build-user-api.outputs.image }}}
+      - name: Fill in the new gateway image ID in the Amazon ECS task definition
+        id: task-def-gateway
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_GATEWAY }}
+          image: ${{ env.IMAGE_NAME_BASE }}/gateway:${{ github.sha }}
 
-  #     - name: Fill in the new inquiry api image ID in the Amazon ECS task definition
-  #       id: task-def
-  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
-  #       with:
-  #         task-definition: ${{ env.ECS_TASK_DEFINITION }}
-  #         container-name: ${{ env.CONTAINER_NAME_INQUIRY_API }}
-  #         image: ${{ steps.login-ecr.outputs.registry }}/${{ needs.build-inquiry-api.outputs.image }}}
+      - name: Fill in the new federation image ID in the Amazon ECS task definition
+        id: task-def-federation
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_FEDERATION }}
+          image: ${{ env.IMAGE_NAME_BASE }}/federation:${{ github.sha }}
 
-  #     - name: Deploy Amazon ECS task definition
-  #       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-  #       with:
-  #         task-definition: ${{ steps.task-def.outputs.task-definition }}
-  #         service: ${{ env.ECS_SERVICE }}
-  #         cluster: ${{ env.ECS_CLUSTER }}
-  #         wait-for-service-stability: true
+      - name: Fill in the new staff api image ID in the Amazon ECS task definition
+        id: task-def-staff-api
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_STAFF_API }}
+          image: ${{ env.IMAGE_NAME_BASE }}/staff-api:${{ github.sha }}
+
+      - name: Fill in the new user api image ID in the Amazon ECS task definition
+        id: task-def-user-api
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_USER_API }}
+          image: ${{ env.IMAGE_NAME_BASE }}/user-api:${{ github.sha }}
+
+      - name: Fill in the new inquiry api image ID in the Amazon ECS task definition
+        id: task-def-inquiry-api
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_INQUIRY_API }}
+          image: ${{ env.IMAGE_NAME_BASE }}/inquiry-api:${{ github.sha }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
