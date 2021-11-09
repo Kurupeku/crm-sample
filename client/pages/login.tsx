@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/dist/client/router";
 import axios from "axios";
 import { useCookies } from "react-cookie";
@@ -36,8 +36,9 @@ export default function Login() {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
+  const jwt = useMemo(() => cookies.jwt, [cookies]) as string | null;
+
   useEffect(() => {
-    const jwt = cookies.jwt as string | null;
     if (jwt) {
       setGlobalLoading(true);
       const url = `${process.env.NEXT_PUBLIC_API_HOST}/api/refresh_token`;
@@ -66,7 +67,14 @@ export default function Login() {
           setGlobalLoading(false);
         });
     }
-  }, []);
+  }, [
+    router,
+    enqueueSnackbar,
+    removeCookie,
+    setCookie,
+    setSession,
+    setLoading,
+  ]);
 
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(e.currentTarget.value);
