@@ -149,7 +149,7 @@ const Layout: FC = ({ children }) => {
     removeCookie("jwt");
     resetSession();
     enqueueSnackbar("ログアウトしました", { variant: "success" });
-    router.replace("/admin/login");
+    router.replace("/login");
   };
 
   return (

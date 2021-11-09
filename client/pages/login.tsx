@@ -3,7 +3,7 @@ import { useRouter } from "next/dist/client/router";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { globalLoadingState, sessionState } from "../../modules/atoms";
+import { globalLoadingState, sessionState } from "../modules/atoms";
 import { useSnackbar } from "notistack";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -15,7 +15,7 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import CircleProgress from "@mui/material/CircularProgress";
-import { generateSessionData, AuthResponseData } from "../../modules/jwt";
+import { generateSessionData, AuthResponseData } from "../modules/jwt";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { teal, pink } from "@mui/material/colors";
 
@@ -56,7 +56,7 @@ export default function Login() {
           setCookie("jwt", response.data.token, { path: "/" });
           const sessionData = generateSessionData(response.data);
           setSession(sessionData);
-          router.replace("/admin");
+          router.replace("/");
         })
         .catch((err) => {
           removeCookie("jwt");
@@ -89,7 +89,7 @@ export default function Login() {
         setCookie("jwt", response.data.token, { path: "/" });
         const sessionData = generateSessionData(response.data);
         setSession(sessionData);
-        router.replace("/admin");
+        router.replace("/");
         enqueueSnackbar("ログインしました", { variant: "success" });
       })
       .catch(() => {

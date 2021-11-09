@@ -279,7 +279,7 @@ const InquiriesIndexBase: FC<Props> = ({ state, staffId, title }) => {
         order={order}
         searchLabel="検索"
         naked
-        basePath="/admin/inquiries"
+        basePath="/inquiries"
         onOrderClick={handleOrder}
         onSearchSubmit={handleSearch}
         recordCount={count}

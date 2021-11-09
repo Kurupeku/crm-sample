@@ -15,7 +15,7 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import ja from "date-fns/locale/ja";
 
-const loginPath = /^\/admin\/login\/?$/;
+const loginPath = /^\/login\/?$/;
 
 const isMatchLoginPath = (router: NextRouter) => {
   return loginPath.test(router.pathname);
