@@ -19,10 +19,10 @@ type Staff struct {
 func (Staff) IsEntity() {}
 
 type StaffPageInfo struct {
-	CurrentPage int `json:"currentPage"`
-	RecordCount int `json:"recordCount"`
-	PageCount   int `json:"pageCount"`
-	Limit       int `json:"limit"`
+	CurrentPage  int `json:"currentPage"`
+	RecordsCount int `json:"recordCount"`
+	PagesCount    int `json:"pageCount"`
+	Limit        int `json:"limit"`
 }
 
 type StaffList struct {

@@ -36,6 +36,8 @@ class User < ApplicationRecord
   }
 
   scope :fields_cont, lambda { |word|
+    return all if word.blank?
+
     company_name_cont(word)
       .or(name_cont(word))
       .or(email_cont(word))

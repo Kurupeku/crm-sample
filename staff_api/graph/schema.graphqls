@@ -21,20 +21,21 @@ extend type Comment @key(fields: "id") {
 
 type StaffPageInfo {
   currentPage: Int!
-  recordCount: Int!
-  pageCount: Int!
+  recordsCount: Int!
+  pagesCount: Int!
   limit: Int!
 }
 
-type StaffList {
+type StaffsList {
   pageInfo: StaffPageInfo!
   staffs: [Staff!]!
 }
 
 type Query {
   staffs: [Staff!]!
-  staffList(page: Int, per: Int): StaffList!
+  staffsList(page: Int, per: Int): StaffsList!
   staff(id: ID!): Staff!
+  staffByEmail(email: String!): Staff!
 }
 
 input NewStaffInput {

@@ -11,5 +11,5 @@ type Staff struct {
 	Name           string    `gorm:"not null" csv:"name"`
 	Email          string    `gorm:"uniqueIndex;not null" csv:"email"`
 	PasswordDigest []byte    `gorm:"not null"`
-	Icon           string    `gorm:"type:text"`
+	Icon           string    `gorm:"type:text" csv:"icon"`
 }

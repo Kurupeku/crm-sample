@@ -1,0 +1,242 @@
+query getMenusOnlyName {
+  menus {
+    id
+    name
+  }
+}
+
+query getStaffsOnlyName {
+  staffs {
+    id
+    name
+  }
+}
+
+query getStaffsList($page: Int, $per: Int) {
+  staffsList(page: $page, per: $per) {
+    staffs {
+      id
+      name
+      email
+      icon
+      createdAt
+      updatedAt
+    }
+    pageInfo {
+      currentPage
+      limit
+      pagesCount
+      recordsCount
+    }
+  }
+}
+
+query getStaffById($id: ID!) {
+  staff(id: $id) {
+    id
+    name
+    email
+    icon
+    createdAt
+    updatedAt
+  }
+}
+
+query getStaffbyEmail($email: String!) {
+  staffByEmail(email: $email) {
+    id
+    name
+    email
+    icon
+    createdAt
+    updatedAt
+  }
+}
+
+query getUsersList($fieldsCont: String, $order: String, $page: Int, $per: Int) {
+  usersList(fieldsCont: $fieldsCont, order: $order, page: $page, per: $per) {
+    pageInfo {
+      currentPage
+      limit
+      pagesCount
+      recordsCount
+    }
+    users {
+      id
+      companyName
+      name
+      email
+      tel
+      createdAt
+      updatedAt
+      address {
+        postalCode
+        prefecture
+        city
+        street
+        building
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+
+query getUserById($userId: Int!) {
+  user(id: $userId) {
+    id
+    companyName
+    name
+    email
+    tel
+    createdAt
+    updatedAt
+    address {
+      id
+      postalCode
+      prefecture
+      city
+      street
+      building
+      createdAt
+      updatedAt
+    }
+  }
+}
+
+query getInquiriesList(
+  $per: Int
+  $page: Int
+  $order: String
+  $fieldsCont: String
+  $staffId: Int
+  $state: ProgressStateEnum
+) {
+  inquiriesList(
+    per: $per
+    page: $page
+    order: $order
+    fieldsCont: $fieldsCont
+    staffId: $staffId
+    state: $state
+  ) {
+    inquiries {
+      id
+      userId
+      companyName
+      name
+      email
+      tel
+      numberOfUsers
+      introductoryTerm
+      detail
+      createdAt
+      updatedAt
+      progress {
+        id
+        inquiryId
+        staffId
+        rank
+        rankI18n
+        state
+        stateI18n
+        recontactedOn
+        contactedAt
+        staff {
+          name
+        }
+      }
+      menus {
+        id
+        name
+      }
+    }
+    pageInfo {
+      currentPage
+      limit
+      pagesCount
+      recordsCount
+    }
+  }
+}
+
+query getInquiryById($inquiryId: ID!) {
+  inquiry(id: $inquiryId) {
+    id
+    userId
+    companyName
+    name
+    email
+    tel
+    numberOfUsers
+    introductoryTerm
+    detail
+    createdAt
+    updatedAt
+    progress {
+      id
+      inquiryId
+      staffId
+      rank
+      rankI18n
+      state
+      stateI18n
+      recontactedOn
+      contactedAt
+      selectableEvents {
+        event
+        label
+      }
+      staff {
+        id
+        name
+        icon
+      }
+    }
+    menus {
+      id
+      name
+    }
+    user {
+      id
+      companyName
+      name
+      email
+      tel
+      address {
+        postalCode
+        prefecture
+        city
+        street
+        building
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+
+query getProgressStateAndEvents($progressId: ID!) {
+  progress(id: $progressId) {
+    id
+    state
+    stateI18n
+    selectableEvents {
+      event
+      label
+    }
+  }
+}
+
+query getComments($inquiryId: Int, $order: String) {
+  comments(inquiryId: $inquiryId, order: $order) {
+    id
+    content
+    createdAt
+    staff {
+      id
+      name
+      icon
+    }
+  }
+}

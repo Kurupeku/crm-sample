@@ -22,23 +22,24 @@ module Mutations
 
     def resolve(id:, **args)
       user = User.find id
-      user.assign_attributes user_params(args)
-      user.address.assign_attributes address_params(args[:address]) if args[:address].present?
-      user.save! && user
+      user.transaction do
+        user.assign_attributes user_params(args)
+        user.address.update! address_params(args[:address]) if args[:address].present?
+        user.save! && user
+      end
     end
 
     private
 
     def user_params(args)
-      args.select do |key, value|
-        key != :address && value.present?
+      args.reject do |key, _|
+        key == :address
       end
     end
 
-    def address_params(args)
-      address_args = args[:address]
+    def address_params(address)
       %i[postal_code prefecture city street building].map do |key|
-        [key, address_args.send(key)]
+        [key, address.send(key)]
       end.to_h
     end
   end
