@@ -6,6 +6,10 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - ".github/**"
+      - "client/**"
+      - "**.md"
 
 env:
   REGISTRY: ghcr.io
