@@ -103,12 +103,12 @@ const GlobalStateProvider: FC = ({ children }) => {
 
   return (
     <>
+      {children}
       {loading && (
         <Backdrop open={loading}>
           <Loader type="MutatingDots" height={100} width={100} />
         </Backdrop>
       )}
-      {children}
     </>
   );
 };
