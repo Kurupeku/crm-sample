@@ -175,7 +175,7 @@ const HeadCell: FC<HeadCellProps> = (props) => {
         setAlign("left");
         break;
     }
-  }, []);
+  }, [type]);
 
   const handleOrder = () => {
     if (!onOrderClick) return;
@@ -321,7 +321,7 @@ const DataRow: FC<DataRowProps> = (props) => {
       ))}
       <TableCell padding="none" align="center">
         <div style={{ display: "flex", justifyContent: "start" }}>
-          <Link href={`${path}/${row.id}`}>
+          <Link href={`${path}/${row.id}`} passHref>
             <IconButton size="small" color="default">
               <InfoOutlinedIcon />
             </IconButton>

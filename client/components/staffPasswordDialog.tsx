@@ -17,7 +17,7 @@ import { useChangeStaffPasswordMutation } from "../graphql/client";
 
 interface Props {
   open: boolean;
-  staffId?: string;
+  staffId: string;
   onClose?: () => void;
   refetchFunc?: () => void;
 }
@@ -28,8 +28,6 @@ const ChangePasswordDialog: FC<Props> = ({
   onClose,
   refetchFunc,
 }) => {
-  if (!staffId) return null;
-
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
@@ -58,12 +56,13 @@ const ChangePasswordDialog: FC<Props> = ({
     },
   });
 
-  return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm">
-      <DialogTitle>パスワード変更</DialogTitle>
-      <DialogContent>
+  return !staffId ? null : (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle sx={{ width: 350 }}>パスワード変更</DialogTitle>
+      <DialogContent sx={{ width: 350 }}>
         <DialogContentText>
           パスワードは本人以外に確認できません。
+          <br />
           忘れないように注意してください。
         </DialogContentText>
         <FormControl sx={{ m: 1 }} variant="standard" fullWidth>
@@ -105,7 +104,7 @@ const ChangePasswordDialog: FC<Props> = ({
           />
         </FormControl>
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ width: 350 }}>
         <Button onClick={onClose}>キャンセル</Button>
         <Button onClick={() => changeAction()} color="primary">
           変更

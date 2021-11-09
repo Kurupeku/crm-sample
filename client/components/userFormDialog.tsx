@@ -269,7 +269,7 @@ const UserFormDialog: FC<UserFormProps> = (props) => {
                       </TableRow>
                     ) : (
                       usersData.usersList.users.map((user) => (
-                        <TableRow>
+                        <TableRow key={user.id}>
                           <TableCell>{user.id}</TableCell>
                           <TableCell>{user.companyName}</TableCell>
                           <TableCell>{user.name}</TableCell>
@@ -317,9 +317,10 @@ const UserFormDialog: FC<UserFormProps> = (props) => {
             ) : (
               userFormLayouts.map((layout, i) => (
                 <TextField
-                  autoFocus={i === 0}
+                  key={`${layout.key}-${i}`}
                   id={layout.key}
                   label={layout.label}
+                  autoFocus={i === 0}
                   type={layout.key === "email" ? "email" : "text"}
                   fullWidth
                   variant="standard"

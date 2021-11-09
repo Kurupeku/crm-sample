@@ -53,7 +53,7 @@ interface ItemProps {
 }
 
 interface Props {
-  inquiryId?: string;
+  inquiryId: string;
 }
 
 const CommentItem: FC<ItemProps> = (props) => {
@@ -134,7 +134,6 @@ const Transition = forwardRef(function Transition(
 
 const CommentsDialog: FC<Props> = (props) => {
   const { inquiryId } = props;
-  if (!inquiryId) return null;
 
   const [open, setOpen] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -242,7 +241,7 @@ const CommentsDialog: FC<Props> = (props) => {
     );
   }, [data]);
 
-  return (
+  return !inquiryId ? null : (
     <>
       <Fab
         color="secondary"

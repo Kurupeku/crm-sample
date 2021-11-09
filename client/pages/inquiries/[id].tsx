@@ -151,7 +151,7 @@ const InquiryShow: FC = () => {
     if (!data || !data.inquiry) return;
 
     setProgressId(data.inquiry.progress.id);
-  }, [data?.inquiry]);
+  }, [data]);
 
   return (
     <>
@@ -315,7 +315,7 @@ const InquiryShow: FC = () => {
         refetchFunc={refetch}
         onClose={() => setUserModalOpen(false)}
       />
-      <CommentsDialog inquiryId={id as string | undefined} />
+      <CommentsDialog inquiryId={(id as string | undefined) || "0"} />
     </>
   );
 };

@@ -151,6 +151,7 @@ const InquiryFormDialog: FC<Props> = (props) => {
               .reverse()
               .map((pair) => (
                 <FormControlLabel
+                  key={pair[0]}
                   value={pair[1]}
                   control={<Radio />}
                   label={pair[0].toUpperCase()}
@@ -236,6 +237,7 @@ const InquiryFormDialog: FC<Props> = (props) => {
           <FormGroup>
             {menuOptions.map(({ label, value }) => (
               <FormControlLabel
+                key={`check-${value}`}
                 control={
                   <Checkbox
                     checked={isChecked(value)}
