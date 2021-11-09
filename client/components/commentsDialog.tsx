@@ -25,6 +25,7 @@ import Slide from "@mui/material/Slide";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import TextField from "@mui/material/TextField";
+import CircularProgress from "@mui/material/CircularProgress";
 import { TransitionProps } from "@mui/material/transitions";
 import {
   useGetCommentsQuery,
@@ -142,7 +143,7 @@ const CommentsDialog: FC<Props> = (props) => {
   const { enqueueSnackbar } = useSnackbar();
   const currentStaff = useRecoilValue(currentStaffState);
 
-  const { data, refetch } = useGetCommentsQuery({
+  const { data, loading, refetch } = useGetCommentsQuery({
     skip: !open,
     variables: { inquiryId: parseInt(inquiryId, 10) },
   });
@@ -302,20 +303,26 @@ const CommentsDialog: FC<Props> = (props) => {
                   作成
                 </Button>
               </Box>
-              {comments.map((comment, i) => (
-                <>
-                  <CommentItem
-                    key={comment.id}
-                    comment={comment}
-                    owned={currentStaff?.id === comment?.staff?.id}
-                    onEditClick={handleEdit}
-                    refetchFunc={refetch}
-                  />
-                  {i === comments.length - 1 ? null : (
-                    <Divider variant="inset" component="li" />
-                  )}
-                </>
-              ))}
+              {loading ? (
+                <ListItem sx={{ display: "flex", justifyContent: "center" }}>
+                  <CircularProgress />
+                </ListItem>
+              ) : (
+                comments.map((comment, i) => (
+                  <>
+                    <CommentItem
+                      key={comment.id}
+                      comment={comment}
+                      owned={currentStaff?.id === comment?.staff?.id}
+                      onEditClick={handleEdit}
+                      refetchFunc={refetch}
+                    />
+                    {i === comments.length - 1 ? null : (
+                      <Divider variant="inset" component="li" />
+                    )}
+                  </>
+                ))
+              )}
             </List>
           </Paper>
         </Container>
