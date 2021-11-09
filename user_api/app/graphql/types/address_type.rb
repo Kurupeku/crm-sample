@@ -13,9 +13,15 @@ module Types
     field :created_at, Int, null: false
     field :updated_at, Int, null: false
 
-    # method_fields
     field :full_address, String, null: false
+    def full_address
+      object.full_address
+    end
+
     field :full_address_with_postal_code, String, null: false
+    def full_address_with_postal_code
+      object.full_address_with_postal_code
+    end
 
     def created_at
       object.created_at_unix
@@ -25,6 +31,4 @@ module Types
       object.updated_at_unix
     end
   end
-
-  
 end

@@ -44,7 +44,7 @@ func staffInsert() []uint {
 
 	var result []uint
 	for _, staff := range staffs {
-		result = append(result, staff.ID)
+		result = append(result, uint(staff.ID))
 	}
 
 	return result
@@ -73,7 +73,7 @@ func userInsert() []uint {
 
 	var result []uint
 	for _, user := range users {
-		result = append(result, user.ID)
+		result = append(result, uint(user.ID))
 	}
 
 	return result
@@ -108,11 +108,14 @@ func inquiryInsert(staffIDs []uint, userIDs []uint) {
 
 	// Create Menus
 	mr := db.Create(&menus)
+	for _, menu := range menus {
+		menu.PublishedOn = time.Now().Format("2006-01-02")
+	}
 	fmt.Printf("created %d menus\n", mr.RowsAffected)
 
 	// Create Inquiries
 	for _, inquiry := range inquiries {
-		inquiry.UserID = userIDs[rand.Intn(len(userIDs))]
+		inquiry.UserID = uint(userIDs[rand.Intn(len(userIDs))])
 	}
 	ir := db.Create(&inquiries)
 	fmt.Printf("created %d inquiries\n", ir.RowsAffected)
@@ -138,7 +141,7 @@ func inquiryInsert(staffIDs []uint, userIDs []uint) {
 	now := time.Now()
 	recontactDate := now.AddDate(0, 0, 7).Format("2006-01-02")
 	for i, inquiry := range inquiries {
-		staffID := staffIDs[rand.Intn(len(staffIDs))]
+		staffID := uint(staffIDs[rand.Intn(len(staffIDs))])
 
 		progress := progresses[i]
 		if progress.State != "waiting" {
@@ -163,7 +166,7 @@ func inquiryInsert(staffIDs []uint, userIDs []uint) {
 		for i, comment := range comments {
 			inqInd := i / roundNum
 			inquiry := inquiries[inqInd]
-			comment.StaffID = staffIDs[rand.Intn(len(staffIDs))]
+			comment.StaffID = uint(staffIDs[rand.Intn(len(staffIDs))])
 			comment.InquiryID = inquiry.ID
 			comment.UserID = inquiry.UserID
 		}

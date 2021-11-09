@@ -8,7 +8,7 @@ module Mutations
 
     def resolve(id:, **args)
       menu = Menu.find id
-      menu.update!(params(args)) && menu
+      menu.update!(args) && menu
     end
   end
 end

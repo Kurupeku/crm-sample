@@ -31,6 +31,12 @@ class Comment < ApplicationRecord
     validates :user_id, allow_nil: true
   end
 
+  scope :inquiry_id_eq, lambda { |inquiry_id|
+    return all if inquiry_id.blank?
+
+    where inquiry_id: inquiry_id
+  }
+
   private
 
   def set_user_id

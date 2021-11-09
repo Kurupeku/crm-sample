@@ -1,0 +1,115 @@
+mutation createStaff($input: NewStaffInput) {
+  createStaff(input: $input) {
+    id
+  }
+}
+
+mutation updateStaff($input: StaffInput) {
+  updateStaff(input: $input) {
+    id
+  }
+}
+
+mutation deleteStaff($input: StaffIDInput) {
+  deleteStaff(input: $input) {
+    id
+  }
+}
+
+mutation createUser($input: CreateUserInput!) {
+  createUser(input: $input) {
+    id
+  }
+}
+
+mutation updateUser($input: UpdateUserInput!) {
+  updateUser(input: $input) {
+    id
+  }
+}
+
+mutation deleteUser($input: DeleteUserInput!) {
+  deleteUser(input: $input) {
+    id
+  }
+}
+
+mutation createInquiry($input: CreateInquiryInput!) {
+  createInquiry(input: $input) {
+    id
+  }
+}
+
+mutation updateInquiry($input: UpdateInquiryInput!) {
+  updateInquiry(input: $input) {
+    id
+  }
+}
+
+mutation deleteInquiry($input: DeleteInquiryInput!) {
+  deleteInquiry(input: $input) {
+    id
+  }
+}
+
+mutation changeProgressStaff($input: ChangeProgressStaffInput!) {
+  changeProgressStaff(input: $input) {
+    id
+  }
+}
+
+mutation changeProgressRank($input: ChangeProgressRankInput!) {
+  changeProgressRank(input: $input) {
+    id
+  }
+}
+
+mutation changeProgressState($input: ChangeProgressStateInput!) {
+  changeProgressState(input: $input) {
+    id
+  }
+}
+
+mutation createComment($input: CreateCommentInput!) {
+  createComment(input: $input) {
+    id
+  }
+}
+
+mutation updateComment($input: UpdateCommentInput!) {
+  updateComment(input: $input) {
+    id
+  }
+}
+
+mutation deleteComment($input: DeleteCommentInput!) {
+  deleteComment(input: $input) {
+    id
+  }
+}
+
+mutation changeProgressRecontactedOn(
+  $input: ChangeProgressRecontactedOnInput!
+) {
+  changeProgressRecontactedOn(input: $input) {
+    id
+  }
+}
+
+mutation uploadStaffIcon($input: StaffIconInput) {
+  uploadStaffIcon(input: $input) {
+    id
+  }
+}
+
+mutation deleteStaffIcon($input: StaffIDInput) {
+  deleteStaffIcon(input: $input) {
+    id
+  }
+}
+
+mutation changeStaffPassword($input: StaffChangePasswordInput) {
+  changeStaffPassword(input: $input) {
+    id
+  }
+}

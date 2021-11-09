@@ -40,3 +40,8 @@ type StaffInput struct {
 	Name  *string `json:"name"`
 	Email *string `json:"email"`
 }
+
+type StaffsList struct {
+	PageInfo *StaffPageInfo `json:"pageInfo"`
+	Staffs   []*Staff       `json:"staffs"`
+}

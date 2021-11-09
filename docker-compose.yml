@@ -22,7 +22,13 @@ services:
       - /app/node_modules
     ports:
       - "8080:3000"
+    depends_on:
+      gateway: service_healthy
+      federation: service_healthy
     env_file: ./.env
+    depends_on:
+      gateway:
+        condition: service_healthy
 
   gateway:
     build:
@@ -36,9 +42,21 @@ services:
     ports:
       - 2000:2000
     depends_on:
-      - staff_api
-      - federation
+      staff_api:
+        condition: service_healthy
+      federation:
+        condition: service_healthy
     env_file: ./.env
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'wget --header="Content-Type: application/json" -q -O - http://localhost:2000/health_check || exit 1',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
   federation:
     build:
@@ -54,11 +72,24 @@ services:
       - user_api:user_api
       - inquiry_api:inquiry_api
     depends_on:
-      - staff_api
-      - user_api
-      - inquiry_api
+      staff_api:
+        condition: service_healthy
+      user_api:
+        condition: service_healthy
+      inquiry_api:
+        condition: service_healthy
     env_file: ./.env
     command: npm run dev
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'wget --header="Content-Type: application/json" -q -O - http://localhost:3000/.well-known/apollo/server-health || exit 1',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
   staff_api:
     build:
@@ -75,16 +106,26 @@ services:
     depends_on:
       - db
     env_file: ./.env
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'wget --header="Content-Type: application/json" -q -O - http://localhost:3001/health_check || exit 1',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
-  staff_db_gui:
-    image: sosedoff/pgweb
-    ports:
-      - "3011:8081"
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/staff_development?sslmode=disable
-    depends_on:
-      - db
-    restart: always
+  # staff_db_gui:
+  #   image: sosedoff/pgweb
+  #   ports:
+  #     - "3011:8081"
+  #   environment:
+  #     - DATABASE_URL=postgres://postgres:postgres@db:5432/staff_development?sslmode=disable
+  #   depends_on:
+  #     - db
+  #   restart: always
 
   user_api:
     build:
@@ -98,16 +139,26 @@ services:
     depends_on:
       - db
     env_file: ./.env
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'wget --header="Content-Type: application/json" -q -O - http://localhost:3002/health_check || exit 1',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
-  user_db_gui:
-    image: sosedoff/pgweb
-    ports:
-      - "3012:8081"
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/user_development?sslmode=disable
-    depends_on:
-      - db
-    restart: always
+  # user_db_gui:
+  #   image: sosedoff/pgweb
+  #   ports:
+  #     - "3012:8081"
+  #   environment:
+  #     - DATABASE_URL=postgres://postgres:postgres@db:5432/user_development?sslmode=disable
+  #   depends_on:
+  #     - db
+  #   restart: always
 
   inquiry_api:
     build:
@@ -121,16 +172,26 @@ services:
     depends_on:
       - db
     env_file: ./.env
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'wget --header="Content-Type: application/json" -q -O - http://localhost:3003/health_check || exit 1',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
-  inquiry_db_gui:
-    image: sosedoff/pgweb
-    ports:
-      - "3013:8081"
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/inquiry_development?sslmode=disable
-    depends_on:
-      - db
-    restart: always
+  # inquiry_db_gui:
+  #   image: sosedoff/pgweb
+  #   ports:
+  #     - "3013:8081"
+  #   environment:
+  #     - DATABASE_URL=postgres://postgres:postgres@db:5432/inquiry_development?sslmode=disable
+  #   depends_on:
+  #     - db
+  #   restart: always
 
   batch:
     build:

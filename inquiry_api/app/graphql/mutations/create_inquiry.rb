@@ -1,8 +1,7 @@
 module Mutations
   class CreateInquiry < BaseMutation
     class CreateProgressInput < Types::BaseInputObject
-      argument :rank, Integer, required: false
-      argument :state, String, required: false
+      argument :rank, Integer, required: true
       argument :staff_id, Integer, required: false
     end
 
@@ -20,24 +19,23 @@ module Mutations
     type Types::InquiryType
 
     def resolve(**args)
-      puts params(args)
-      inquiry = Inquiry.create inquiry_params(args)
-      inquiry.build_progress progress_params(args)
+      inquiry = Inquiry.new inquiry_params(args)
+      inquiry.build_progress progress_params(args[:progress]) if args[:progress].present?
       inquiry.save! && inquiry
     end
 
     private
 
     def inquiry_params(args)
-      params(args).reject do |key, _|
+      args.reject do |key, _|
         key == :progress
       end
     end
 
-    def progress_params(args)
-      params(args).fetch(:progress, {}).reject do |_, value|
-        value.blank?
-      end
+    def progress_params(progress)
+      %i[rank staff_id].map do |key|
+        [key, progress.send(key)]
+      end.to_h
     end
   end
 end

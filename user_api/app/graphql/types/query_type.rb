@@ -9,9 +9,7 @@ module Types
       argument :order, String, required: false
     end
     def users(fields_cont: nil, order: 'created_at desc')
-      User.then do |r|
-        fields_cont.present? ? r.fields_cont(fields_cont) : r.all
-      end.order(order.underscore)
+      User.fields_cont(fields_cont).order(order.underscore)
     end
 
     field :users_list, UsersListType, null: false do
@@ -21,9 +19,7 @@ module Types
       argument :order, String, required: false
     end
     def users_list(page: 1, per: 25, fields_cont: nil, order: 'created_at desc')
-      result = User.then do |r|
-        fields_cont.present? ? r.fields_cont(fields_cont) : r.all
-      end.order(order.underscore).page(page).per(per)
+      result = User.fields_cont(fields_cont).order(order.underscore).page(page).per(per)
       parse_connection_payload result, :users
     end
 
