@@ -102,10 +102,6 @@ func (r *mutationResolver) UploadStaffIcon(ctx context.Context, input *model.Sta
 		return nil, gqlerror.Errorf("対象のレコードは存在しません")
 	}
 
-	if validator.IsInvalidIcon(input.Icon) {
-		return nil, gqlerror.Errorf("有効な画像ではありません")
-	}
-
 	if err := r.DB.Model(&staff).Update("icon", input.Icon).Error; err != nil {
 		return nil, gqlerror.Errorf("レコードの更新に失敗しました")
 	}
@@ -128,7 +124,7 @@ func (r *mutationResolver) DeleteStaffIcon(ctx context.Context, input *model.Sta
 
 func (r *queryResolver) Staffs(ctx context.Context) ([]*model.Staff, error) {
 	var staffs []entity.Staff
-	if err := r.DB.Order("created_at").Find(&staffs).Error; err != nil {
+	if err := r.DB.Order("id").Find(&staffs).Error; err != nil {
 		return nil, gqlerror.Errorf("情報を取得できませんでした")
 	}
 
@@ -140,7 +136,7 @@ func (r *queryResolver) Staffs(ctx context.Context) ([]*model.Staff, error) {
 	return result, nil
 }
 
-func (r *queryResolver) StaffList(ctx context.Context, page *int, per *int) (*model.StaffList, error) {
+func (r *queryResolver) StaffsList(ctx context.Context, page *int, per *int) (*model.StaffsList, error) {
 	var lm, pg int
 	if per == nil {
 		lm = 25
@@ -162,7 +158,7 @@ func (r *queryResolver) StaffList(ctx context.Context, page *int, per *int) (*mo
 	}
 
 	var staffs []entity.Staff
-	if err := r.DB.Limit(lm).Offset(offset).Find(&staffs).Error; err != nil {
+	if err := r.DB.Order("id").Limit(lm).Offset(offset).Find(&staffs).Error; err != nil {
 		return nil, gqlerror.Errorf("情報を取得できませんでした")
 	}
 
@@ -178,13 +174,13 @@ func (r *queryResolver) StaffList(ctx context.Context, page *int, per *int) (*mo
 	}
 
 	pageInfo := &model.StaffPageInfo{
-		CurrentPage: pg,
-		RecordCount: rc,
-		PageCount:   pa,
-		Limit:       lm,
+		CurrentPage:  pg,
+		RecordsCount: rc,
+		PagesCount:   pa,
+		Limit:        lm,
 	}
 
-	data := &model.StaffList{
+	data := &model.StaffsList{
 		PageInfo: pageInfo,
 		Staffs:   result,
 	}
@@ -195,6 +191,15 @@ func (r *queryResolver) StaffList(ctx context.Context, page *int, per *int) (*mo
 func (r *queryResolver) Staff(ctx context.Context, id string) (*model.Staff, error) {
 	var staff entity.Staff
 	if count := r.DB.First(&staff, id).RowsAffected; count == 0 {
+		return nil, gqlerror.Errorf("対象のレコードは存在しません")
+	}
+
+	return model.StaffFromEntity(&staff), nil
+}
+
+func (r *queryResolver) StaffByEmail(ctx context.Context, email string) (*model.Staff, error) {
+	var staff entity.Staff
+	if count := r.DB.Where(&entity.Staff{Email: email}).First(&staff).RowsAffected; count == 0 {
 		return nil, gqlerror.Errorf("対象のレコードは存在しません")
 	}
 

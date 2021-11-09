@@ -25,6 +25,8 @@ class Progress < ApplicationRecord
 
   attr_reader :event_log
 
+  before_validation :clear_recontacted_on
+
   belongs_to :inquiry
 
   enum rank: { d: 0, c: 1, b: 2, a: 3 }
@@ -97,5 +99,9 @@ class Progress < ApplicationRecord
     message = I18n.t :status_denied,
                      scope: %i[activerecord errors messages]
     errors.add :base, message
+  end
+
+  def clear_recontacted_on
+    self.recontacted_on = nil unless waiting_recontact?
   end
 end
