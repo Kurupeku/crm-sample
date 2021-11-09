@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
 	"gateway/proto"
@@ -12,7 +13,7 @@ import (
 )
 
 var identityKey = "email"
-var secretKey = "secretKey"
+var secretKey = os.Getenv("SIGN_KEY")
 
 type loginParams struct {
 	Email    string `form:"email" json:"email" binding:"required"`
@@ -70,7 +71,7 @@ func AuthMiddleware(ac proto.AuthClient) (*jwt.GinJWTMiddleware, error) {
 		Unauthorized: func(c *gin.Context, code int, message string) {
 			c.JSON(code, gin.H{
 				"code":    code,
-				"message": message,
+				"message": "email もしくは password が正しくありません",
 			})
 		},
 		// TokenLookup is a string in the form of "<source>:<name>" that is used

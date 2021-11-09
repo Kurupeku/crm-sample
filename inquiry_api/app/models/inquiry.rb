@@ -35,14 +35,20 @@ class Inquiry < ApplicationRecord
   validates :tel, format: { with: PHONE_NUMBER_REGEX }
 
   scope :company_name_cont, lambda { |word|
+    return all if word.blank?
+
     where 'company_name LIKE ?', "%#{word}%"
   }
 
   scope :name_cont, lambda { |word|
+    return all if word.blank?
+
     where 'name LIKE ?', "%#{word}%"
   }
 
   scope :email_cont, lambda { |word|
+    return all if word.blank?
+
     where 'email LIKE ?', "%#{word}%"
   }
 
@@ -50,6 +56,18 @@ class Inquiry < ApplicationRecord
     company_name_cont(word)
       .or(name_cont(word))
       .or(email_cont(word))
+  }
+
+  scope :state_eq, lambda { |state|
+    return all if state.blank?
+
+    merge Progress.send(state.to_s)
+  }
+
+  scope :staff_eq, lambda { |staff_id|
+    return all if staff_id.blank?
+
+    merge Progress.where(staff_id: staff_id)
   }
 
   private

@@ -4,10 +4,11 @@ module Types
     include GraphQL::Types::Relay::HasNodesField
 
     field :comments, [CommentType], null: false do
+      argument :inquiry_id, Int, required: false
       argument :order, String, required: false
     end
-    def comments(order: 'created_at desc')
-      Comment.all.order order.underscore
+    def comments(inquiry_id: nil, order: 'created_at desc')
+      Comment.inquiry_id_eq(inquiry_id).order order.underscore
     end
 
     field :comments_list, CommentsListType, null: false do
@@ -16,7 +17,8 @@ module Types
       argument :order, String, required: false
     end
     def comments_list(page: 1, per: 25, order: 'created_at desc')
-      Comment.all.order(order.underscore).page(page).per(per)
+      result = Comment.all.order(order.underscore).page(page).per(per)
+      parse_connection_payload result, :comments
     end
 
     field :comment, CommentType, null: true do
@@ -45,16 +47,20 @@ module Types
       argument :order, String, required: false
       argument :fields_cont, String, required: false
       argument :staff_id, Int, required: false
+      argument :state, ProgressStateEnum, required: false
     end
-    def inquiries_list(page: 1, per: 25, fields_cont: nil, staff_id: nil, order: 'created_at desc')
-      Inquiry.all.then do |r|
-        fields_cont.present? ? r.fields_cont(fields_cont) : r
-      end.then do |r|
-        staff_id.present? ? r.includes(:progress).where(progress: { staff_id: staff_id }) : r
-      end.order(order.underscore).page(page).per(per)
+    def inquiries_list(page: 1, per: 25, fields_cont: nil, staff_id: nil, order: 'created_at desc', state: nil)
+      result = Inquiry.joins(:progress)
+                      .fields_cont(fields_cont)
+                      .state_eq(state)
+                      .staff_eq(staff_id)
+                      .order(order.underscore)
+                      .page(page)
+                      .per(per)
+      parse_connection_payload result, :inquiries
     end
 
-    field :comment, InquiryType, null: true do
+    field :inquiry, InquiryType, null: true do
       argument :id, ID, required: true
     end
     def inquiry(id:)
@@ -74,7 +80,8 @@ module Types
       argument :order, String, required: false
     end
     def menus_list(page: 1, per: 25, order: 'created_at desc')
-      Menu.all.order(order.underscore).page(page).per(per)
+      result = Menu.all.order(order.underscore).page(page).per(per)
+      parse_connection_payload result, :menus
     end
 
     field :menu, MenuType, null: true do
@@ -109,13 +116,14 @@ module Types
       argument :staff_id, Int, required: false
     end
     def progresses_list(page: 1, per: 25, rank: nil, state: nil, staff_id: nil, order: 'created_at desc')
-      Progress.all.then do |r|
+      result = Progress.all.then do |r|
         rank.present? && r.respond_to?(rank) ? r.send(rank) : r
       end.then do |r|
         state.present? && r.respond_to?(state) ? r.send(state) : r
       end.then do |r|
         staff_id.present? ? r.where(staff_id: staff_id) : r
       end.order(order.underscore).page(page).per(per)
+      parse_connection_payload result, :progresses
     end
 
     field :progress, ProgressType, null: true do
