@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo } from "react";
 import { useRouter } from "next/dist/client/router";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   globalLoadingState,
   sessionState,
@@ -30,7 +30,7 @@ const GlobalStateProvider: FC = ({ children }) => {
   const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
   const [loading, setLoading] = useRecoilState(globalLoadingState);
   const [session, setSession] = useRecoilState(sessionState);
-  const setCurrentStaff = useSetRecoilState(currentStaffState);
+  const [currentStaff, setCurrentStaff] = useRecoilState(currentStaffState);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const { data, error } = useGetStaffbyEmailQuery({
@@ -50,6 +50,7 @@ const GlobalStateProvider: FC = ({ children }) => {
   }, [data, error, enqueueSnackbar, setCurrentStaff]);
 
   useEffect(() => {
+    setLoading(true);
     if (!jwt) {
       router.replace("/login");
     } else {
@@ -77,6 +78,8 @@ const GlobalStateProvider: FC = ({ children }) => {
   ]);
 
   useEffect(() => {
+    if (!currentStaff) return;
+
     const id = setInterval(() => {
       if (!jwt) {
         router.replace("/login");
@@ -94,18 +97,18 @@ const GlobalStateProvider: FC = ({ children }) => {
             setSession(null);
           });
       }
-    }, 300000);
+    }, 60000);
     return () => clearInterval(id);
   }, [router, enqueueSnackbar, removeCookie, setCookie, setSession]);
 
   return (
     <>
-      {children}
-      {loading ? (
+      {loading && (
         <Backdrop open={loading}>
           <Loader type="MutatingDots" height={100} width={100} />
         </Backdrop>
-      ) : null}
+      )}
+      {children}
     </>
   );
 };
