@@ -8,10 +8,7 @@ import {
   useDeleteUserMutation,
 } from "../../graphql/client";
 import DataTable, { ColumnProps } from "../../components/dataTable";
-import FormDialog, {
-  FormData,
-  InputOption,
-} from "../../components/formDialog";
+import FormDialog, { FormData, InputOption } from "../../components/formDialog";
 import DeleteDialog from "../../components/deleteDialog";
 import Breads from "../../components/breadcrumbs";
 
@@ -280,7 +277,7 @@ const UsersIndex: FC = () => {
     <Container sx={{ marginTop: 2 }}>
       <Breads />
       <DataTable
-        title="スタッフ一覧"
+        title="ユーザー一覧"
         columns={columns}
         rows={rows}
         loading={loading}
