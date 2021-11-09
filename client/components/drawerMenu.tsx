@@ -14,7 +14,7 @@ const DrawerMenu: React.FC = () => {
   return (
     <>
       <List>
-        <Link href="/">
+        <Link href="/" passHref>
           <ListItem button>
             <ListItemIcon>
               <AssignmentReturnedIcon />
@@ -22,7 +22,7 @@ const DrawerMenu: React.FC = () => {
             <ListItemText primary="担当案件一覧" />
           </ListItem>
         </Link>
-        <Link href="/inquiries">
+        <Link href="/inquiries" passHref>
           <ListItem button>
             <ListItemIcon>
               <MoveToInboxIcon />
@@ -30,7 +30,7 @@ const DrawerMenu: React.FC = () => {
             <ListItemText primary="問い合わせ一覧" />
           </ListItem>
         </Link>
-        <Link href="/users">
+        <Link href="/users" passHref>
           <ListItem button>
             <ListItemIcon>
               <PeopleAltIcon />
@@ -41,7 +41,7 @@ const DrawerMenu: React.FC = () => {
       </List>
       <Divider />
       <List>
-        <Link href="/staffs">
+        <Link href="/staffs" passHref>
           <ListItem button>
             <ListItemIcon>
               <AccountBoxIcon />

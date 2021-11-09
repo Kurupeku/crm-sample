@@ -38,6 +38,8 @@ const GlobalStateProvider: FC = ({ children }) => {
     skip: !session,
   });
 
+  const jwt = useMemo(() => cookies.jwt, [cookies]) as string | null;
+
   useEffect(() => {
     const newCurrentStaff = data?.staffByEmail;
     if (newCurrentStaff) setCurrentStaff(newCurrentStaff);
@@ -45,10 +47,9 @@ const GlobalStateProvider: FC = ({ children }) => {
       enqueueSnackbar("セッションからユーザー情報を取得できませんでした", {
         variant: "error",
       });
-  }, [data, error]);
+  }, [data, error, enqueueSnackbar, setCurrentStaff]);
 
   useEffect(() => {
-    const jwt = cookies.jwt as string | null;
     if (!jwt) {
       router.replace("/login");
     } else {
@@ -66,11 +67,17 @@ const GlobalStateProvider: FC = ({ children }) => {
         })
         .finally(() => setLoading(false));
     }
-  }, []);
+  }, [
+    router,
+    enqueueSnackbar,
+    removeCookie,
+    setCookie,
+    setSession,
+    setLoading,
+  ]);
 
   useEffect(() => {
     const id = setInterval(() => {
-      const jwt = cookies.jwt as string | null;
       if (!jwt) {
         router.replace("/login");
       } else {
@@ -89,7 +96,7 @@ const GlobalStateProvider: FC = ({ children }) => {
       }
     }, 300000);
     return () => clearInterval(id);
-  }, []);
+  }, [router, enqueueSnackbar, removeCookie, setCookie, setSession]);
 
   return (
     <>

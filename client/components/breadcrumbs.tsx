@@ -31,7 +31,7 @@ const Breads: FC<{ naked?: boolean }> = (props) => {
           } else {
             const href = "/" + paths.slice(0, i + 1).join("/");
             return (
-              <Link key={i} href={href}>
+              <Link key={i} href={href} passHref>
                 <Button sx={{ p: 0 }} color="inherit">
                   {path}
                 </Button>
