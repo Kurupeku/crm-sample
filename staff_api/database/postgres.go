@@ -3,10 +3,7 @@ package database
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
-
-	"staff_api/entity"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -27,18 +24,13 @@ type Meta struct {
 func Connect() (*gorm.DB, error) {
 	m := Meta{}
 	m.Init()
-	db, err := connect(&m)
 
+	db, err := connect(&m)
 	if err != nil {
 		return nil, err
 	}
 
 	d = db
-
-	err = db.AutoMigrate(&entity.Staff{})
-	if err != nil {
-		return nil, err
-	}
 
 	return db, nil
 }
@@ -79,10 +71,7 @@ func connect(m *Meta) (*gorm.DB, error) {
 }
 
 func connectOrCreatePostgresDatabase(m *Meta) (*gorm.DB, error) {
-	public, err := gorm.Open(postgres.Open(m.PgDsnWithoutDBName()), &gorm.Config{})
-	if err != nil {
-		log.Fatal(err)
-	}
+	public, _ := gorm.Open(postgres.Open(m.PgDsnWithoutDBName()), &gorm.Config{})
 	public.Exec(fmt.Sprintf("CREATE DATABASE %s;", m.dbname))
 
 	named, err := gorm.Open(postgres.Open(m.PgDsn()), &gorm.Config{})

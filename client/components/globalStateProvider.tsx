@@ -13,6 +13,7 @@ import Loader from "react-loader-spinner";
 import { generateSessionData, AuthResponseData } from "../modules/jwt";
 import { useSnackbar } from "notistack";
 import { useGetStaffbyEmailQuery } from "../graphql/client";
+import Box from "@mui/material/Box";
 
 const fetchRefreshToken = (token: string) => {
   const url = `${process.env.NEXT_PUBLIC_API_HOST}/api/refresh_token`;
@@ -53,6 +54,7 @@ const GlobalStateProvider: FC = ({ children }) => {
     setLoading(true);
     if (!jwt) {
       router.replace("/login");
+      enqueueSnackbar("ログインしてください", { variant: "error" });
     } else {
       fetchRefreshToken(jwt)
         .then((response) => {
@@ -83,6 +85,7 @@ const GlobalStateProvider: FC = ({ children }) => {
     const id = setInterval(() => {
       if (!jwt) {
         router.replace("/login");
+        enqueueSnackbar("ログインしてください", { variant: "error" });
       } else {
         fetchRefreshToken(jwt)
           .then((response) => {
@@ -103,7 +106,9 @@ const GlobalStateProvider: FC = ({ children }) => {
 
   return (
     <>
-      {children}
+      <Box sx={{ m: 0, p: 0, visibility: currentStaff ? "visible" : "hidden" }}>
+        {children}
+      </Box>
       {loading && (
         <Backdrop open={loading}>
           <Loader type="MutatingDots" height={100} width={100} />
