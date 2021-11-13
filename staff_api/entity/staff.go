@@ -226,6 +226,19 @@ func (s *Staff) ChangePassword(id string, current string, new string) error {
 	return nil
 }
 
+func (s Staff) IsAuthenticated(email string, password string) bool {
+	err := s.FindStaffByEmail(email)
+	if err != nil {
+		return false
+	}
+
+	if s.comparePassword(password) != nil {
+		return false
+	}
+
+	return true
+}
+
 func (s Staff) comparePassword(p string) error {
 	if bcrypt.CompareHashAndPassword(s.PasswordDigest, []byte(p)) != nil {
 		return errors.New("パスワードが正しくありません")
