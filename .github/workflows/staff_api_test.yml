@@ -29,6 +29,8 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_HOST: db
           POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
 
     steps:
       - name: Checkout
@@ -45,7 +47,7 @@ jobs:
       - name: Test code
         run: go test -v ./...
         env:
-          DB_HOST: db
+          DB_HOST: localhost
           DB_USER: postgres
           DB_PASSWORD: postgres
           DB_PORT: 5432
