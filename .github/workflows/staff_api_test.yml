@@ -1,0 +1,57 @@
+name: Staff API Test
+
+on:
+  workflow_dispatch:
+
+  push:
+    paths:
+      - "staff_api/**"
+
+defaults:
+  run:
+    working-directory: ./staff_api
+
+jobs:
+  test-staff-api:
+    name: Test Staff API
+    runs-on: ubuntu-latest
+    env:
+      GO_ENV: production
+      GO111MODULE: on
+      CGO_ENABLED: 0
+      GOOS: linux
+
+    services:
+      db:
+        image: postgres:13.4
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_HOST: db
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.17.1"
+
+      - name: Get dependencies
+        run: go mod download
+
+      - name: Test code
+        run: go test -v ./...
+        env:
+          DB_HOST: localhost
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_PORT: 5432
+          GO_ENV: test
+
+      - name: Try Building
+        run: go build main.go

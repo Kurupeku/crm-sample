@@ -15,8 +15,8 @@ import (
 
 func (r *entityResolver) FindStaffByID(ctx context.Context, id string) (*model.Staff, error) {
 	var staff entity.Staff
-	if count := r.DB.First(&staff, id).RowsAffected; count == 0 {
-		return nil, gqlerror.Errorf("対象のレコードは存在しません")
+	if err := staff.FindStaffByID(id); err != nil {
+		return nil, gqlerror.Errorf(err.Error())
 	}
 
 	return model.StaffFromEntity(&staff), nil
