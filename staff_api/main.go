@@ -14,13 +14,9 @@ func main() {
 		os.Setenv("GO_ENV", "development")
 	}
 
-	db, err := database.Connect()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db, _ := database.Connect()
 
-	err = db.AutoMigrate(&entity.Staff{})
-	if err != nil {
+	if err := db.AutoMigrate(&entity.Staff{}); err != nil {
 		log.Fatal(err)
 	}
 

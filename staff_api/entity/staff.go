@@ -39,6 +39,14 @@ func AllStaffs() ([]Staff, error) {
 }
 
 func PaginatedStaffs(lm int, of int) ([]Staff, error) {
+	if lm < 0 {
+		return nil, errors.New("表示件数は0以上である必要があります")
+	}
+
+	if of < 0 {
+		return nil, errors.New("ページ数は1以上である必要があります")
+	}
+
 	db := database.GetDB()
 
 	var staffs []Staff
@@ -50,6 +58,14 @@ func PaginatedStaffs(lm int, of int) ([]Staff, error) {
 }
 
 func GetPageInfo(per int, page int) (*PageInfo, error) {
+	if per < 0 {
+		return nil, errors.New("表示件数は0以上である必要があります")
+	}
+
+	if page < 1 {
+		return nil, errors.New("ページ数は1以上である必要があります")
+	}
+
 	staffs, err := AllStaffs()
 	if err != nil {
 		return nil, err
@@ -100,6 +116,10 @@ func (s *Staff) FindStaffByEmail(email string) error {
 }
 
 func (s *Staff) Create(name string, email string, password string) error {
+	if isInvalidName(name) {
+		return errors.New("名前は必須です")
+	}
+
 	if isInvalidEmail(email) {
 		return errors.New("Emailの形式が正しくありません")
 	}
@@ -131,10 +151,6 @@ func (s *Staff) Create(name string, email string, password string) error {
 }
 
 func (s *Staff) Update(id string, name *string, email *string) error {
-	if err := s.FindStaffByID(id); err != nil {
-		return err
-	}
-
 	if name == nil && email == nil {
 		return nil
 	}
@@ -142,6 +158,10 @@ func (s *Staff) Update(id string, name *string, email *string) error {
 	params := map[string]interface{}{}
 
 	if name != nil {
+		if isInvalidName(*name) {
+			return errors.New("名前は必須です")
+		}
+
 		params["name"] = *name
 	}
 
@@ -151,6 +171,10 @@ func (s *Staff) Update(id string, name *string, email *string) error {
 		}
 
 		params["email"] = *email
+	}
+
+	if err := s.FindStaffByID(id); err != nil {
+		return err
 	}
 
 	db := database.GetDB()
@@ -245,6 +269,10 @@ func (s Staff) comparePassword(p string) error {
 	}
 
 	return nil
+}
+
+func isInvalidName(n string) bool {
+	return len(n) == 0
 }
 
 func isInvalidEmail(e string) bool {

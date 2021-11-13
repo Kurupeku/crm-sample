@@ -3,7 +3,6 @@ package database
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 
 	"gorm.io/driver/postgres"
@@ -72,10 +71,7 @@ func connect(m *Meta) (*gorm.DB, error) {
 }
 
 func connectOrCreatePostgresDatabase(m *Meta) (*gorm.DB, error) {
-	public, err := gorm.Open(postgres.Open(m.PgDsnWithoutDBName()), &gorm.Config{})
-	if err != nil {
-		log.Fatal(err)
-	}
+	public, _ := gorm.Open(postgres.Open(m.PgDsnWithoutDBName()), &gorm.Config{})
 	public.Exec(fmt.Sprintf("CREATE DATABASE %s;", m.dbname))
 
 	named, err := gorm.Open(postgres.Open(m.PgDsn()), &gorm.Config{})
