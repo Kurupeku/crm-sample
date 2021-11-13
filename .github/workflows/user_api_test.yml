@@ -13,6 +13,7 @@ defaults:
 
 jobs:
   test-user-api:
+    name: Test User API
     runs-on: ubuntu-latest
 
     services:
