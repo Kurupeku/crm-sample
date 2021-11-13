@@ -5,11 +5,9 @@ import (
 	"log"
 	"net"
 
-	"staff_api/database"
 	"staff_api/entity"
 	"staff_api/proto"
 
-	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc"
 )
 
@@ -23,18 +21,9 @@ func (*gsv) Authenticate(ctx context.Context, req *proto.AuthenticateRequest) (*
 	email := req.GetEmail()
 	password := req.GetPassword()
 
-	authenticated := false
 	var staff entity.Staff
-	db := database.GetDB()
-	if count := db.First(&staff, entity.Staff{Email: email}).RowsAffected; count > 0 {
-		err := bcrypt.CompareHashAndPassword(staff.PasswordDigest, []byte(password))
-		if err == nil {
-			authenticated = true
-		}
-	}
-
 	return &proto.AuthenticateResponse{
-		Authenticated: authenticated,
+		Authenticated: staff.IsAuthenticated(email, password),
 	}, nil
 }
 
