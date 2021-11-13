@@ -43,7 +43,7 @@ jobs:
         run: go mod download
 
       - name: Test code
-        run: go test -v .
+        run: go test -v ./...
         env:
           DB_HOST: db
           DB_USER: postgres
@@ -52,4 +52,4 @@ jobs:
           GO_ENV: test
 
       - name: Try Building
-        run: go build -o main.go
+        run: go build main.go
