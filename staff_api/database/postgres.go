@@ -6,8 +6,6 @@ import (
 	"log"
 	"os"
 
-	"staff_api/entity"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -27,18 +25,13 @@ type Meta struct {
 func Connect() (*gorm.DB, error) {
 	m := Meta{}
 	m.Init()
-	db, err := connect(&m)
 
+	db, err := connect(&m)
 	if err != nil {
 		return nil, err
 	}
 
 	d = db
-
-	err = db.AutoMigrate(&entity.Staff{})
-	if err != nil {
-		return nil, err
-	}
 
 	return db, nil
 }
