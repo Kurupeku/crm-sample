@@ -31,8 +31,8 @@ RSpec.describe Mutations::UpdateUser, type: :request do
     INPUT
   end
 
-  describe '正常な値のとき' do
-    it 'レコードが作成される' do
+  describe '正常な値を与えた場合' do
+    it 'レコードが更新される' do
       new_name = 'asserted_name'
       user.name = new_name
       result = AppSchema.execute input(user_attributes, address_attributes)
@@ -42,12 +42,21 @@ RSpec.describe Mutations::UpdateUser, type: :request do
   end
 
   describe 'バリデーションに引っかかった場合' do
-    it 'errorsフィールドにエラー内容が生成され、レコードは生成されない' do
+    it 'errorsフィールドにエラー内容が生成され、レコードは更新されない' do
       before_email = user.email
       user.email = nil
       result = AppSchema.execute input(user_attributes, address_attributes)
       is_asserted_by { result.key?('errors') }
       is_asserted_by { user.reload.email == before_email }
+    end
+  end
+
+  describe '存在しないIDを指定した場合' do
+    it 'errorsフィールドにエラー内容が生成され、レコードは更新されない' do
+      user_attributes[:id] = 0
+      result = AppSchema.execute input(user_attributes, address_attributes)
+      is_asserted_by { result.key?('errors') }
+      is_asserted_by { User.find(user.id).present? }
     end
   end
 end
