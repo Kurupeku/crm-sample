@@ -21,5 +21,5 @@ func main() {
 	}
 
 	go server.RunGrpc()
-	server.RunGraphql(db)
+	server.RunGraphql()
 }
