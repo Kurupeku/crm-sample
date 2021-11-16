@@ -45,7 +45,9 @@ jobs:
         run: go mod download
 
       - name: Test code
-        run: go test -v ./...
+        run: |
+          go test -v ./
+          go test -v ./entity
         env:
           DB_HOST: localhost
           DB_USER: postgres
