@@ -80,7 +80,7 @@ const InquiriesIndexBase: FC<Props> = ({ state, staffId, title }) => {
   const [rows, setRows] = useState<Inquiry[]>([]);
   const [count, setCount] = useState(0);
   const [fieldsCont, setFieldsCont] = useState("");
-  const [orderBy, setOrderBy] = useState("createdAt");
+  const [orderBy, setOrderBy] = useState("id");
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [per, setPer] = useState(25);
   const [page, setPage] = useState(1);

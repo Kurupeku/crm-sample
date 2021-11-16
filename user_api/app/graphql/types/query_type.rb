@@ -8,8 +8,9 @@ module Types
       argument :fields_cont, String, required: false
       argument :order, String, required: false
     end
-    def users(fields_cont: nil, order: 'created_at desc')
-      User.fields_cont(fields_cont).order(order.underscore)
+    def users(fields_cont: nil, order: nil)
+      User.fields_cont(fields_cont)
+          .order(order.present? ? order.underscore : 'id desc')
     end
 
     field :users_list, UsersListType, null: false do
@@ -18,8 +19,10 @@ module Types
       argument :fields_cont, String, required: false
       argument :order, String, required: false
     end
-    def users_list(page: 1, per: 25, fields_cont: nil, order: 'created_at desc')
-      result = User.fields_cont(fields_cont).order(order.underscore).page(page).per(per)
+    def users_list(page: 1, per: 25, fields_cont: nil, order: nil)
+      result = User.fields_cont(fields_cont)
+                   .order(order.present? ? order.underscore : 'id desc')
+                   .page(page).per(per)
       parse_connection_payload result, :users
     end
 

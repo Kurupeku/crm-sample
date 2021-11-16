@@ -197,6 +197,7 @@ const InquiryFormDialog: FC<Props> = (props) => {
           onChange={(e) => onChange("tel", e.target.value)}
           fullWidth
           required
+          placeholder="080-1234-5678"
           sx={{ marginBottom: 4 }}
         />
         <TextField

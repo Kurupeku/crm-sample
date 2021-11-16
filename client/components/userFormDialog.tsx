@@ -30,6 +30,7 @@ import {
 interface Layout {
   label: string;
   key: string;
+  placeholder?: string;
 }
 
 interface UserFormProps {
@@ -58,8 +59,8 @@ const userFormLayouts: Layout[] = [
   { label: "会社名", key: "companyName" },
   { label: "顧客名", key: "name" },
   { label: "Email", key: "email" },
-  { label: "TEL", key: "tel" },
-  { label: "郵便番号", key: "postalCode" },
+  { label: "TEL", key: "tel", placeholder: "080-1234-5678" },
+  { label: "郵便番号", key: "postalCode", placeholder: "123-4567" },
   { label: "都道府県", key: "prefecture" },
   { label: "市区町村", key: "city" },
   { label: "町名・番地", key: "street" },
@@ -326,6 +327,7 @@ const UserFormDialog: FC<UserFormProps> = (props) => {
                   variant="standard"
                   value={form[layout.key] || ""}
                   margin="normal"
+                  placeholder={layout.placeholder || ""}
                   onChange={(e) => handleChange(layout.key, e.target.value)}
                 />
               ))
