@@ -133,6 +133,5 @@ class Progress < ApplicationRecord
     message = I18n.t :status_denied,
                      scope: %i[activerecord errors messages]
     errors.add :base, message
-    raise ActiveRecord::RecordInvalid, self
   end
 end
