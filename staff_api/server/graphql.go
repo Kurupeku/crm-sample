@@ -10,13 +10,12 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"gorm.io/gorm"
 )
 
 const gqlPort = "3001"
 
-func RunGraphql(db *gorm.DB) {
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{DB: db}}))
+func RunGraphql() {
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
 	http.Handle("/health_check", http.HandlerFunc(handlers.HealthCheckHandler))
 
