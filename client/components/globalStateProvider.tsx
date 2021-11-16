@@ -106,9 +106,7 @@ const GlobalStateProvider: FC = ({ children }) => {
 
   return (
     <>
-      <Box sx={{ m: 0, p: 0, visibility: currentStaff ? "visible" : "hidden" }}>
-        {children}
-      </Box>
+      <Box sx={{ m: 0, p: 0 }}>{children}</Box>
       {loading && (
         <Backdrop open={loading}>
           <Loader type="MutatingDots" height={100} width={100} />

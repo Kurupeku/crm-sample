@@ -42,6 +42,7 @@ export interface InputOption {
     | "boolean"
     | "email"
     | "password";
+  placeholder?: string;
   choices?: Choice[];
   variant?: "standard" | "filled" | "outlined";
 }
@@ -136,6 +137,7 @@ const ReactableInput: FC<ReactableInputProps> = (props) => {
           variant={data.variant || "standard"}
           onChange={(e) => onChange(data.name, e.target.value)}
           fullWidth
+          placeholder={data.placeholder || ""}
           sx={{ marginBottom: theme.spacing(4) }}
         />
       );
