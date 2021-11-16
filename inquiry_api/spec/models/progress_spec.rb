@@ -24,7 +24,7 @@ require 'rails_helper'
 
 RSpec.describe Progress, type: :model do
   describe '# aasm_status' do
-    let(:progress) { create :progress }
+    let(:progress) { create :progress, state: :waiting }
     let(:error_message) do
       I18n.t :status_denied,
              scope: %i[activerecord errors messages]
