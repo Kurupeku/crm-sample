@@ -24,7 +24,7 @@ ja:
         staff_id: スタッフID
         rank: 見込みランク
         contacted_at: 連絡日時
-        reconciled_on: 再連絡日
+        recontacted_on: 再連絡日
         state:
           waiting: 未着手
           waiting_recontact: 再度連絡待ち

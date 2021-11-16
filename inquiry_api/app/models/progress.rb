@@ -25,11 +25,14 @@ class Progress < ApplicationRecord
 
   attr_reader :event_log
 
-  before_validation :clear_recontacted_on
-
   belongs_to :inquiry
 
   enum rank: { d: 0, c: 1, b: 2, a: 3 }
+
+  validates :staff_id, numericality: {
+    integer: true,
+    greater_than: 0
+  }, allow_nil: true
 
   aasm column: :state do
     state :waiting, initial: true
@@ -68,6 +71,24 @@ class Progress < ApplicationRecord
     end
   end
 
+  scope :rank_eq, lambda { |value|
+    return all if value.blank?
+
+    send value
+  }
+
+  scope :state_eq, lambda { |value|
+    return all if value.blank?
+
+    send value
+  }
+
+  scope :staff_eq, lambda { |staff_id|
+    return all if staff_id.blank?
+
+    where staff_id: staff_id
+  }
+
   def state_i18n
     I18n.t state.to_sym,
            scope: %i[activerecord attributes progress state]
@@ -81,6 +102,17 @@ class Progress < ApplicationRecord
     end
   end
 
+  def asign_recontacted_on!(date)
+    if waiting_recontact?
+      update! recontacted_on: Date.parse(date)
+    else
+      message = I18n.t :present,
+                       scope: %i[errors messages]
+      errors.add :recontacted_on, message
+      raise ActiveRecord::RecordInvalid, self
+    end
+  end
+
   private
 
   def event_i18n(event)
@@ -89,6 +121,8 @@ class Progress < ApplicationRecord
   end
 
   def state_changed
+    self.recontacted_on = nil unless aasm.to_state != :waiting_recontact?
+
     message = I18n.t :status_changed,
                      scope: %i[activerecord logs messages],
                      to_state: aasm.to_state
@@ -99,9 +133,5 @@ class Progress < ApplicationRecord
     message = I18n.t :status_denied,
                      scope: %i[activerecord errors messages]
     errors.add :base, message
-  end
-
-  def clear_recontacted_on
-    self.recontacted_on = nil unless waiting_recontact?
   end
 end

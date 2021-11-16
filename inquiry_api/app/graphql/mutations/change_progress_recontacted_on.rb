@@ -7,7 +7,8 @@ module Mutations
 
     def resolve(id:, recontacted_on: nil)
       progress = Progress.find id
-      progress.update!(recontacted_on: Date.parse(recontacted_on)) && progress
+      progress.asign_recontacted_on! recontacted_on
+      progress
     end
   end
 end

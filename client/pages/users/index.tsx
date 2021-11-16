@@ -92,8 +92,8 @@ const inputOptions: InputOption[] = [
   { name: "companyName", label: "会社名", type: "text" },
   { name: "name", label: "顧客名", type: "text", required: true },
   { name: "email", label: "Email", type: "text", required: true },
-  { name: "tel", label: "TEL", type: "text", required: true },
-  { name: "postalCode", label: "郵便番号", type: "text", required: true },
+  { name: "tel", label: "TEL", type: "text", required: true, placeholder: "080-1234-5678" },
+  { name: "postalCode", label: "郵便番号", type: "text", required: true, placeholder: "123-4567" },
   {
     name: "prefecture",
     label: "都道府県",
@@ -110,7 +110,7 @@ const UsersIndex: FC = () => {
   const [rows, setRows] = useState<User[]>([]);
   const [count, setCount] = useState(0);
   const [fieldsCont, setFieldsCont] = useState("");
-  const [orderBy, setOrderBy] = useState("createdAt");
+  const [orderBy, setOrderBy] = useState("id");
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [per, setPer] = useState(25);
   const [page, setPage] = useState(1);
