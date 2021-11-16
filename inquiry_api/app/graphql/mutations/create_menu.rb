@@ -5,9 +5,12 @@ module Mutations
 
     type Types::MenuType
 
-    def resolve(name:, published_on:)
-      Menu.create! name: name,
-                   published_on: Date.parse(published_on)
+    def resolve(**args)
+      menu = Menu.new name: args[:name]
+      unless args.key?(:published_on)
+        menu.published_on = (Date.parse(args[:published_on]) if args[:published_on].present?)
+      end
+      menu.save! && menu
     end
   end
 end

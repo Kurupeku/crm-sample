@@ -53,6 +53,8 @@ class Inquiry < ApplicationRecord
   }
 
   scope :fields_cont, lambda { |word|
+    return all if word.blank?
+
     company_name_cont(word)
       .or(name_cont(word))
       .or(email_cont(word))
@@ -61,13 +63,13 @@ class Inquiry < ApplicationRecord
   scope :state_eq, lambda { |state|
     return all if state.blank?
 
-    merge Progress.send(state.to_s)
+    joins(:progress).merge Progress.state_eq(state)
   }
 
   scope :staff_eq, lambda { |staff_id|
     return all if staff_id.blank?
 
-    merge Progress.where(staff_id: staff_id)
+    joins(:progress).merge Progress.staff_eq(staff_id)
   }
 
   private
