@@ -24,9 +24,8 @@ FactoryBot.define do
   factory :progress do
     association :inquiry
 
-    staff_id { 1 }
-    rank { 0 }
-    contacted_at { nil }
-    recontacted_on { nil }
+    staff_id { [1, 2, 3].sample }
+    rank { %w[a b c d].sample }
+    state { %i[waiting waiting_recontact contacting estimating archived ordered].sample }
   end
 end
