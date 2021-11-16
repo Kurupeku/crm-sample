@@ -1,6 +1,7 @@
 import { FC, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
+import { currentStaffState } from "../../modules/atoms";
 import Link from "next/link";
 import { useSnackbar } from "notistack";
 import Container from "@mui/material/Container";
@@ -10,7 +11,6 @@ import Paper from "@mui/material/Paper";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import { currentStaffState, globalLoadingState } from "../../modules/atoms";
 import {
   useGetStaffByIdQuery,
   useUpdateStaffMutation,
@@ -50,7 +50,6 @@ const StaffShow: FC = (props) => {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const currentStaff = useRecoilValue(currentStaffState);
-  const setLoading = useSetRecoilState(globalLoadingState);
   const { id } = router.query;
 
   const { data, loading, error, refetch } = useGetStaffByIdQuery({
@@ -160,8 +159,6 @@ const StaffShow: FC = (props) => {
       };
     }
   };
-
-  useEffect(() => setLoading(loading), [loading]);
 
   return (
     <Container maxWidth="md" sx={{ marginTop: 2 }}>

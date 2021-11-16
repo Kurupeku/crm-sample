@@ -2,8 +2,6 @@ import { FC, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useSnackbar } from "notistack";
-import { useSetRecoilState } from "recoil";
-import { globalLoadingState } from "../../modules/atoms";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -131,7 +129,6 @@ const UserShow: FC = (props) => {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const { id } = router.query;
-  const setLoading = useSetRecoilState(globalLoadingState);
 
   const { data, loading, error, refetch } = useGetUserByIdQuery({
     skip: !id,
@@ -208,8 +205,6 @@ const UserShow: FC = (props) => {
   };
 
   const handleDelete = () => setDeleteId(id as string);
-
-  useEffect(() => setLoading(loading), [loading]);
 
   return (
     <Container maxWidth="md" sx={{ marginTop: 2 }}>
