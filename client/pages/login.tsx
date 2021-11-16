@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/dist/client/router";
 import axios from "axios";
 import { useCookies } from "react-cookie";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { globalLoadingState, sessionState } from "../modules/atoms";
 import { useSnackbar } from "notistack";
 import Avatar from "@mui/material/Avatar";
@@ -57,13 +57,12 @@ export default function Login() {
           setCookie("jwt", response.data.token, { path: "/" });
           const sessionData = generateSessionData(response.data);
           setSession(sessionData);
+          setGlobalLoading(false);
           router.replace("/");
         })
         .catch((err) => {
           removeCookie("jwt");
           setSession(null);
-        })
-        .finally(() => {
           setGlobalLoading(false);
         });
     }
