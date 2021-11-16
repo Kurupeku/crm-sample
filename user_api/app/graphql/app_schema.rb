@@ -18,6 +18,18 @@ class AppSchema < GraphQL::Schema
     )
   end
 
+  rescue_from(ActiveRecord::RecordNotFound) do |error|
+    GraphQL::ExecutionError.new(
+      I18n.t(:record_not_found, scope: %i[activerecord errors messages]),
+      extensions: {
+        code: 'RECORD_NOT_FOUND',
+        record: {
+          model: error.model
+        }
+      }
+    )
+  end
+
   # Union and Interface Resolution
   def self.resolve_type(_abstract_type, _obj, _ctx)
     # TODO: Implement this function

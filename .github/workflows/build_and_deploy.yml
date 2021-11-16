@@ -9,6 +9,8 @@ on:
     paths-ignore:
       - ".github/**"
       - "client/**"
+      - "user_api/spec/**"
+      - "inquiry_api/spec/**"
       - "docs/**"
       - "**.md"
 
