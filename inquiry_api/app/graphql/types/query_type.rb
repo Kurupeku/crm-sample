@@ -7,17 +7,21 @@ module Types
       argument :inquiry_id, Int, required: false
       argument :order, String, required: false
     end
-    def comments(inquiry_id: nil, order: 'created_at desc')
-      Comment.inquiry_id_eq(inquiry_id).order order.underscore
+    def comments(inquiry_id: nil, order: nil)
+      Comment.inquiry_id_eq(inquiry_id)
+             .order(order.present? ? order.underscore : 'id desc')
     end
 
     field :comments_list, CommentsListType, null: false do
       argument :page, Int, required: false
       argument :per, Int, required: false
+      argument :inquiry_id, Int, required: false
       argument :order, String, required: false
     end
-    def comments_list(page: 1, per: 25, order: 'created_at desc')
-      result = Comment.all.order(order.underscore).page(page).per(per)
+    def comments_list(page: 1, per: 25, inquiry_id: nil, order: nil)
+      result = Comment.inquiry_id_eq(inquiry_id)
+                      .order(order.present? ? order.underscore : 'id desc')
+                      .page(page).per(per)
       parse_connection_payload result, :comments
     end
 
@@ -32,13 +36,13 @@ module Types
       argument :order, String, required: false
       argument :fields_cont, String, required: false
       argument :staff_id, Int, required: false
+      argument :state, ProgressStateEnum, required: false
     end
-    def inquiries(fields_cont: nil, staff_id: nil, order: 'created_at desc')
-      Inquiry.all.then do |r|
-        fields_cont.present? ? r.fields_cont(fields_cont) : r
-      end.then do |r|
-        staff_id.present? ? r.includes(:progress).where(progress: { staff_id: staff_id }) : r
-      end.order order.underscore
+    def inquiries(fields_cont: nil, staff_id: nil, state: nil, order: nil)
+      Inquiry.fields_cont(fields_cont)
+             .state_eq(state)
+             .staff_eq(staff_id)
+             .order(order.present? ? order.underscore : 'id desc')
     end
 
     field :inquiries_list, InquiriesListType, null: false do
@@ -49,12 +53,11 @@ module Types
       argument :staff_id, Int, required: false
       argument :state, ProgressStateEnum, required: false
     end
-    def inquiries_list(page: 1, per: 25, fields_cont: nil, staff_id: nil, order: 'created_at desc', state: nil)
-      result = Inquiry.joins(:progress)
-                      .fields_cont(fields_cont)
+    def inquiries_list(page: 1, per: 25, fields_cont: nil, staff_id: nil, order: nil, state: nil)
+      result = Inquiry.fields_cont(fields_cont)
                       .state_eq(state)
                       .staff_eq(staff_id)
-                      .order(order.underscore)
+                      .order(order.present? ? order.underscore : 'id desc')
                       .page(page)
                       .per(per)
       parse_connection_payload result, :inquiries
@@ -70,8 +73,8 @@ module Types
     field :menus, [MenuType], null: false do
       argument :order, String, required: false
     end
-    def menus(order: 'created_at desc')
-      Menu.all.order order.underscore
+    def menus(order: nil)
+      Menu.all.order(order.present? ? order.underscore : 'id desc')
     end
 
     field :menus_list, MenusListType, null: false do
@@ -79,8 +82,8 @@ module Types
       argument :per, Int, required: false
       argument :order, String, required: false
     end
-    def menus_list(page: 1, per: 25, order: 'created_at desc')
-      result = Menu.all.order(order.underscore).page(page).per(per)
+    def menus_list(page: 1, per: 25, order: nil)
+      result = Menu.all.order(order.present? ? order.underscore : 'id desc').page(page).per(per)
       parse_connection_payload result, :menus
     end
 
@@ -97,14 +100,11 @@ module Types
       argument :state, ProgressStateEnum, required: false
       argument :staff_id, Int, required: false
     end
-    def progresses(rank: nil, state: nil, staff_id: nil, order: 'created_at desc')
-      Progress.all.then do |r|
-        rank.present? && r.respond_to?(rank) ? r.send(rank) : r
-      end.then do |r|
-        state.present? && r.respond_to?(state) ? r.send(state) : r
-      end.then do |r|
-        staff_id.present? ? r.where(staff_id: staff_id) : r
-      end.order order.underscore
+    def progresses(rank: nil, state: nil, staff_id: nil, order: nil)
+      Progress.rank_eq(rank)
+              .state_eq(state)
+              .staff_eq(staff_id)
+              .order(order.present? ? order.underscore : 'id desc')
     end
 
     field :progresses_list, ProgressesListType, null: false do
@@ -115,14 +115,12 @@ module Types
       argument :state, ProgressStateEnum, required: false
       argument :staff_id, Int, required: false
     end
-    def progresses_list(page: 1, per: 25, rank: nil, state: nil, staff_id: nil, order: 'created_at desc')
-      result = Progress.all.then do |r|
-        rank.present? && r.respond_to?(rank) ? r.send(rank) : r
-      end.then do |r|
-        state.present? && r.respond_to?(state) ? r.send(state) : r
-      end.then do |r|
-        staff_id.present? ? r.where(staff_id: staff_id) : r
-      end.order(order.underscore).page(page).per(per)
+    def progresses_list(page: 1, per: 25, rank: nil, state: nil, staff_id: nil, order: nil)
+      result = Progress.rank_eq(rank)
+                       .state_eq(state)
+                       .staff_eq(staff_id)
+                       .order(order.present? ? order.underscore : 'id desc')
+                       .page(page).per(per)
       parse_connection_payload result, :progresses
     end
 
