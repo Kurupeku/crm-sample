@@ -202,7 +202,7 @@ RSpec.describe Progress, type: :model do
           { label: I18n.t(event, scope: %i[activerecord attributes progress event]), event: event }
         end
       end
-      let(:progress) { create :progress }
+      let(:progress) { create :progress, state: :waiting }
       it 'order以外のeventが配列で返される' do
         is_asserted_by { progress.selectable_events == events }
       end
