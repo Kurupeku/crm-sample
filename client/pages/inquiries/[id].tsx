@@ -1,8 +1,6 @@
 import { FC, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
-import { useSetRecoilState } from "recoil";
-import { globalLoadingState } from "../../modules/atoms";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -67,7 +65,6 @@ const InquiryShow: FC = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [userModalOpen, setUserModalOpen] = useState<boolean>(false);
   const [progressId, setProgressId] = useState<string | null>(null);
-  const setLoading = useSetRecoilState(globalLoadingState);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const { id } = router.query;
@@ -155,8 +152,6 @@ const InquiryShow: FC = () => {
 
     setProgressId(data.inquiry.progress.id);
   }, [data]);
-
-  useEffect(() => setLoading(loading), [loading]);
 
   return (
     <>

@@ -13,7 +13,6 @@ import Loader from "react-loader-spinner";
 import { generateSessionData, AuthResponseData } from "../modules/jwt";
 import { useSnackbar } from "notistack";
 import { useGetStaffbyEmailQuery } from "../graphql/client";
-import Box from "@mui/material/Box";
 
 const fetchRefreshToken = (token: string) => {
   const url = `${process.env.NEXT_PUBLIC_API_HOST}/api/refresh_token`;
@@ -58,17 +57,18 @@ const GlobalStateProvider: FC = ({ children }) => {
     } else {
       fetchRefreshToken(jwt)
         .then((response) => {
+          setLoading(false);
           removeCookie("jwt");
           setCookie("jwt", response.data.token, { path: "/" });
           setSession(generateSessionData(response.data));
         })
         .catch((err) => {
+          setLoading(false);
           removeCookie("jwt");
-          router.replace("/login");
           enqueueSnackbar("セッションが切れています", { variant: "error" });
           setSession(null);
-        })
-        .finally(() => setLoading(false));
+          router.replace("/login");
+        });
     }
   }, [
     router,
@@ -95,9 +95,9 @@ const GlobalStateProvider: FC = ({ children }) => {
           })
           .catch((err) => {
             removeCookie("jwt");
-            router.replace("/login");
             enqueueSnackbar("セッションが切れています", { variant: "error" });
             setSession(null);
+            router.replace("/login");
           });
       }
     }, 60000);
@@ -106,7 +106,7 @@ const GlobalStateProvider: FC = ({ children }) => {
 
   return (
     <>
-      <Box sx={{ m: 0, p: 0 }}>{children}</Box>
+      {children}
       {loading && (
         <Backdrop open={loading}>
           <Loader type="MutatingDots" height={100} width={100} />

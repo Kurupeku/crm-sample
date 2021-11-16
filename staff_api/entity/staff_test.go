@@ -12,7 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func TestMain(m *testing.M) {
+func TestStaffEntities(t *testing.T) {
 	os.Setenv("GO_ENV", "test")
 	db, err := database.Connect()
 	if err != nil {
@@ -24,17 +24,24 @@ func TestMain(m *testing.M) {
 		log.Panic(err)
 	}
 
-	code := m.Run()
+	t.Run("AllStaffs", testAllStaffs)
+	t.Run("PaginatedStaffs", testPaginatedStaffs)
+	t.Run("GetPageInfo", testGetPageInfo)
+	t.Run("FindStaffByID", testFindStaffByID)
+	t.Run("FindStaffByEmail", testFindStaffByEmail)
+	t.Run("Create", testCreate)
+	t.Run("Update", testUpdate)
+	t.Run("Delete", testDelete)
+	t.Run("ChangeIcon", testChangeIcon)
+	t.Run("ChangePassword", testChangePassword)
+	t.Run("IsAuthenticated", testIsAuthenticated)
 
 	cleanStaffs()
-
-	os.Exit(code)
 }
 
-func TestAllStaffs(t *testing.T) {
+func testAllStaffs(t *testing.T) {
 	size := 10
 	createStaffs(t, size)
-	defer cleanStaffs()
 
 	staffs, err := AllStaffs()
 	if err != nil {
@@ -42,11 +49,12 @@ func TestAllStaffs(t *testing.T) {
 	}
 
 	assert.Equal(t, size, len(staffs))
+
+	cleanStaffs()
 }
 
-func TestPaginatedStaffs(t *testing.T) {
+func testPaginatedStaffs(t *testing.T) {
 	createStaffs(t, 30)
-	defer cleanStaffs()
 
 	limit := 25
 	offset := 0
@@ -76,11 +84,12 @@ func TestPaginatedStaffs(t *testing.T) {
 	_, err = PaginatedStaffs(limit, offset)
 
 	assert.Error(t, err)
+
+	cleanStaffs()
 }
 
-func TestGetPageInfo(t *testing.T) {
+func testGetPageInfo(t *testing.T) {
 	createStaffs(t, 30)
-	defer cleanStaffs()
 
 	per := 25
 	page := 1
@@ -132,11 +141,12 @@ func TestGetPageInfo(t *testing.T) {
 	_, err = GetPageInfo(per, page)
 
 	assert.Error(t, err)
+
+	cleanStaffs()
 }
 
-func TestFindStaffByID(t *testing.T) {
+func testFindStaffByID(t *testing.T) {
 	s := createStaff(t)
-	defer cleanStaffs()
 
 	var staff Staff
 	staff.FindStaffByID(fmt.Sprintf("%d", s.ID))
@@ -147,11 +157,12 @@ func TestFindStaffByID(t *testing.T) {
 	err := staff.FindStaffByID("0")
 
 	assert.Error(t, err)
+
+	cleanStaffs()
 }
 
-func TestFindStaffByEmail(t *testing.T) {
+func testFindStaffByEmail(t *testing.T) {
 	s := createStaff(t)
-	defer cleanStaffs()
 
 	var staff Staff
 	staff.FindStaffByEmail(s.Email)
@@ -162,11 +173,11 @@ func TestFindStaffByEmail(t *testing.T) {
 	err := staff.FindStaffByEmail("test")
 
 	assert.Error(t, err)
+
+	cleanStaffs()
 }
 
-func TestCreate(t *testing.T) {
-	defer cleanStaffs()
-
+func testCreate(t *testing.T) {
 	var staff Staff
 
 	name := "テスト"
@@ -196,11 +207,12 @@ func TestCreate(t *testing.T) {
 	err = staff.Create(name, email, password)
 
 	assert.Error(t, err)
+
+	cleanStaffs()
 }
 
-func TestUpdate(t *testing.T) {
+func testUpdate(t *testing.T) {
 	s := createStaff(t)
-	defer cleanStaffs()
 
 	id := fmt.Sprintf("%d", s.ID)
 
@@ -227,11 +239,12 @@ func TestUpdate(t *testing.T) {
 	err = staff.Update(id, &name, &email)
 
 	assert.Error(t, err)
+
+	cleanStaffs()
 }
 
-func TestDelete(t *testing.T) {
+func testDelete(t *testing.T) {
 	s := createStaff(t)
-	defer cleanStaffs()
 
 	var staff Staff
 
@@ -245,11 +258,12 @@ func TestDelete(t *testing.T) {
 	staff.Delete(id)
 
 	assert.Equal(t, int64(0), database.GetDB().First(&Staff{}, s.ID).RowsAffected)
+
+	cleanStaffs()
 }
 
-func TestChangeIcon(t *testing.T) {
+func testChangeIcon(t *testing.T) {
 	s := createStaff(t)
-	defer cleanStaffs()
 
 	id := fmt.Sprintf("%d", s.ID)
 
@@ -273,11 +287,12 @@ func TestChangeIcon(t *testing.T) {
 	database.GetDB().First(&fs, id)
 
 	assert.Equal(t, "", fs.Icon)
+
+	cleanStaffs()
 }
 
-func TestChangePassword(t *testing.T) {
+func testChangePassword(t *testing.T) {
 	s := createStaff(t)
-	defer cleanStaffs()
 
 	id := fmt.Sprintf("%d", s.ID)
 
@@ -307,11 +322,12 @@ func TestChangePassword(t *testing.T) {
 	err := staff.ChangePassword(id, cps, nps)
 
 	assert.Error(t, err)
+
+	cleanStaffs()
 }
 
-func TestIsAuthenticated(t *testing.T) {
+func testIsAuthenticated(t *testing.T) {
 	s := createStaff(t)
-	defer cleanStaffs()
 
 	e := s.Email
 	p := "password"
@@ -322,6 +338,8 @@ func TestIsAuthenticated(t *testing.T) {
 	staff = Staff{}
 	p = "incorrectpassword"
 	assert.Equal(t, false, staff.IsAuthenticated(e, p))
+
+	cleanStaffs()
 }
 
 var staffCreatedTimes = 1000
@@ -354,7 +372,7 @@ func createStaffs(t *testing.T, size int) []Staff {
 	for i := 1; i <= size; i++ {
 		staffs = append(staffs, Staff{
 			Name:           fmt.Sprintf("テスト%d", i),
-			Email:          fmt.Sprintf("test%d@example.com", i),
+			Email:          fmt.Sprintf("entity_test%d@example.com", i),
 			PasswordDigest: hashed,
 		})
 	}
