@@ -9,6 +9,7 @@ import {
 import axios from "axios";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
+import { useTheme } from "@mui/material/styles";
 import Loader from "react-loader-spinner";
 import { generateSessionData, AuthResponseData } from "../modules/jwt";
 import { useSnackbar } from "notistack";
@@ -36,6 +37,7 @@ const GlobalStateProvider: FC = ({ children }) => {
     variables: { email: session?.email || "" },
     skip: !session,
   });
+  const theme = useTheme();
 
   useEffect(() => {
     const newCurrentStaff = data?.staffByEmail;
@@ -92,16 +94,18 @@ const GlobalStateProvider: FC = ({ children }) => {
       }
     }, 60000);
     return () => clearInterval(id);
-  }, [router, enqueueSnackbar, setSession]);
+  }, [router, currentStaff, enqueueSnackbar, setSession]);
 
   return (
     <>
-      <Box sx={{ m: 0, p: 0, opacity: currentStaff ? 1 : 0 }}>{children}</Box>
-      {loading && (
-        <Backdrop open={loading}>
-          <Loader type="MutatingDots" height={100} width={100} />
-        </Backdrop>
-      )}
+      {children}
+      <Backdrop
+        open={loading}
+        sx={{ zIndex: theme.zIndex.drawer + 1 }}
+        transitionDuration={100}
+      >
+        <Loader type="MutatingDots" height={100} width={100} />
+      </Backdrop>
     </>
   );
 };
