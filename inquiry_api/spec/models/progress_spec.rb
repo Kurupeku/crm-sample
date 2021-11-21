@@ -263,13 +263,14 @@ RSpec.describe Progress, type: :model do
     let(:date_string) { Date.today.strftime '%F' }
     context 'state: waiting_recontactの場合' do
       it '正常に値が更新される' do
-        progress.recontact!
+        progress.update! state: :waiting_recontact
         progress.assign_recontacted_on!(date_string)
       end
     end
 
     context 'state: waiting_recontact以外の場合' do
       it 'ActiveRecord::RecordInvalidをraiseする' do
+        progress.update! state: :waiting
         expect { progress.assign_recontacted_on!(date_string) }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
