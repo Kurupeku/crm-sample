@@ -17,7 +17,9 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  describe '# validateions' do
+  let(:model) { User }
+
+  describe '# validations' do
     let(:user) { build(:user) }
 
     context 'name が blank の場合' do
@@ -78,6 +80,55 @@ RSpec.describe User, type: :model do
         user.tel = '123456789011'
         user.valid?
         is_asserted_by { user.errors.full_messages.first == expected_error }
+      end
+    end
+  end
+
+  describe '# scopes' do
+    before do
+      create :user, company_name: 'target_company_name', name: 'target_name', email: 'target_email@example.com'
+      create_list :user, 5
+    end
+
+    context 'company_name_cont' do
+      it '会社名に対してLIKE検索できる' do
+        is_asserted_by { model.company_name_cont('target').size == 1 }
+      end
+    end
+
+    context 'name_cont' do
+      it '顧客名に対してLIKE検索できる' do
+        is_asserted_by { model.name_cont('target').size == 1 }
+      end
+    end
+
+    context 'email_cont' do
+      it 'Emailに対してLIKE検索できる' do
+        is_asserted_by { model.email_cont('target').size == 1 }
+      end
+    end
+
+    context 'fields_cont' do
+      it '会社名、顧客名、Emailに対してLIKE検索できる' do
+        is_asserted_by { model.fields_cont('target_comp').size == 1 }
+        is_asserted_by { model.fields_cont('target_name').size == 1 }
+        is_asserted_by { model.fields_cont('target_email').size == 1 }
+      end
+    end
+  end
+
+  describe '# timestamps_to_unix' do
+    let(:user) { create :user }
+
+    context 'created_at_unix' do
+      it 'created_atがunix_timeで出力される' do
+        is_asserted_by { user.created_at_unix == user.created_at.to_i }
+      end
+    end
+
+    context 'updated_at_unix' do
+      it 'updated_atがunix_timeで出力される' do
+        is_asserted_by { user.updated_at_unix == user.updated_at.to_i }
       end
     end
   end
