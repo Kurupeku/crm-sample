@@ -23,7 +23,9 @@
 require 'rails_helper'
 
 RSpec.describe Comment, type: :model do
-  describe '# validateions' do
+  let(:model) { Comment }
+
+  describe '# validations' do
     let(:comment) { build :comment }
 
     context 'contentが空の場合' do
@@ -41,7 +43,7 @@ RSpec.describe Comment, type: :model do
     end
 
     context 'user_idが空の場合' do
-      it '関連するInquryからuser_idを補完してくる' do
+      it '関連するInquiryからuser_idを補完してくる' do
         comment.user_id = nil
         comment.valid?
         is_asserted_by { comment.user_id == comment.inquiry.user_id }
@@ -56,6 +58,21 @@ RSpec.describe Comment, type: :model do
         comment.inquiry.update user_id: new_user_id
         comment.reload
         is_asserted_by { comment.user_id == new_user_id }
+      end
+    end
+  end
+
+  describe '# scopes' do
+    let(:inquiry_1) { create :inquiry }
+    let(:inquiry_2) { create :inquiry }
+    before do
+      3.times { create :comment, inquiry: inquiry_1 }
+      2.times { create :comment, inquiry: inquiry_2 }
+    end
+
+    context 'inquiry_id_eq' do
+      it 'inquiry_idが一致するレコードを取得できる' do
+        is_asserted_by { model.inquiry_id_eq(inquiry_1.id).size == 3 }
       end
     end
   end
