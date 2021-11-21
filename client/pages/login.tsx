@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
 import axios from "axios";
 import { useSetRecoilState } from "recoil";
@@ -61,7 +61,7 @@ export default function Login() {
           setGlobalLoading(false);
         });
     }
-  }, [router, enqueueSnackbar, setSession, setLoading]);
+  }, [router, enqueueSnackbar, setSession, setLoading, setGlobalLoading]);
 
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(e.currentTarget.value);
