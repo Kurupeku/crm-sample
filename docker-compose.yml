@@ -23,12 +23,11 @@ services:
     ports:
       - "8080:3000"
     depends_on:
-      gateway: service_healthy
-      federation: service_healthy
-    env_file: ./.env
-    depends_on:
       gateway:
         condition: service_healthy
+      federation:
+        condition: service_healthy
+    env_file: ./.env
 
   gateway:
     build:
@@ -50,8 +49,8 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
-          'wget --header="Content-Type: application/json" -q -O - http://localhost:2000/health_check || exit 1',
+            "CMD-SHELL",
+            'wget --header="Content-Type: application/json" -q -O - http://localhost:2000/health_check || exit 1',
         ]
       interval: 10s
       timeout: 5s
@@ -83,8 +82,8 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
-          'wget --header="Content-Type: application/json" -q -O - http://localhost:3000/.well-known/apollo/server-health || exit 1',
+            "CMD-SHELL",
+            'wget --header="Content-Type: application/json" -q -O - http://localhost:3000/.well-known/apollo/server-health || exit 1',
         ]
       interval: 10s
       timeout: 5s
@@ -109,8 +108,8 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
-          'wget --header="Content-Type: application/json" -q -O - http://localhost:3001/health_check || exit 1',
+            "CMD-SHELL",
+            'wget --header="Content-Type: application/json" -q -O - http://localhost:3001/health_check || exit 1',
         ]
       interval: 10s
       timeout: 5s
@@ -142,8 +141,8 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
-          'wget --header="Content-Type: application/json" -q -O - http://localhost:3002/health_check || exit 1',
+            "CMD-SHELL",
+            'wget --header="Content-Type: application/json" -q -O - http://localhost:3002/health_check || exit 1',
         ]
       interval: 10s
       timeout: 5s
@@ -175,8 +174,8 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
-          'wget --header="Content-Type: application/json" -q -O - http://localhost:3003/health_check || exit 1',
+            "CMD-SHELL",
+            'wget --header="Content-Type: application/json" -q -O - http://localhost:3003/health_check || exit 1',
         ]
       interval: 10s
       timeout: 5s
