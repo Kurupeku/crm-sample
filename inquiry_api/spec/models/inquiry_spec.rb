@@ -19,7 +19,9 @@
 require 'rails_helper'
 
 RSpec.describe Inquiry, type: :model do
-  describe '# validateions' do
+  let(:model) { Inquiry }
+
+  describe '# validations' do
     let(:inquiry) { build :inquiry }
 
     context 'nameが空の場合' do
@@ -109,6 +111,71 @@ RSpec.describe Inquiry, type: :model do
         inquiry.tel = '123456789011'
         inquiry.valid?
         is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+      end
+    end
+
+    context 'Progressモデルに不正な値が与えられた場合' do
+      it 'バリデーションに引っかかる' do
+        expected_error = '進捗は不正な値です'
+
+        inquiry.build_progress
+        inquiry.progress.staff_id = -1
+        is_asserted_by { !inquiry.valid? }
+        is_asserted_by { inquiry.errors.full_messages.first == expected_error }
+      end
+    end
+  end
+
+  describe '# scopes' do
+    let(:inquiry_with_progress) { create :inquiry, progress: build(:progress, staff_id: 2, state: 'waiting_recontact') }
+
+    before do
+      create_list :inquiry, 5, progress: build(:progress, staff_id: 1, state: 'waiting')
+    end
+
+    context 'company_name_cont' do
+      it '会社名に対してLIKE検索できる' do
+        inquiry = create :inquiry, company_name: 'company_name_cont_test'
+        is_asserted_by { model.company_name_cont('ny_na').size == 1 }
+      end
+    end
+
+    context 'name_cont' do
+      it "顧客名に対してLIKE検索できる" do
+        inquiry = create :inquiry, name: 'name_cont_test'
+        is_asserted_by { model.name_cont('me_co').size == 1 }
+      end
+    end
+
+    context 'email_cont' do
+      it "Emailに対してLIKE検索できる" do
+        inquiry = create :inquiry, email: 'email_cont_test@example.com'
+        is_asserted_by { model.email_cont('l_con').size == 1 }
+      end
+    end
+
+    context 'fields_cont' do
+      it '会社名、顧客名、EmailのいずれかのカラムでLIKE検索に一致する結果を返す' do
+        inquiry = create :inquiry, { company_name: 'fields_cont_test_company_name',
+                                     name: 'fields_cont_test_name',
+                                     email: 'fields_cont_test_email@example.com' }
+        is_asserted_by { model.fields_cont('ds_cont_test_com').size == 1 }
+        is_asserted_by { model.fields_cont('ds_cont_test_na').size == 1 }
+        is_asserted_by { model.fields_cont('ds_cont_test_em').size == 1 }
+      end
+    end
+
+    context 'state_eq' do
+      it '紐づくProgressのstateの値に一致する結果を返す' do
+        inquiry_with_progress
+        is_asserted_by { model.state_eq('waiting_recontact').size == 1 }
+      end
+    end
+
+    context 'staff_eq' do
+      it '紐づくProgressのstaff_idの値に一致する結果を返す' do
+        inquiry_with_progress
+        is_asserted_by { model.staff_eq(2).size == 1 }
       end
     end
   end

@@ -23,6 +23,36 @@
 require 'rails_helper'
 
 RSpec.describe Progress, type: :model do
+  let(:model) { Progress }
+
+  describe '# scopes' do
+    let(:target) { create :progress, rank: 'c', state: 'waiting_recontact', staff_id: 2 }
+    before do
+      create_list :progress, 5, rank: 'd', state: 'waiting', staff_id: 1
+    end
+
+    context 'rank_eq' do
+      it 'rankと一致するレコードを返す' do
+        target
+        is_asserted_by { model.rank_eq('c').size == 1 }
+      end
+    end
+
+    context 'state_eq' do
+      it 'stateと一致するレコードを返す' do
+        target
+        is_asserted_by { model.state_eq('waiting_recontact').size == 1 }
+      end
+    end
+
+    context 'staff_eq' do
+      it 'staff_idと一致するレコードを返す' do
+        target
+        is_asserted_by { model.staff_eq(2).size == 1 }
+      end
+    end
+  end
+
   describe '# aasm_status' do
     let(:progress) { create :progress, state: :waiting }
     let(:error_message) do
@@ -217,6 +247,31 @@ RSpec.describe Progress, type: :model do
       let(:progress) { create :progress, state: 'estimating' }
       it 'archiveとorderのみが配列で返される' do
         is_asserted_by { progress.selectable_events == events }
+      end
+    end
+  end
+
+  describe '# state_i18n' do
+    it 'stateが翻訳された値として出力される' do
+      progress = create :progress, state: 'waiting'
+      is_asserted_by { progress.state_i18n == '未着手' }
+    end
+  end
+
+  describe '# assign_recontacted_on!' do
+    let(:progress) { create :progress }
+    let(:date_string) { Date.today.strftime '%F' }
+    context 'state: waiting_recontactの場合' do
+      it '正常に値が更新される' do
+        progress.update! state: :waiting_recontact
+        progress.assign_recontacted_on!(date_string)
+      end
+    end
+
+    context 'state: waiting_recontact以外の場合' do
+      it 'ActiveRecord::RecordInvalidをraiseする' do
+        progress.update! state: :waiting
+        expect { progress.assign_recontacted_on!(date_string) }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
   end

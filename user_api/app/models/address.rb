@@ -32,7 +32,7 @@ class Address < ApplicationRecord
   validates :postal_code, format: { with: POSTAL_CODE_REGEX }
 
   def full_address
-    [prefecture, city, address, building].select(&:present?).join
+    [prefecture, city, street, building].select(&:present?).join
   end
 
   def full_address_with_postal_code

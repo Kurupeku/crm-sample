@@ -102,7 +102,7 @@ class Progress < ApplicationRecord
     end
   end
 
-  def asign_recontacted_on!(date)
+  def assign_recontacted_on!(date)
     if waiting_recontact?
       update! recontacted_on: Date.parse(date)
     else

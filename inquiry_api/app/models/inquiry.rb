@@ -33,6 +33,7 @@ class Inquiry < ApplicationRecord
 
   validates :email, format: { with: EMAIL_REGEXP }
   validates :tel, format: { with: PHONE_NUMBER_REGEX }
+  validates_associated :progress
 
   scope :company_name_cont, lambda { |word|
     return all if word.blank?
