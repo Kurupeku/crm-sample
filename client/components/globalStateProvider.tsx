@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo } from "react";
+import { FC, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
 import { useRecoilState } from "recoil";
 import {
@@ -6,9 +6,10 @@ import {
   sessionState,
   currentStaffState,
 } from "../modules/atoms";
-import { useCookies } from "react-cookie";
 import axios from "axios";
-import { Backdrop } from "@mui/material";
+import Backdrop from "@mui/material/Backdrop";
+import Box from "@mui/material/Box";
+import { useTheme } from "@mui/material/styles";
 import Loader from "react-loader-spinner";
 import { generateSessionData, AuthResponseData } from "../modules/jwt";
 import { useSnackbar } from "notistack";
@@ -27,7 +28,6 @@ const fetchRefreshToken = (token: string) => {
 };
 
 const GlobalStateProvider: FC = ({ children }) => {
-  const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
   const [loading, setLoading] = useRecoilState(globalLoadingState);
   const [session, setSession] = useRecoilState(sessionState);
   const [currentStaff, setCurrentStaff] = useRecoilState(currentStaffState);
@@ -37,8 +37,7 @@ const GlobalStateProvider: FC = ({ children }) => {
     variables: { email: session?.email || "" },
     skip: !session,
   });
-
-  const jwt = useMemo(() => cookies.jwt, [cookies]) as string | null;
+  const theme = useTheme();
 
   useEffect(() => {
     const newCurrentStaff = data?.staffByEmail;
@@ -51,6 +50,7 @@ const GlobalStateProvider: FC = ({ children }) => {
 
   useEffect(() => {
     setLoading(true);
+    const jwt = localStorage.getItem("jwt");
     if (!jwt) {
       router.replace("/login");
       enqueueSnackbar("ログインしてください", { variant: "error" });
@@ -58,43 +58,35 @@ const GlobalStateProvider: FC = ({ children }) => {
       fetchRefreshToken(jwt)
         .then((response) => {
           setLoading(false);
-          removeCookie("jwt");
-          setCookie("jwt", response.data.token, { path: "/" });
+          localStorage.setItem("jwt", response.data.token);
           setSession(generateSessionData(response.data));
         })
         .catch((err) => {
           setLoading(false);
-          removeCookie("jwt");
+          localStorage.removeItem("jwt");
           enqueueSnackbar("セッションが切れています", { variant: "error" });
           setSession(null);
           router.replace("/login");
         });
     }
-  }, [
-    router,
-    enqueueSnackbar,
-    removeCookie,
-    setCookie,
-    setSession,
-    setLoading,
-  ]);
+  }, [router, enqueueSnackbar, setSession, setLoading]);
 
   useEffect(() => {
     if (!currentStaff) return;
 
     const id = setInterval(() => {
+      const jwt = localStorage.getItem("jwt");
       if (!jwt) {
         router.replace("/login");
         enqueueSnackbar("ログインしてください", { variant: "error" });
       } else {
         fetchRefreshToken(jwt)
           .then((response) => {
-            removeCookie("jwt");
-            setCookie("jwt", response.data.token, { path: "/" });
+            localStorage.setItem("jwt", response.data.token);
             setSession(generateSessionData(response.data));
           })
           .catch((err) => {
-            removeCookie("jwt");
+            localStorage.removeItem("jwt");
             enqueueSnackbar("セッションが切れています", { variant: "error" });
             setSession(null);
             router.replace("/login");
@@ -102,16 +94,18 @@ const GlobalStateProvider: FC = ({ children }) => {
       }
     }, 60000);
     return () => clearInterval(id);
-  }, [router, enqueueSnackbar, removeCookie, setCookie, setSession]);
+  }, [router, currentStaff, enqueueSnackbar, setSession]);
 
   return (
     <>
       {children}
-      {loading && (
-        <Backdrop open={loading}>
-          <Loader type="MutatingDots" height={100} width={100} />
-        </Backdrop>
-      )}
+      <Backdrop
+        open={loading}
+        sx={{ zIndex: theme.zIndex.drawer + 1 }}
+        transitionDuration={100}
+      >
+        <Loader type="MutatingDots" height={100} width={100} />
+      </Backdrop>
     </>
   );
 };

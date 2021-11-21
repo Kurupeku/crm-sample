@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
 import axios from "axios";
-import { useCookies } from "react-cookie";
 import { useSetRecoilState } from "recoil";
 import { globalLoadingState, sessionState } from "../modules/atoms";
 import { useSnackbar } from "notistack";
@@ -27,7 +26,6 @@ const publicTheme = createTheme({
 });
 
 export default function Login() {
-  const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
@@ -36,9 +34,8 @@ export default function Login() {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
-  const jwt = useMemo(() => cookies.jwt, [cookies]) as string | null;
-
   useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
     if (jwt) {
       setGlobalLoading(true);
       const url = `${process.env.NEXT_PUBLIC_API_HOST}/api/refresh_token`;
@@ -53,27 +50,18 @@ export default function Login() {
         })
         .then((response) => {
           enqueueSnackbar("ログイン中です", { variant: "success" });
-          removeCookie("jwt");
-          setCookie("jwt", response.data.token, { path: "/" });
           const sessionData = generateSessionData(response.data);
           setSession(sessionData);
           setGlobalLoading(false);
           router.replace("/");
         })
         .catch((err) => {
-          removeCookie("jwt");
+          localStorage.removeItem("jwt");
           setSession(null);
           setGlobalLoading(false);
         });
     }
-  }, [
-    router,
-    enqueueSnackbar,
-    removeCookie,
-    setCookie,
-    setSession,
-    setLoading,
-  ]);
+  }, [router, enqueueSnackbar, setSession, setLoading, setGlobalLoading]);
 
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(e.currentTarget.value);
@@ -92,19 +80,19 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
       })
       .then((response) => {
-        removeCookie("jwt");
-        setCookie("jwt", response.data.token, { path: "/" });
+        setLoading(false);
+        localStorage.setItem("jwt", response.data.token);
         const sessionData = generateSessionData(response.data);
         setSession(sessionData);
-        router.replace("/");
         enqueueSnackbar("ログインしました", { variant: "success" });
+        router.replace("/");
       })
       .catch(() => {
+        setLoading(false);
         enqueueSnackbar("メールアドレスまたはパスワードが一致しません", {
           variant: "error",
         });
-      })
-      .finally(() => setLoading(false));
+      });
   };
 
   return (
