@@ -135,33 +135,33 @@ RSpec.describe Inquiry, type: :model do
 
     context 'company_name_cont' do
       it '会社名に対してLIKE検索できる' do
-        inquiry = create :inquiry, company_name: 'test'
-        is_asserted_by { model.company_name_cont('es').size == 1 }
+        inquiry = create :inquiry, company_name: 'company_name_cont_test'
+        is_asserted_by { model.company_name_cont('ny_na').size == 1 }
       end
     end
 
     context 'name_cont' do
       it "顧客名に対してLIKE検索できる" do
-        inquiry = create :inquiry, name: 'test'
-        is_asserted_by { model.name_cont('es').size == 1 }
+        inquiry = create :inquiry, name: 'name_cont_test'
+        is_asserted_by { model.name_cont('me_co').size == 1 }
       end
     end
 
     context 'email_cont' do
       it "Emailに対してLIKE検索できる" do
-        inquiry = create :inquiry, email: 'search_target@example.com'
-        is_asserted_by { model.email_cont('ch_t').size == 1 }
+        inquiry = create :inquiry, email: 'email_cont_test@example.com'
+        is_asserted_by { model.email_cont('l_con').size == 1 }
       end
     end
 
     context 'fields_cont' do
       it '会社名、顧客名、EmailのいずれかのカラムでLIKE検索に一致する結果を返す' do
-        inquiry = create :inquiry, { company_name: 'test_company_name',
-                                     name: 'test_name',
-                                     email: 'search_target@example.com' }
-        is_asserted_by { model.fields_cont('comp').size == 1 }
-        is_asserted_by { model.fields_cont('t_na').size == 1 }
-        is_asserted_by { model.fields_cont('ch_t').size == 1 }
+        inquiry = create :inquiry, { company_name: 'fields_cont_test_company_name',
+                                     name: 'fields_cont_test_name',
+                                     email: 'fields_cont_test_email@example.com' }
+        is_asserted_by { model.fields_cont('ds_cont_test_com').size == 1 }
+        is_asserted_by { model.fields_cont('ds_cont_test_na').size == 1 }
+        is_asserted_by { model.fields_cont('ds_cont_test_em').size == 1 }
       end
     end
 
