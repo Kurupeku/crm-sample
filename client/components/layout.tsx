@@ -1,9 +1,7 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 import { useResetRecoilState } from "recoil";
 import { sessionState } from "../modules/atoms";
-import { useCookies } from "react-cookie";
 import { useSnackbar } from "notistack";
 import {
   styled,
@@ -104,7 +102,6 @@ const Layout: FC = ({ children }) => {
   const resetSession = useResetRecoilState(sessionState);
   const [open, setOpen] = React.useState(false);
   const router = useRouter();
-  const [_cookies, _setCookie, removeCookie] = useCookies(["jwt"]);
   const { enqueueSnackbar } = useSnackbar();
 
   const privateTheme: Theme = useMemo(
@@ -146,7 +143,7 @@ const Layout: FC = ({ children }) => {
   };
 
   const handleLogout = () => {
-    removeCookie("jwt");
+    localStorage.removeItem("jwt");
     resetSession();
     enqueueSnackbar("ログアウトしました", { variant: "success" });
     router.replace("/login");

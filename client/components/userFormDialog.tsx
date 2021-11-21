@@ -340,7 +340,7 @@ const UserFormDialog: FC<UserFormProps> = (props) => {
           maxWidth="md"
           sx={{ display: "flex", justifyContent: "end" }}
         >
-          <Button onClick={onClose} color="inherit" variant="contained">
+          <Button onClick={onClose} color="secondary" variant="contained">
             キャンセル
           </Button>
           {index !== 0 ? (

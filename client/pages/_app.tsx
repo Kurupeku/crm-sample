@@ -5,7 +5,6 @@ import { NextRouter } from "next/dist/client/router";
 import { RecoilRoot } from "recoil";
 import { SnackbarProvider } from "notistack";
 import { CacheProvider, EmotionCache } from "@emotion/react";
-import { CookiesProvider } from "react-cookie";
 import GlobalStateProvider from "../components/globalStateProvider";
 import Layout from "../components/layout";
 import { ApolloProvider } from "@apollo/client";
@@ -43,24 +42,21 @@ export default function MyApp(props: MyAppProps) {
       </Head>
 
       <RecoilRoot>
-        <CookiesProvider>
-          <SnackbarProvider maxSnack={10}>
-            <LocalizationProvider dateAdapter={AdapterDateFns} locale={ja}>
-              {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-              {isMatchLoginPath(router) ? (
-                <Component {...pageProps} />
-              ) : (
-                <ApolloProvider client={client}>
-                  <GlobalStateProvider>
-                    <Layout>
-                      <Component {...pageProps} />
-                    </Layout>
-                  </GlobalStateProvider>
-                </ApolloProvider>
-              )}
-            </LocalizationProvider>
-          </SnackbarProvider>
-        </CookiesProvider>
+        <SnackbarProvider maxSnack={10}>
+          <LocalizationProvider dateAdapter={AdapterDateFns} locale={ja}>
+            {isMatchLoginPath(router) ? (
+              <Component {...pageProps} />
+            ) : (
+              <ApolloProvider client={client}>
+                <GlobalStateProvider>
+                  <Layout>
+                    <Component {...pageProps} />
+                  </Layout>
+                </GlobalStateProvider>
+              </ApolloProvider>
+            )}
+          </LocalizationProvider>
+        </SnackbarProvider>
       </RecoilRoot>
     </CacheProvider>
   );
