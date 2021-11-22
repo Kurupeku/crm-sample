@@ -8,7 +8,6 @@ import {
 } from "../modules/atoms";
 import axios from "axios";
 import Backdrop from "@mui/material/Backdrop";
-import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import Loader from "react-loader-spinner";
 import { generateSessionData, AuthResponseData } from "../modules/jwt";

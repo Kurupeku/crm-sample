@@ -1,6 +1,7 @@
 # Environment for dev
 FROM node:16-alpine as dev
 WORKDIR /app
+#COPY package*.json ./
 COPY . ./
 RUN yarn install
 EXPOSE 3000

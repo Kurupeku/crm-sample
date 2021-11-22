@@ -19,7 +19,7 @@ services:
       target: dev
     volumes:
       - ./client:/app
-      - /app/node_modules
+#      - ./client/node_modules:/app/node_modules
     ports:
       - "8080:3000"
     depends_on:
@@ -63,7 +63,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./federation:/app
-      - /app/node_modules
+#      - ./federation/node_modules:/app/node_modules
     ports:
       - "3000:3000"
     links:
