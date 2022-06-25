@@ -19,7 +19,7 @@ services:
       target: dev
     volumes:
       - ./client:/app
-      - /app/node_modules
+      - ./client/node_modules:/app/node_modules
     ports:
       - "8080:3000"
     depends_on:
@@ -28,6 +28,8 @@ services:
       federation:
         condition: service_healthy
     env_file: ./.env
+    environment:
+      - PORT=3000
 
   gateway:
     build:
@@ -41,16 +43,18 @@ services:
     ports:
       - 2000:2000
     depends_on:
-      staff_api:
-        condition: service_healthy
+      grpc_staff_api:
+        condition: service_started
       federation:
         condition: service_healthy
     env_file: ./.env
+    environment:
+      - PORT=2000
     healthcheck:
       test:
         [
-            "CMD-SHELL",
-            'wget --header="Content-Type: application/json" -q -O - http://localhost:2000/health_check || exit 1',
+          "CMD-SHELL",
+          'wget --header="Content-Type: application/json" -q -O - http://localhost:2000/health_check || exit 1',
         ]
       interval: 10s
       timeout: 5s
@@ -63,7 +67,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./federation:/app
-      - /app/node_modules
+      - ./federation/node_modules:/app/node_modules
     ports:
       - "3000:3000"
     links:
@@ -78,12 +82,14 @@ services:
       inquiry_api:
         condition: service_healthy
     env_file: ./.env
+    environment:
+      - PORT=3000
     command: npm run dev
     healthcheck:
       test:
         [
-            "CMD-SHELL",
-            'wget --header="Content-Type: application/json" -q -O - http://localhost:3000/.well-known/apollo/server-health || exit 1',
+          "CMD-SHELL",
+          'wget --header="Content-Type: application/json" -q -O - http://localhost:3000/.well-known/apollo/server-health || exit 1',
         ]
       interval: 10s
       timeout: 5s
@@ -101,20 +107,38 @@ services:
     stdin_open: true
     ports:
       - 3001:3001
-      - 50051:50051
     depends_on:
       - db
     env_file: ./.env
+    environment:
+      - PORT=3001
     healthcheck:
       test:
         [
-            "CMD-SHELL",
-            'wget --header="Content-Type: application/json" -q -O - http://localhost:3001/health_check || exit 1',
+          "CMD-SHELL",
+          'wget --header="Content-Type: application/json" -q -O - http://localhost:3001/health_check || exit 1',
         ]
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 5s
+
+  grpc_staff_api:
+    build:
+      context: ./grpc_staff_api
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./grpc_staff_api:/go/src/app
+    tty: true
+    stdin_open: true
+    ports:
+      - 50051:50051
+    depends_on:
+      - db
+    env_file: ./.env
+    environment:
+      - PORT=50051
 
   # staff_db_gui:
   #   image: sosedoff/pgweb
@@ -138,11 +162,13 @@ services:
     depends_on:
       - db
     env_file: ./.env
+    environment:
+      - PORT=3002
     healthcheck:
       test:
         [
-            "CMD-SHELL",
-            'wget --header="Content-Type: application/json" -q -O - http://localhost:3002/health_check || exit 1',
+          "CMD-SHELL",
+          'wget --header="Content-Type: application/json" -q -O - http://localhost:3002/health_check || exit 1',
         ]
       interval: 10s
       timeout: 5s
@@ -171,11 +197,13 @@ services:
     depends_on:
       - db
     env_file: ./.env
+    environment:
+      - PORT=3003
     healthcheck:
       test:
         [
-            "CMD-SHELL",
-            'wget --header="Content-Type: application/json" -q -O - http://localhost:3003/health_check || exit 1',
+          "CMD-SHELL",
+          'wget --header="Content-Type: application/json" -q -O - http://localhost:3003/health_check || exit 1',
         ]
       interval: 10s
       timeout: 5s

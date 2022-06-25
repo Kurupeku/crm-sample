@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "federation",
   "version": "0.0.0",
   "description": "",
   "main": "build/src/index.js",
@@ -19,7 +19,7 @@
     "pretest": "npm run compile",
     "posttest": "npm run lint",
     "dev": "ts-node-dev --respawn src/index.ts",
-    "start": "node build/src/index.js"
+    "start": "PORT=$npm_config_port node build/src/index.js"
   },
   "devDependencies": {
     "@types/node": "^14.11.2",

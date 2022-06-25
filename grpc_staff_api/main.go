@@ -30,5 +30,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server.RunGraphql(port)
+	server.RunGrpc(port)
 }

@@ -40,7 +40,6 @@ WORKDIR ${ROOT}
 COPY . ${ROOT}
 RUN go mod download
 
-# RUN go build -o ${ROOT}/binary
 RUN go build -o ${ROOT}/binary
 
 FROM alpine:3.14 as prod

@@ -1,8 +1,9 @@
 FROM node:16
 
 WORKDIR /app
+#COPY package*.json ./
 COPY . ./
 RUN npm install
 
-EXPOSE 3000
-CMD ["npm", "start"]
+EXPOSE ${PORT}
+CMD ["/bin/sh", "-c", "npm start -port=$PORT"]
