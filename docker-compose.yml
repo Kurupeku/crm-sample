@@ -43,8 +43,8 @@ services:
     ports:
       - 2000:2000
     depends_on:
-      staff_api:
-        condition: service_healthy
+      grpc_staff_api:
+        condition: service_started
       federation:
         condition: service_healthy
     env_file: ./.env
@@ -107,13 +107,11 @@ services:
     stdin_open: true
     ports:
       - 3001:3001
-      - 50051:50051
     depends_on:
       - db
     env_file: ./.env
     environment:
       - PORT=3001
-      - SERVER_TYPE=both
     healthcheck:
       test:
         [
@@ -124,6 +122,23 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
+
+  grpc_staff_api:
+    build:
+      context: ./grpc_staff_api
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./grpc_staff_api:/go/src/app
+    tty: true
+    stdin_open: true
+    ports:
+      - 50051:50051
+    depends_on:
+      - db
+    env_file: ./.env
+    environment:
+      - PORT=50051
 
   # staff_db_gui:
   #   image: sosedoff/pgweb

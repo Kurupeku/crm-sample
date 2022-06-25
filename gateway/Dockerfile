@@ -21,7 +21,7 @@ RUN go get github.com/uudashr/gopkgs/v2/cmd/gopkgs \
   golang.org/x/tools/gopls
 
 EXPOSE ${PORT}
-CMD ["go", "run", "main.go", ${PORT}]
+CMD ["/bin/sh", "-c", "go run main.go $PORT"]
 
 # -------------------------------
 
@@ -43,7 +43,6 @@ RUN go mod download
 # RUN go build -o ${ROOT}/binary
 RUN go build -o ${ROOT}/binary
 
-
 FROM alpine:3.14 as prod
 
 ENV ROOT=/go/src/app
@@ -51,4 +50,4 @@ WORKDIR ${ROOT}
 COPY --from=builder ${ROOT}/binary ${ROOT}
 
 EXPOSE ${PORT}
-CMD ["/go/src/app/binary", ${PORT}]
+CMD ["/bin/sh", "-c", "/go/src/app/binary $PORT"]

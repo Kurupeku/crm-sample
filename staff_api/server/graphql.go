@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"log"
 	"net/http"
 
@@ -13,7 +12,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 )
 
-func RunGraphql(ctx context.Context, port string) {
+func RunGraphql(port string) {
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
 	http.Handle("/health_check", http.HandlerFunc(handlers.HealthCheckHandler))

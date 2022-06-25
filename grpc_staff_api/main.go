@@ -15,7 +15,7 @@ func main() {
 		os.Setenv("GO_ENV", "development")
 	}
 
-	if len(os.Args) != 1 {
+	if len(os.Args) != 2 {
 		log.Fatal("require argument of port number")
 	}
 
