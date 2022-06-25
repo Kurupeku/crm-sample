@@ -13,8 +13,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 )
 
-const gqlPort = "3001"
-
 func RunGraphql(ctx context.Context, port string) {
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
