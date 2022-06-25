@@ -24,10 +24,13 @@ func main() {
 	}
 	defer conn.Close()
 
-	client := proto.NewAuthClient(conn)
+	corsConf := getCorsConfig()
+	if err := corsConf.Validate(); err != nil {
+		log.Fatal(err)
+	}
 
 	engine := gin.Default()
-	corsConf := getCorsConfig()
+	client := proto.NewAuthClient(conn)
 	engine.Use(cors.New(corsConf))
 	routerSetup(engine, client)
 	engine.Run(":2000")
