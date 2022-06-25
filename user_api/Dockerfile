@@ -36,8 +36,8 @@ RUN bundle install -j4
 
 COPY . ${WORKDIR}
 
-EXPOSE 3002
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3002"]
+EXPOSE ${PORT}
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", ${PORT}]
 
 # ---------------------------------------------------------
 
@@ -62,5 +62,5 @@ RUN bundle config set --local deployment 'true' && \
 
 COPY . ${WORKDIR}
 
-EXPOSE 3002
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3002", "-e", "production"]
+EXPOSE ${PORT}
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-e", "production", "-p", ${PORT}]
