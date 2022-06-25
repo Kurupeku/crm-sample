@@ -28,6 +28,8 @@ services:
       federation:
         condition: service_healthy
     env_file: ./.env
+    environment:
+      - PORT=3000
 
   gateway:
     build:
@@ -46,6 +48,8 @@ services:
       federation:
         condition: service_healthy
     env_file: ./.env
+    environment:
+      - PORT=2000
     healthcheck:
       test:
         [
@@ -78,6 +82,8 @@ services:
       inquiry_api:
         condition: service_healthy
     env_file: ./.env
+    environment:
+      - PORT=3000
     command: npm run dev
     healthcheck:
       test:
@@ -105,6 +111,9 @@ services:
     depends_on:
       - db
     env_file: ./.env
+    environment:
+      - PORT=3001
+      - SERVER_TYPE=both
     healthcheck:
       test:
         [
@@ -138,6 +147,8 @@ services:
     depends_on:
       - db
     env_file: ./.env
+    environment:
+      - PORT=3002
     healthcheck:
       test:
         [
@@ -171,6 +182,8 @@ services:
     depends_on:
       - db
     env_file: ./.env
+    environment:
+      - PORT=3003
     healthcheck:
       test:
         [
