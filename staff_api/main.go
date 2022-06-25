@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"staff_api/database"
 	"staff_api/entity"
@@ -14,12 +15,21 @@ func main() {
 		os.Setenv("GO_ENV", "development")
 	}
 
+	if len(os.Args) != 1 {
+		log.Fatal("require argument of port number")
+	}
+
+	port := os.Args[1]
+	if _, err := strconv.Atoi(port); err != nil {
+		log.Fatal("env var PORT must be a uint")
+	}
+
 	db, _ := database.Connect()
 
 	if err := db.AutoMigrate(&entity.Staff{}); err != nil {
 		log.Fatal(err)
 	}
 
-	go server.RunGrpc()
-	server.RunGraphql()
+	server.RunGrpc(port)
+	server.RunGraphql(port)
 }

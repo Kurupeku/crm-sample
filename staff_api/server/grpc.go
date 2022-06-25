@@ -27,9 +27,8 @@ func (*gsv) Authenticate(ctx context.Context, req *proto.AuthenticateRequest) (*
 	}, nil
 }
 
-func RunGrpc() {
-	listener, err := net.Listen("tcp", ":"+grpcPort)
-
+func RunGrpc(ctx context.Context, port string) {
+	listener, err := net.Listen("tcp", ":50051")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
