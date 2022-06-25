@@ -32,6 +32,8 @@ services:
       - staff_api
       - federation
     env_file: ./.env
+    environment:
+      - PORT=2000
 
   federation:
     image: ghcr.io/kurupeku/crm-sample/federation:latest
@@ -46,16 +48,29 @@ services:
       - user_api
       - inquiry_api
     env_file: ./.env
+    environment:
+      - PORT=3000
     command: npm run dev
 
   staff_api:
     image: ghcr.io/kurupeku/crm-sample/staff-api:latest
     ports:
       - 3001:3001
+    depends_on:
+      - db
+    env_file: ./.env
+    environment:
+      - PORT=3001
+
+  grpc_staff_api:
+    image: ghcr.io/kurupeku/crm-sample/grpc_staff-api:latest
+    ports:
       - 50051:50051
     depends_on:
       - db
     env_file: ./.env
+    environment:
+      - PORT=50051
 
   user_api:
     image: ghcr.io/kurupeku/crm-sample/user-api:latest
@@ -64,6 +79,8 @@ services:
     depends_on:
       - db
     env_file: ./.env
+    environment:
+      - PORT=3002
 
   inquiry_api:
     image: ghcr.io/kurupeku/crm-sample/inquiry-api:latest
@@ -72,6 +89,8 @@ services:
     depends_on:
       - db
     env_file: ./.env
+    environment:
+      - PORT=3003
 
 volumes:
   postgres-data:

@@ -12,9 +12,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 )
 
-const gqlPort = "3001"
-
-func RunGraphql() {
+func RunGraphql(port string) {
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
 	http.Handle("/health_check", http.HandlerFunc(handlers.HealthCheckHandler))
@@ -22,7 +20,7 @@ func RunGraphql() {
 	http.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
 	http.Handle("/graphql", srv)
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", gqlPort)
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 
-	log.Fatal(http.ListenAndServe(":"+gqlPort, nil))
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

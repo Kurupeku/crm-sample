@@ -12,7 +12,6 @@ ENV PATH $BUNDLE_BIN:$PATH
 ENV RUNTIME_PACKAGES bash gcc linux-headers musl-dev libxml2-dev make tzdata imagemagick nodejs yarn postgresql-dev
 ENV DEV_PACKAGES build-base curl-dev
 
-
 WORKDIR ${WORKDIR}
 
 RUN apk update && apk upgrade && \
@@ -36,8 +35,8 @@ RUN bundle install -j4
 
 COPY . ${WORKDIR}
 
-EXPOSE 3002
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3002"]
+EXPOSE ${PORT}
+CMD ["/bin/sh", "-c", "bundle exec rails server -b 0.0.0.0 -p $PORT"]
 
 # ---------------------------------------------------------
 
@@ -62,5 +61,5 @@ RUN bundle config set --local deployment 'true' && \
 
 COPY . ${WORKDIR}
 
-EXPOSE 3002
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3002", "-e", "production"]
+EXPOSE ${PORT}
+CMD ["/bin/sh", "-c", "bundle exec rails server -b 0.0.0.0 -e production -p $PORT"]

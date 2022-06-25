@@ -11,8 +11,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-const grpcPort = "50051"
-
 type gsv struct {
 	proto.UnimplementedAuthServer
 }
@@ -27,9 +25,8 @@ func (*gsv) Authenticate(ctx context.Context, req *proto.AuthenticateRequest) (*
 	}, nil
 }
 
-func RunGrpc() {
-	listener, err := net.Listen("tcp", ":"+grpcPort)
-
+func RunGrpc(port string) {
+	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
