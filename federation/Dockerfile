@@ -6,4 +6,4 @@ COPY . ./
 RUN npm install
 
 EXPOSE ${PORT}
-CMD ["/bin/sh", "-c", "npm start -port=$PORT"]
+CMD ["npm", "start"]

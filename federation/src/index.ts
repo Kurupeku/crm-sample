@@ -2,7 +2,7 @@ import {ApolloGateway} from '@apollo/gateway';
 import {ApolloServer} from 'apollo-server';
 
 const portStr = process.env.PORT;
-const port = portStr && portStr.match(/^\d+$/) ? parseInt(portStr, 10) : 3000;
+const port = portStr ? parseInt(portStr, 10) : 3000;
 
 const gateway = new ApolloGateway({
   serviceList: [
