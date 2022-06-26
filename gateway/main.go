@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/url"
 	"os"
-	"strconv"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -26,9 +25,9 @@ func main() {
 	}
 	defer conn.Close()
 
-	port := os.Args[1]
-	if _, err := strconv.Atoi(port); err != nil {
-		log.Fatal("env var PORT must be a uint")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "2000"
 	}
 
 	corsConf := getCorsConfig()
