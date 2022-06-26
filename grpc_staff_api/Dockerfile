@@ -21,7 +21,7 @@ RUN go get github.com/uudashr/gopkgs/v2/cmd/gopkgs \
   golang.org/x/tools/gopls
 
 EXPOSE ${PORT}
-CMD ["/bin/sh", "-c", "go run main.go $PORT"]
+CMD ["go", "run", "main.go"]
 
 # -------------------------------
 
@@ -49,4 +49,4 @@ WORKDIR ${ROOT}
 COPY --from=builder ${ROOT}/binary ${ROOT}
 
 EXPOSE ${PORT}
-CMD ["/bin/sh", "-c", "/go/src/app/binary $PORT"]
+CMD ["/go/src/app/binary"]

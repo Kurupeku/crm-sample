@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"os"
-	"strconv"
 
 	"staff_api/database"
 	"staff_api/server"
@@ -18,9 +17,9 @@ func main() {
 		log.Fatal("require argument of port number")
 	}
 
-	port := os.Args[1]
-	if _, err := strconv.Atoi(port); err != nil {
-		log.Fatal("env var PORT must be a uint")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "50051"
 	}
 
 	_, err := database.Connect()
