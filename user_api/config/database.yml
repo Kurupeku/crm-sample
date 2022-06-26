@@ -16,4 +16,4 @@ test:
 
 production:
   <<: *default
-  database: user_production
+  database: <%= ENV.fetch('DB_NAME') { 'user_production' } %>
