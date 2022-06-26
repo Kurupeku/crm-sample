@@ -1,4 +1,4 @@
-package database
+package staff_api
 
 import (
 	"errors"
