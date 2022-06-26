@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/url"
 	"os"
 	"strconv"
 
@@ -19,7 +20,7 @@ func main() {
 		os.Setenv("GO_ENV", "development")
 	}
 
-	conn, err := grpc.Dial(os.Getenv("STAFF_AUTH_HOST"), grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := getGRPCConnect()
 	if err != nil {
 		log.Fatalf("did not connect staff_api tcp: %v", err)
 	}
@@ -57,6 +58,15 @@ func getCorsConfig() cors.Config {
 			"Authorization",
 		},
 	}
+}
+
+func getGRPCConnect() (*grpc.ClientConn, error) {
+	u, err := url.Parse(os.Getenv("STAFF_AUTH_HOST"))
+	if err != nil {
+		return nil, err
+	}
+
+	return grpc.Dial(u.Host, grpc.WithInsecure(), grpc.WithBlock())
 }
 
 func routerSetup(r *gin.Engine, cc proto.AuthClient) {
