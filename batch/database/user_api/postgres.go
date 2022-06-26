@@ -1,4 +1,4 @@
-package database
+package user_api
 
 import (
 	"errors"
