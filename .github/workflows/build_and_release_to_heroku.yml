@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy-gateway:
@@ -19,6 +19,20 @@ jobs:
           heroku_app_name: gateway-crm-system-sample
           appdir: gateway
           usedocker: true
+
+  deploy-batch:
+    name: Deploy Database Batch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          heroku_app_name: gateway-crm-system-sample
+          appdir: batch
+          usedocker: true
+          docker_heroku_process_type: scheduler
 
   deploy-federation:
     name: Deploy Federation
