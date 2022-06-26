@@ -29,11 +29,11 @@ ENTRYPOINT ["/usr/bin/entrypoint.sh"]
 
 FROM base AS dev
 
-COPY Gemfile* ${WORKDIR}
+COPY Gemfile* ${WORKDIR}/
 
 RUN bundle install -j4
 
-COPY . ${WORKDIR}
+COPY . ${WORKDIR}/
 
 EXPOSE ${PORT}
 CMD ["/bin/sh", "-c", "bundle exec rails server -b 0.0.0.0 -p $PORT"]
@@ -46,7 +46,7 @@ ENV NODE_ENV production
 ENV RAILS_ENV production
 ENV BUNDLE_WITHOUT development:test
 
-COPY Gemfile* ${WORKDIR}
+COPY Gemfile* ${WORKDIR}/
 
 RUN bundle config set --local deployment 'true' && \
   bundle config set --local path "${BUNDLE_PATH}" && \
@@ -59,7 +59,7 @@ RUN bundle config set --local deployment 'true' && \
 #   && yarn cache clean \
 #   && rm -rf node_modules tmp/cache
 
-COPY . ${WORKDIR}
+COPY . ${WORKDIR}/
 
 EXPOSE ${PORT}
 CMD ["/bin/sh", "-c", "bundle exec rails server -b 0.0.0.0 -e production -p $PORT"]
