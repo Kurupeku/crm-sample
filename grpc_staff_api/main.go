@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"staff_api/database"
-	"staff_api/entity"
 	"staff_api/server"
 )
 
@@ -24,9 +23,8 @@ func main() {
 		log.Fatal("env var PORT must be a uint")
 	}
 
-	db, _ := database.Connect()
-
-	if err := db.AutoMigrate(&entity.Staff{}); err != nil {
+	_, err := database.Connect()
+	if err != nil {
 		log.Fatal(err)
 	}
 
