@@ -44,12 +44,18 @@ func newMeta() *Meta {
 		log.Fatal("env 'DB_PORT' is required")
 	}
 
+	var ssl bool
+	if s := os.Getenv("DB_SSL"); s == "true" {
+		ssl = true
+	}
+
 	return &Meta{
 		host:     host,
 		user:     user,
 		password: password,
 		port:     port,
 		dbname:   "staff_" + os.Getenv("GO_ENV"),
+		ssl:      ssl,
 	}
 }
 
