@@ -8,15 +8,15 @@ const gateway = new ApolloGateway({
   serviceList: [
     {
       name: 'staffs',
-      url: `http://${process.env.STAFF_API_HOST}/graphql`,
+      url: `${process.env.STAFF_API_HOST}/graphql`,
     },
     {
       name: 'users',
-      url: `http://${process.env.USER_API_HOST}/graphql`,
+      url: `${process.env.USER_API_HOST}/graphql`,
     },
     {
       name: 'inquiries',
-      url: `http://${process.env.INQUIRY_API_HOST}/graphql`,
+      url: `${process.env.INQUIRY_API_HOST}/graphql`,
     },
   ],
 });
