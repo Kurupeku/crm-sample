@@ -61,23 +61,23 @@ func newMeta() *Meta {
 
 func (m *Meta) sslmode() string {
 	if m.ssl {
-		return "disable"
+		return "require"
 	}
 
-	return "require"
+	return "disable"
 }
 
 func (m *Meta) pgDsn() string {
 	return fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=Asia/Tokyo",
-		m.host, m.port, m.user, m.password, m.dbname, m.sslmode(),
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=Asia/Tokyo",
+		m.host, m.user, m.password, m.dbname, m.port, m.sslmode(),
 	)
 }
 
 func (m *Meta) pgDsnWithoutDBName() string {
 	return fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s sslmode=%s TimeZone=Asia/Tokyo",
-		m.host, m.port, m.user, m.password, m.sslmode(),
+		"host=%s user=%s password=%s port=%s sslmode=%s TimeZone=Asia/Tokyo",
+		m.host, m.user, m.password, m.port, m.sslmode(),
 	)
 }
 
@@ -108,12 +108,15 @@ func GetDB() *gorm.DB {
 }
 
 func connectOrCreatePostgresDatabase(m *Meta) (*gorm.DB, error) {
-	public, _ := gorm.Open(postgres.Open(m.pgDsnWithoutDBName()), &gorm.Config{})
-	public.Exec(fmt.Sprintf("CREATE DATABASE %s;", m.dbname))
-
 	named, err := gorm.Open(postgres.Open(m.pgDsn()), &gorm.Config{})
 	if err != nil {
-		return nil, err
+		public, _ := gorm.Open(postgres.Open(m.pgDsnWithoutDBName()), &gorm.Config{})
+		public.Exec(fmt.Sprintf("CREATE DATABASE %s;", m.dbname))
+
+		named, err = gorm.Open(postgres.Open(m.pgDsn()), &gorm.Config{})
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return named, nil
