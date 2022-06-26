@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -24,6 +25,11 @@ func main() {
 	}
 	defer conn.Close()
 
+	port := os.Args[1]
+	if _, err := strconv.Atoi(port); err != nil {
+		log.Fatal("env var PORT must be a uint")
+	}
+
 	corsConf := getCorsConfig()
 	if err := corsConf.Validate(); err != nil {
 		log.Fatal(err)
@@ -33,7 +39,7 @@ func main() {
 	client := proto.NewAuthClient(conn)
 	engine.Use(cors.New(corsConf))
 	routerSetup(engine, client)
-	engine.Run(":2000")
+	engine.Run(":" + port)
 }
 
 func getCorsConfig() cors.Config {
