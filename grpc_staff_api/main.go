@@ -13,10 +13,6 @@ func main() {
 		os.Setenv("GO_ENV", "development")
 	}
 
-	if len(os.Args) != 2 {
-		log.Fatal("require argument of port number")
-	}
-
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "50051"
