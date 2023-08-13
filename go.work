@@ -2,7 +2,7 @@ go 1.20
 
 use (
 	./auth_api
+	./batch
 	./gateway
-	./lib/util
 	./staff_api
 )
