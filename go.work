@@ -1,6 +1,8 @@
 go 1.20
 
 use (
+	./auth_api
 	./gateway
+	./lib/util
 	./staff_api
 )
