@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"os"
 
 	"net/http"
@@ -24,19 +25,19 @@ func HealthCheckHandler(c *gin.Context) {
 }
 
 func GetMenusHandler(c *gin.Context) {
-	proxyHandler(c, os.Getenv("INQUIRY_API_HOST")+"/menus")
+	proxyHandler(c, parseURL(os.Getenv("INQUIRY_API_HOST"), "/menus"))
 }
 
 func PostInquiriesHandler(c *gin.Context) {
-	proxyHandler(c, os.Getenv("INQUIRY_API_HOST")+"/inquiries")
+	proxyHandler(c, parseURL(os.Getenv("INQUIRY_API_HOST"), "/inquiries"))
 }
 
 func PostGraphqlHandler(c *gin.Context) {
-	proxyHandler(c, os.Getenv("FEDERATION_HOST"))
+	proxyHandler(c, parseURL(os.Getenv("FEDERATION_HOST"), ""))
 }
 
 func GetPlayGroundHandler(c *gin.Context) {
-	proxyHtmlHandler(c, os.Getenv("FEDERATION_HOST"))
+	proxyHtmlHandler(c, parseURL(os.Getenv("FEDERATION_HOST"), ""))
 }
 
 func proxyHandler(c *gin.Context, urlString string) {
@@ -50,7 +51,7 @@ func proxyHandler(c *gin.Context, urlString string) {
 	proxy.Director = func(req *http.Request) {
 		req.Header = c.Request.Header
 		req.Host = target.Host
-		req.URL.Scheme = target.Scheme
+		req.URL.Scheme = "http"
 		req.URL.Host = target.Host
 		req.URL.Path = target.Path
 		req.Header.Set("Content-Type", "application/json")
@@ -72,10 +73,14 @@ func proxyHtmlHandler(c *gin.Context, urlString string) {
 	proxy.Director = func(req *http.Request) {
 		req.Header = c.Request.Header
 		req.Host = target.Host
-		req.URL.Scheme = target.Scheme
+		req.URL.Scheme = "http"
 		req.URL.Host = target.Host
 		req.URL.Path = target.Path
 	}
 
 	proxy.ServeHTTP(c.Writer, c.Request)
+}
+
+func parseURL(host string, path string) string {
+	return fmt.Sprintf("http://%s%s", host, path)
 }
