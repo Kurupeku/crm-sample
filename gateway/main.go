@@ -7,37 +7,16 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"gateway/handlers"
 	"gateway/middleware"
 	"gateway/proto"
 )
 
-func main() {
-	if os.Getenv("GO_ENV") == "" {
-		os.Setenv("GO_ENV", "development")
-	}
-
-	conn, err := grpc.Dial(os.Getenv("STAFF_AUTH_HOST"), grpc.WithInsecure(), grpc.WithBlock())
-	if err != nil {
-		log.Fatalf("did not connect staff_api tcp: %v", err)
-	}
-	defer conn.Close()
-
-	corsConf := getCorsConfig()
-	if err := corsConf.Validate(); err != nil {
-		log.Fatal(err)
-	}
-
-	engine := gin.Default()
-	client := proto.NewAuthClient(conn)
-	engine.Use(cors.New(corsConf))
-	routerSetup(engine, client)
-	engine.Run(":2000")
-}
-
-func getCorsConfig() cors.Config {
-	return cors.Config{
+var (
+	authHost string
+	corsConf = cors.Config{
 		AllowAllOrigins:  true,
 		AllowCredentials: true,
 		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
@@ -50,6 +29,30 @@ func getCorsConfig() cors.Config {
 			"Accept-Encoding",
 			"Authorization",
 		},
+	}
+)
+
+func main() {
+	conn, err := grpc.Dial(
+		authHost,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithBlock(),
+	)
+	if err != nil {
+		log.Fatalf("could not connect staff_api tcp: %v", err)
+	}
+	defer conn.Close()
+
+	if err := corsConf.Validate(); err != nil {
+		log.Fatal(err)
+	}
+
+	engine := gin.Default()
+	client := proto.NewAuthClient(conn)
+	engine.Use(cors.New(corsConf))
+	routerSetup(engine, client)
+	if err := engine.Run(":2000"); err != nil {
+		log.Fatal(err)
 	}
 }
 
@@ -78,5 +81,17 @@ func routerSetup(r *gin.Engine, cc proto.AuthClient) {
 			auth.GET("/graphql", handlers.GetPlayGroundHandler)
 			auth.POST("/graphql", handlers.PostGraphqlHandler)
 		}
+	}
+}
+
+func init() {
+	var ok bool
+	if _, ok = os.LookupEnv("GO_ENV"); !ok {
+		os.Setenv("GO_ENV", "development")
+	}
+
+	authHost, ok = os.LookupEnv("AUTH_HOST")
+	if !ok {
+		log.Fatal("$AUTH_HOST is not set")
 	}
 }
