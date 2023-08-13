@@ -116,16 +116,6 @@ services:
       retries: 3
       start_period: 5s
 
-  # staff_db_gui:
-  #   image: sosedoff/pgweb
-  #   ports:
-  #     - "3011:8081"
-  #   environment:
-  #     - DATABASE_URL=postgres://postgres:postgres@db:5432/staff_development?sslmode=disable
-  #   depends_on:
-  #     - db
-  #   restart: always
-
   user_api:
     build:
       context: ./user_api
@@ -149,16 +139,6 @@ services:
       retries: 3
       start_period: 20s
 
-  # user_db_gui:
-  #   image: sosedoff/pgweb
-  #   ports:
-  #     - "3012:8081"
-  #   environment:
-  #     - DATABASE_URL=postgres://postgres:postgres@db:5432/user_development?sslmode=disable
-  #   depends_on:
-  #     - db
-  #   restart: always
-
   inquiry_api:
     build:
       context: ./inquiry_api
@@ -181,16 +161,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
-
-  # inquiry_db_gui:
-  #   image: sosedoff/pgweb
-  #   ports:
-  #     - "3013:8081"
-  #   environment:
-  #     - DATABASE_URL=postgres://postgres:postgres@db:5432/inquiry_development?sslmode=disable
-  #   depends_on:
-  #     - db
-  #   restart: always
 
   batch:
     build:
