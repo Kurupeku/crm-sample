@@ -19,12 +19,9 @@ func main() {
 		port = "3001"
 	}
 
-	db, err := database.Connect()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db, _ := database.Connect()
 
-	if err = db.AutoMigrate(&entity.Staff{}); err != nil {
+	if err := db.AutoMigrate(&entity.Staff{}); err != nil {
 		log.Fatal(err)
 	}
 
