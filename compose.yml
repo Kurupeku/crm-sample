@@ -6,11 +6,11 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST=db
-      - PGDATA=/var/lib/postgresql/data/pgdata
-      - POSTGRES_HOST_AUTH_METHOD=trust
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: db
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_HOST_AUTH_METHOD: trust
 
   client:
     build:
@@ -61,6 +61,7 @@ services:
     build:
       context: ./federation
       dockerfile: Dockerfile
+      target: dev
     volumes:
       - ./federation:/app
       - ./federation/node_modules:/app/node_modules
@@ -96,7 +97,7 @@ services:
       dockerfile: Dockerfile
       target: dev
     volumes:
-      - ./staff_api:/app
+      - ./auth_api:/app
     tty: true
     stdin_open: true
     ports:
