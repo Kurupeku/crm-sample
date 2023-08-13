@@ -1,4 +1,4 @@
-package inquiry_api
+package database
 
 import (
 	"errors"
