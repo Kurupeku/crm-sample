@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"staff_api/database"
+	"staff_api/entity"
 	"staff_api/server"
 )
 
@@ -18,8 +19,9 @@ func main() {
 		port = "50051"
 	}
 
-	_, err := database.Connect()
-	if err != nil {
+	db, _ := database.Connect()
+
+	if err := db.AutoMigrate(&entity.Staff{}); err != nil {
 		log.Fatal(err)
 	}
 

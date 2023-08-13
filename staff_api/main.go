@@ -24,12 +24,9 @@ func main() {
 		log.Fatal("env var PORT must be a uint")
 	}
 
-	db, err := database.Connect()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db, _ := database.Connect()
 
-	if err = db.AutoMigrate(&entity.Staff{}); err != nil {
+	if err := db.AutoMigrate(&entity.Staff{}); err != nil {
 		log.Fatal(err)
 	}
 
