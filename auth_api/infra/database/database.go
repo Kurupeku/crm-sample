@@ -17,6 +17,7 @@ var (
 	TxKey                              = transactionKey{}
 	database                           *Database
 	dbHost, dbPort, dbUser, dbPassword string
+	retryDuration                      = 10 * time.Second
 )
 
 type Database struct {
@@ -37,7 +38,7 @@ func setup(dbName string) {
 			break
 		}
 
-		<-time.After(3 * time.Second)
+		<-time.After(retryDuration)
 	}
 	if err != nil {
 		log.Fatal(err)
@@ -62,7 +63,7 @@ func Connect(dbName string) (*Database, error) {
 			break
 		}
 
-		<-time.After(3 * time.Second)
+		<-time.After(retryDuration)
 	}
 	if err != nil {
 		return nil, err
