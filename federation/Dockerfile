@@ -16,7 +16,7 @@ ENV PNPM_VERSION 8.6.12
 WORKDIR /app
 RUN npm install -g pnpm@${PNPM_VERSION}
 COPY . .
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --frozen-lockfile
 
 EXPOSE 3000
 CMD ["npm", "start"]
