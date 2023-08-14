@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-sql
+data:
+  init.sql: |
+    CREATE USER app WITH PASSWORD 'password';
+    CREATE DATABASE IF NOT EXISTS staff_production;
+    CREATE DATABASE IF NOT EXISTS user_production;
+    CREATE DATABASE IF NOT EXISTS inquiry_production;
+    GRANT ALL PRIVILEGES ON DATABASE staff_production TO app;
+    GRANT ALL PRIVILEGES ON DATABASE user_production TO app;
+    GRANT ALL PRIVILEGES ON DATABASE inquiry_production TO app;
