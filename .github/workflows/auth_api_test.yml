@@ -8,6 +8,12 @@ on:
     paths:
       - "auth_api/**/**.go"
 
+env:
+  API_NAME: auth_api
+  GO_ENV: production
+  GOOS: linux
+  GOARCH: amd64
+
 defaults:
   run:
     working-directory: ./auth_api
@@ -16,12 +22,6 @@ jobs:
   test-auth-api:
     name: Test Auth API
     runs-on: ubuntu-latest
-    env:
-      GO_ENV: production
-      GO111MODULE: on
-      CGO_ENABLED: 0
-      GOOS: linux
-      GOARCH: amd64
 
     services:
       db:
@@ -34,12 +34,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
 
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version-file: auth_api/go.mod
+          go-version-file: ${{ env.API_NAME }}/go.mod
           cache: true
+          cache-dependency-path: ${{ env.API_NAME }}/go.sum
 
       - name: Get dependencies
         run: go get .
@@ -60,6 +63,7 @@ jobs:
       - uses: dominikh/staticcheck-action@v1.3.0
         with:
           install-go: false
+          working-directory: ${{ env.API_NAME }}
 
       - name: Try Building
         run: go build main.go
