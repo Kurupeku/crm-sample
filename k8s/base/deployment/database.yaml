@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - name: db
+          image: postgres:15.4-alpine3.18
+          ports:
+            - containerPort: 5432
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: db-sql
+              mountPath: /docker-entrypoint-initdb.d
+            - name: db-config
+              mountPath: /etc/config
+          envFrom:
+            - configMapRef:
+                name: db-config
+              items:
+                - key: POSTGRES_USER
+                  path: DB_USER
+                - key: POSTGRES_PASSWORD
+                  path: DB_PASSWORD
+      volumes:
+        - name: db-sql
+          configMap:
+            name: db-sql
+            items:
+              - key: init.sql
+                path: init.sql
+        - name: db-config
+          configMap:
+            name: db-config
