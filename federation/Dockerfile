@@ -1,9 +1,23 @@
-FROM node:16
+FROM node:19.9.0 AS dev
 
+ENV PNPM_VERSION 8.6.12
+RUN npm install -g pnpm@${PNPM_VERSION}
+COPY . .
+RUN pnpm install
+
+EXPOSE 3000
+CMD ["npm", "start"]
+
+# ---------------------------------------------
+
+FROM node:19.9.0-slim
+
+ENV PNPM_VERSION 8.6.12
 WORKDIR /app
-#COPY package*.json ./
-COPY . ./
-RUN npm install
+RUN npm install -g pnpm@${PNPM_VERSION}
+COPY .npmrc package.json pnpm-lock.yaml .pnpmfile.cjs ./
+RUN pnpm install --frozen-lockfile --prod
+COPY . .
 
 EXPOSE 3000
 CMD ["npm", "start"]

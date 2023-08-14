@@ -1,4 +1,4 @@
-name: Staff API Test
+name: Auth API Test
 
 on:
   workflow_dispatch:
@@ -6,21 +6,21 @@ on:
     branches-ignore:
       - main
     paths:
-      - "staff_api/**/**.go"
+      - "auth_api/**/**.go"
 
 env:
-  API_NAME: staff_api
+  API_NAME: auth_api
   GO_ENV: production
   GOOS: linux
   GOARCH: amd64
 
 defaults:
   run:
-    working-directory: ./staff_api
+    working-directory: ./auth_api
 
 jobs:
-  test-staff-api:
-    name: Test Staff API
+  test-auth-api:
+    name: Test Auth API
     runs-on: ubuntu-latest
 
     services:
