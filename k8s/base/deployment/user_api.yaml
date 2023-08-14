@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user_api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user_api
+  template:
+    metadata:
+      labels:
+        app: user_api
+    spec:
+      containers:
+        - name: user_api
+          image: ghcr.io/kurupeku/crm-sample/user-api:latest
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3002
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - configMapRef:
+                name: db-config
+          volumeMounts:
+            - name: app-config-volume
+              mountPath: /etc/app-config
+              readOnly: true
+            - name: db-config-volume
+              mountPath: /etc/db-config
+              readOnly: true
+      volumes:
+        - name: app-config-volume
+          configMap:
+            name: app-config
+        - name: db-config-volume
+          configMap:
+            name: db-config
