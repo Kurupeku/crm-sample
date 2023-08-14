@@ -2,7 +2,9 @@ name: Auth API Test
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
+    branches-ignore:
+      - main
     paths:
       - "auth_api/**/**.go"
 
