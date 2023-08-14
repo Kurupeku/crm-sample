@@ -2,10 +2,9 @@ name: Auth API Test
 
 on:
   workflow_dispatch:
-
   push:
     paths:
-      - "auth_api/**"
+      - "auth_api/**/**.go"
 
 defaults:
   run:
@@ -20,6 +19,7 @@ jobs:
       GO111MODULE: on
       CGO_ENABLED: 0
       GOOS: linux
+      GOARCH: amd64
 
     services:
       db:
@@ -36,7 +36,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version-file: go.mod
+          go-version-file: auth_api/go.mod
           cache: true
 
       - name: Get dependencies
