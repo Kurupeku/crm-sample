@@ -2,10 +2,11 @@ name: Inquiry API Test
 
 on:
   workflow_dispatch:
-
-  push:
+  pull_request:
     paths:
       - "inquiry_api/**"
+    branches-ignore:
+      - main
 
 defaults:
   run:
@@ -15,6 +16,14 @@ jobs:
   test-inquiry-api:
     name: Test Inquiry API
     runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+      DB_HOST: localhost
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_PORT: 5432
+      TZ: Asia/Tokyo
+      LANG: C.UTF-8
 
     services:
       db:
@@ -22,27 +31,23 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_HOST: db
-          POSTGRES_HOST_AUTH_METHOD: trust
-
-    container:
-      image: ruby:3
-      env:
-        DB_HOST: db
-        DB_USER: postgres
-        DB_PASSWORD: postgres
-        DB_PORT: 5432
-        TZ: Asia/Tokyo
-        LANG: C.UTF-8
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
       - name: Check out branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Setup postgres client
-        run: |
-          apt-get update -qq
-          apt-get install -yq postgresql-client
+      - uses: ruby/setup-ruby@v1
+        with:
+          working-directory: ./inquiry_api
+          ruby-version: .ruby-version
+          bundler-cache: true
 
       - name: Install bundles
         run: bundle install -j4

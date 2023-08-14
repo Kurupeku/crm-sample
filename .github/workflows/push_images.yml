@@ -238,6 +238,8 @@ jobs:
           context: ${{ env.DIR_NAME }}
           push: true
           tags: ${{ env.TAGS }}
+          build-args: |
+            SECRET_KEY_BASE=${{ secrets.USER_API_SECRET_KEY_BASE }}
 
   inquiry-api-image:
     name: Inquiry API Image
@@ -276,3 +278,5 @@ jobs:
           context: ${{ env.DIR_NAME }}
           push: true
           tags: ${{ env.TAGS }}
+          build-args: |
+            SECRET_KEY_BASE=${{ secrets.INQUIRY_API_SECRET_KEY_BASE }}
