@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -17,8 +18,12 @@ import (
 
 const gqlPort = "3001"
 
+var (
+	dbName string
+)
+
 func main() {
-	db, _ := database.Connect()
+	db, _ := database.Connect(dbName)
 	if err := db.AutoMigrate(&entity.Staff{}); err != nil {
 		log.Fatal(err)
 	}
@@ -39,7 +44,10 @@ func runServer() {
 }
 
 func init() {
-	if _, ok := os.LookupEnv("GO_ENV"); !ok {
-		os.Setenv("GO_ENV", "development")
+	env, ok := os.LookupEnv("GO_ENV")
+	if !ok {
+		env = "development"
+		os.Setenv("GO_ENV", env)
 	}
+	dbName = fmt.Sprintf("staff_%s", env)
 }
