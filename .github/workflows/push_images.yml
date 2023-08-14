@@ -36,7 +36,7 @@ jobs:
 
       - name: Build Tags
         run: |
-          TAG_BASE=${IMAGE_NAME_BASE}/$(echo $DIR_NAME | sed -e 's/-/_/g')
+          TAG_BASE=${IMAGE_NAME_BASE}/$(echo $DIR_NAME | sed -e 's/_/-/g')
           echo "TAGS=$TAG_BASE:${{ github.sha }},$TAG_BASE:latest" >> "$GITHUB_ENV"
 
       - name: Build and Push '${{ env.DIR_NAME }}' image
@@ -74,7 +74,7 @@ jobs:
 
       - name: Build Tags
         run: |
-          TAG_BASE=${IMAGE_NAME_BASE}/$(echo $DIR_NAME | sed -e 's/-/_/g')
+          TAG_BASE=${IMAGE_NAME_BASE}/$(echo $DIR_NAME | sed -e 's/_/-/g')
           echo "TAGS=$TAG_BASE:${{ github.sha }},$TAG_BASE:latest" >> "$GITHUB_ENV"
 
       - name: Build and Push '${{ env.DIR_NAME }}' image
@@ -112,7 +112,7 @@ jobs:
 
       - name: Build Tags
         run: |
-          TAG_BASE=${IMAGE_NAME_BASE}/$(echo $DIR_NAME | sed -e 's/-/_/g')
+          TAG_BASE=${IMAGE_NAME_BASE}/$(echo $DIR_NAME | sed -e 's/_/-/g')
           echo "TAGS=$TAG_BASE:${{ github.sha }},$TAG_BASE:latest" >> "$GITHUB_ENV"
 
       - name: Build and Push '${{ env.DIR_NAME }}' image
@@ -150,7 +150,7 @@ jobs:
 
       - name: Build Tags
         run: |
-          TAG_BASE=${IMAGE_NAME_BASE}/$(echo $DIR_NAME | sed -e 's/-/_/g')
+          TAG_BASE=${IMAGE_NAME_BASE}/$(echo $DIR_NAME | sed -e 's/_/-/g')
           echo "TAGS=$TAG_BASE:${{ github.sha }},$TAG_BASE:latest" >> "$GITHUB_ENV"
 
       - name: Build and Push '${{ env.DIR_NAME }}' image
@@ -188,7 +188,7 @@ jobs:
 
       - name: Build Tags
         run: |
-          TAG_BASE=${IMAGE_NAME_BASE}/$(echo $DIR_NAME | sed -e 's/-/_/g')
+          TAG_BASE=${IMAGE_NAME_BASE}/$(echo $DIR_NAME | sed -e 's/_/-/g')
           echo "TAGS=$TAG_BASE:${{ github.sha }},$TAG_BASE:latest" >> "$GITHUB_ENV"
 
       - name: Build and Push '${{ env.DIR_NAME }}' image
@@ -226,7 +226,7 @@ jobs:
 
       - name: Build Tags
         run: |
-          TAG_BASE=${IMAGE_NAME_BASE}/$(echo $DIR_NAME | sed -e 's/-/_/g')
+          TAG_BASE=${IMAGE_NAME_BASE}/$(echo $DIR_NAME | sed -e 's/_/-/g')
           echo "TAGS=$TAG_BASE:${{ github.sha }},$TAG_BASE:latest" >> "$GITHUB_ENV"
 
       - name: Build and Push '${{ env.DIR_NAME }}' image
@@ -264,7 +264,7 @@ jobs:
 
       - name: Build Tags
         run: |
-          TAG_BASE=${IMAGE_NAME_BASE}/$(echo $DIR_NAME | sed -e 's/-/_/g')
+          TAG_BASE=${IMAGE_NAME_BASE}/$(echo $DIR_NAME | sed -e 's/_/-/g')
           echo "TAGS=$TAG_BASE:${{ github.sha }},$TAG_BASE:latest" >> "$GITHUB_ENV"
 
       - name: Build and Push '${{ env.DIR_NAME }}' image
