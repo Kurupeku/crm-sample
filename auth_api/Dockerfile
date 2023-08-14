@@ -36,10 +36,11 @@ RUN go mod download && go build -o ${ROOT}/server
 
 # -------------------------------
 
-FROM bookworm-slim:12.1
+FROM debian:12.1-slim
 
+ENV ROOT /app
 ENV GO_ENV production
-COPY --chown=nobody:nobody --from=builder ${ROOT}/server /usr/local/bin/${ROOT}
+COPY --chown=nobody:nobody --from=builder ${ROOT}/server /usr/local/bin
 
 EXPOSE 50051
 CMD ["server"]
