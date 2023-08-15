@@ -8,5 +8,4 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 8080
-  type: ClusterIP
+      targetPort: 3003

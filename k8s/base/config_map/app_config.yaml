@@ -7,7 +7,7 @@ data:
   NODE_ENV: production
   RAILS_ENV: production
   FEDERATION_HOST: federation-service
-  AUTH_HOST: auth-api-service
+  AUTH_HOST: auth-api-service:50051
   STAFF_HOST: staff-api-service
   USER_HOST: user-api-service
   INQUIRY_HOST: inquiry-api-service

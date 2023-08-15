@@ -8,6 +8,11 @@ spec:
     spec:
       containers:
         - name: batch
-          image: ghcr.io/kurupeku/crm-sample/inquiry-api:latest
+          image: ghcr.io/kurupeku/crm-sample/batch:latest
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - configMapRef:
+                name: db-config
       restartPolicy: Never
   backoffLimit: 10

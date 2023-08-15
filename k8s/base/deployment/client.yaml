@@ -1,28 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-api
+  name: client
 spec:
-  replicas: 2
   selector:
     matchLabels:
-      app: auth-api
+      app: client
   template:
     metadata:
       labels:
-        app: auth-api
+        app: client
     spec:
       containers:
-        - name: auth-api
-          image: ghcr.io/kurupeku/crm-sample/auth-api:latest
+        - name: client
+          image: ghcr.io/kurupeku/crm-sample/client:latest
           resources:
             limits:
               memory: "128Mi"
               cpu: "500m"
           ports:
-            - containerPort: 50051
+            - containerPort: 3000
           envFrom:
             - configMapRef:
-                name: app-config
-            - configMapRef:
-                name: db-config
+                name: client-config

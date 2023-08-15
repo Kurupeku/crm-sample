@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: staff_api
+  name: staff-api
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: staff_api
+      app: staff-api
   template:
     metadata:
       labels:
-        app: staff_api
+        app: staff-api
     spec:
       containers:
-        - name: staff_api
+        - name: staff-api
           image: ghcr.io/kurupeku/crm-sample/staff-api:latest
           resources:
             limits:
@@ -26,17 +26,3 @@ spec:
                 name: app-config
             - configMapRef:
                 name: db-config
-          volumeMounts:
-            - name: app-config-volume
-              mountPath: /etc/app-config
-              readOnly: true
-            - name: db-config-volume
-              mountPath: /etc/db-config
-              readOnly: true
-      volumes:
-        - name: app-config-volume
-          configMap:
-            name: app-config
-        - name: db-config-volume
-          configMap:
-            name: db-config

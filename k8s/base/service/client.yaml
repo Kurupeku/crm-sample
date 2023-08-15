@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: staff-api-service
+  name: client-service
 spec:
   selector:
-    app: staff-api
+    app: client
   ports:
     - name: http
       port: 80
-      targetPort: 3001
+      targetPort: 3000

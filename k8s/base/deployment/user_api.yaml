@@ -1,20 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user_api
+  name: user-api
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: user_api
+      app: user-api
   template:
     metadata:
       labels:
-        app: user_api
+        app: user-api
     spec:
       containers:
-        - name: user_api
+        - name: user-api
           image: ghcr.io/kurupeku/crm-sample/user-api:latest
+          command:
+            - "/bin/sh"
+            - "-c"
+            - "rails db:migrate && rails s -p 3002 -b '0.0.0.0' -e production"
           resources:
             limits:
               memory: "128Mi"
@@ -26,17 +30,3 @@ spec:
                 name: app-config
             - configMapRef:
                 name: db-config
-          volumeMounts:
-            - name: app-config-volume
-              mountPath: /etc/app-config
-              readOnly: true
-            - name: db-config-volume
-              mountPath: /etc/db-config
-              readOnly: true
-      volumes:
-        - name: app-config-volume
-          configMap:
-            name: app-config
-        - name: db-config-volume
-          configMap:
-            name: db-config

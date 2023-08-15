@@ -24,19 +24,3 @@ spec:
           envFrom:
             - configMapRef:
                 name: app-config
-            - configMapRef:
-                name: db-config
-          volumeMounts:
-            - name: app-config-volume
-              mountPath: /etc/app-config
-              readOnly: true
-            - name: db-config-volume
-              mountPath: /etc/db-config
-              readOnly: true
-      volumes:
-        - name: app-config-volume
-          configMap:
-            name: app-config
-        - name: db-config-volume
-          configMap:
-            name: db-config

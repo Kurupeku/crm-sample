@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - config_map/app_config.yaml
   - deployment/auth_api.yaml
+  - deployment/client.yaml
   - deployment/database.yaml
   - deployment/federation.yaml
   - deployment/gateway.yaml
@@ -11,8 +12,10 @@ resources:
   - deployment/user_api.yaml
   - job/db_seed.yaml
   - service/auth_api.yaml
+  - service/client.yaml
   - service/database.yaml
   - service/federation.yaml
+  - service/gateway.yaml
   - service/inquiry_api.yaml
   - service/staff_api.yaml
   - service/user_api.yaml
