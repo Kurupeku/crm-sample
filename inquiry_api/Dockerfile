@@ -57,9 +57,12 @@ RUN bundle config set --local deployment 'true' && \
   rm -rf /usr/local/bundle/cache/* /usr/local/share/.cache/* /var/cache/* /tmp/* && \
   apk del build-dependencies
 
-COPY . ${WORKDIR}
+# Require SECRET_KEY_BASE
+# RUN bundle exec rails assets:precompile \
+#   && yarn cache clean \
+#   && rm -rf node_modules tmp/cache
 
-RUN bundle exec rails db:migrate
+COPY . ${WORKDIR}
 
 EXPOSE 3003
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3003", "-e", "production"]
