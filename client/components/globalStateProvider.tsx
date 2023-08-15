@@ -15,7 +15,7 @@ import { useSnackbar } from "notistack";
 import { useGetStaffbyEmailQuery } from "../graphql/client";
 
 const fetchRefreshToken = (token: string) => {
-  const url = `${process.env.NEXT_PUBLIC_API_HOST}/api/refresh_token`;
+  const url = `${process.env.NEXT_PUBLIC_API_HOST || ""}/api/refresh_token`;
   return axios.request<AuthResponseData>({
     url,
     method: "GET",
