@@ -11,6 +11,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var (
+	inquiryHost, federationHost string
+)
+
 type Health struct {
 	Status int    `json:"status"`
 	Result string `json:"result"`
@@ -25,19 +29,19 @@ func HealthCheckHandler(c *gin.Context) {
 }
 
 func GetMenusHandler(c *gin.Context) {
-	proxyHandler(c, parseURL(os.Getenv("INQUIRY_API_HOST"), "/menus"))
+	proxyHandler(c, parseURL(inquiryHost, "/menus"))
 }
 
 func PostInquiriesHandler(c *gin.Context) {
-	proxyHandler(c, parseURL(os.Getenv("INQUIRY_API_HOST"), "/inquiries"))
+	proxyHandler(c, parseURL(inquiryHost, "/inquiries"))
 }
 
 func PostGraphqlHandler(c *gin.Context) {
-	proxyHandler(c, parseURL(os.Getenv("FEDERATION_HOST"), ""))
+	proxyHandler(c, parseURL(federationHost, ""))
 }
 
 func GetPlayGroundHandler(c *gin.Context) {
-	proxyHtmlHandler(c, parseURL(os.Getenv("FEDERATION_HOST"), ""))
+	proxyHtmlHandler(c, parseURL(federationHost, ""))
 }
 
 func proxyHandler(c *gin.Context, urlString string) {
@@ -83,4 +87,14 @@ func proxyHtmlHandler(c *gin.Context, urlString string) {
 
 func parseURL(host string, path string) string {
 	return fmt.Sprintf("http://%s%s", host, path)
+}
+
+func init() {
+	var ok bool
+	if inquiryHost, ok = os.LookupEnv("INQUIRY_HOST"); !ok {
+		panic("$INQUIRY_HOST is not set")
+	}
+	if federationHost, ok = os.LookupEnv("FEDERATION_HOST"); !ok {
+		panic("$FEDERATION_HOST is not set")
+	}
 }

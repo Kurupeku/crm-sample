@@ -43,6 +43,8 @@ CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3002"]
 
 FROM base AS prod
 
+ARG SECRET_KEY_BASE
+ENV SECRET_KEY_BASE ${SECRET_KEY_BASE}
 ENV NODE_ENV production
 ENV RAILS_ENV production
 ENV BUNDLE_WITHOUT development:test

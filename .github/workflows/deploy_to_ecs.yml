@@ -1,0 +1,289 @@
+name: Build And Deploy
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
+  #   paths-ignore:
+  #     - ".github/**"
+  #     - "client/**"
+  #     - "user_api/spec/**"
+  #     - "inquiry_api/spec/**"
+  #     - "docs/**"
+  #     - "**.md"
+  #     - "**_test.go"
+
+env:
+  REGISTRY: ghcr.io
+  DOCKER_BUILDKIT: 1
+  IMAGE_NAME_BASE: ghcr.io/kurupeku/crm-sample
+
+  AWS_REGION: ap-northeast-1
+  ECS_SERVICE: crm-sample-api
+  ECS_CLUSTER: crm-sample-api-cluster
+
+  CONTAINER_NAME_BATCH: batch
+  CONTAINER_NAME_USER_API_MIGRATION: user-api-migration
+  CONTAINER_NAME_INQUIRY_API_MIGRATION: inquiry-api-migration
+  CONTAINER_NAME_GATEWAY: gateway
+  CONTAINER_NAME_FEDERATION: federation
+  CONTAINER_NAME_STAFF_API: staff-api
+  CONTAINER_NAME_USER_API: user-api
+  CONTAINER_NAME_INQUIRY_API: inquiry-api
+
+jobs:
+  build-batch:
+    name: Build Batch
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push batch image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./batch
+          push: true
+          tags: ${{ env.IMAGE_NAME_BASE }}/batch:${{ github.sha }},${{ env.IMAGE_NAME_BASE }}/batch:latest
+
+  build-gateway:
+    name: Build Gateway
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push gateway image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./gateway
+          push: true
+          tags: ${{ env.IMAGE_NAME_BASE }}/gateway:${{ github.sha }},${{ env.IMAGE_NAME_BASE }}/gateway:latest
+
+  build-federation:
+    name: Build Federation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push federation image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./federation
+          push: true
+          tags: ${{ env.IMAGE_NAME_BASE }}/federation:${{ github.sha }},${{ env.IMAGE_NAME_BASE }}/federation:latest
+
+  build-staff-api:
+    name: Build Staff API
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push staff_api image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./staff_api
+          push: true
+          tags: ${{ env.IMAGE_NAME_BASE }}/staff-api:${{ github.sha }},${{ env.IMAGE_NAME_BASE }}/staff-api:latest
+
+  build-user-api:
+    name: Build User API
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push user_api image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./user_api
+          push: true
+          tags: ${{ env.IMAGE_NAME_BASE }}/user-api:${{ github.sha }},${{ env.IMAGE_NAME_BASE }}/user-api:latest
+
+  build-inquiry-api:
+    name: Build Inquiry API
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push inquiry_api image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./inquiry_api
+          push: true
+          tags: ${{ env.IMAGE_NAME_BASE }}/inquiry-api:${{ github.sha }},${{ env.IMAGE_NAME_BASE }}/inquiry-api:latest
+
+  # -----------------------------------------------------------------------------
+
+  deploy-to-ecs:
+    name: Deploy to ECS
+    runs-on: ubuntu-latest
+    environment: production
+    needs:
+      - build-batch
+      - build-gateway
+      - build-federation
+      - build-staff-api
+      - build-user-api
+      - build-inquiry-api
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
+
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition crm-sample-task-definitions --query taskDefinition > task-definition.json
+
+      - name: Fill in the new batch image ID in the Amazon ECS task definition
+        id: task-def-batch
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_BATCH }}
+          image: ${{ env.IMAGE_NAME_BASE }}/batch:${{ github.sha }}
+
+      - name: Fill in the new user-api-migration image ID in the Amazon ECS task definition
+        id: task-def-user-api-migration
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_USER_API_MIGRATION }}
+          image: ${{ env.IMAGE_NAME_BASE }}/user-api:${{ github.sha }}
+
+      - name: Fill in the new inquiry-api-migration image ID in the Amazon ECS task definition
+        id: task-def-inquiry-api-migration
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_INQUIRY_API_MIGRATION }}
+          image: ${{ env.IMAGE_NAME_BASE }}/inquiry-api:${{ github.sha }}
+
+      - name: Fill in the new gateway image ID in the Amazon ECS task definition
+        id: task-def-gateway
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_GATEWAY }}
+          image: ${{ env.IMAGE_NAME_BASE }}/gateway:${{ github.sha }}
+
+      - name: Fill in the new federation image ID in the Amazon ECS task definition
+        id: task-def-federation
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_FEDERATION }}
+          image: ${{ env.IMAGE_NAME_BASE }}/federation:${{ github.sha }}
+
+      - name: Fill in the new staff api image ID in the Amazon ECS task definition
+        id: task-def-staff-api
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_STAFF_API }}
+          image: ${{ env.IMAGE_NAME_BASE }}/staff-api:${{ github.sha }}
+
+      - name: Fill in the new user api image ID in the Amazon ECS task definition
+        id: task-def-user-api
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_USER_API }}
+          image: ${{ env.IMAGE_NAME_BASE }}/user-api:${{ github.sha }}
+
+      - name: Fill in the new inquiry api image ID in the Amazon ECS task definition
+        id: task-def-inquiry-api
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_INQUIRY_API }}
+          image: ${{ env.IMAGE_NAME_BASE }}/inquiry-api:${{ github.sha }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true

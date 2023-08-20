@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: federation
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: federation
+  template:
+    metadata:
+      labels:
+        app: federation
+    spec:
+      containers:
+        - name: federation
+          image: ghcr.io/kurupeku/crm-sample/federation:latest
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: app-config

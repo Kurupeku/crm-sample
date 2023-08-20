@@ -4,7 +4,7 @@
 
 インバウンドで受け付けた問い合わせを一覧で管理し、進捗や連絡日などを登録して複数人で捌くためのツールというイメージで作成しています。
 
-フロントエンドと API が完全に分離した SPA となっており、両者とも AWS のサービスを用いて稼働させています。
+フロントエンドは Next.js (React) を用いた SPA となっており、バックエンドはコンテキスト境界で切り分けたマイクロサービスとしてコンテナにて稼働します。
 
 サーバー間およびクライアントとの通信には
 
@@ -20,13 +20,78 @@ GitHub Actions を用いての CI/CD も取り入れています。
 
 ![demo](https://user-images.githubusercontent.com/22340645/141000816-b2b793c1-b789-4c3d-ae9f-3ca62687b702.gif)
 
-[CRM Sample App](https://www.crm-sample-app.kurupeku.dev/login) からログインできます。
+<!-- [CRM Sample App](https://www.crm-sample-app.kurupeku.dev/login) からログインできます。 -->
+
+### ローカル上でデモを起動する
+
+ローカル上で `docker-compose` or `kind` をインストールして起動出来ます。
+
+どちらも起動まで少し時間がかかります
+
+#### Docker Compose での起動方法
+
+環境変数設定のため、プロジェクトルートに以下の内容で `.env` ファイルを作成してください
+
+```txt
+GO_ENV=development
+NODE_ENV=development
+NEXT_PUBLIC_API_HOST=http://localhost:2000
+FEDERATION_HOST=federation:3000
+AUTH_HOST=auth_api:50051
+STAFF_HOST=staff_api:3001
+USER_HOST=user_api:3002
+INQUIRY_HOST=inquiry_api:3003
+DB_HOST=db
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=postgres
+```
+
+`.env` 作成後、以下のコマンドを順に入力すればサービスが稼働します
+
+```bash
+docker compose build
+docker compose up -d
+```
+
+起動後 [http://localhost:8080](http://localhost:8080) にアクセスすればアプリケーションが表示されます
+
+#### Kubernetes (kind) での起動方法
+
+[kind](https://kind.sigs.k8s.io/) を前提に構築しています。
+インストールされていない場合はインストールしてください
+
+起動用のコマンドを [Makefile](./Makefile) に用意しているので、以下を入力してクラスターの起動とリソースの Apply を行ってください
+
+```bash
+make create-kind-cluster
+make apply-local
+```
+
+リソースを削除する場合は
+
+```bash
+make delete-local
+```
+
+クラスターを削除する場合は
+
+```bash
+make delete-kind-cluster
+```
+
+を入力してください
+
+起動後 [http://localhost(:80)](http://localhost:80) にアクセスすればアプリケーションが表示されます
+
+### デモアプリケーションのログイン方法
 
 ゲストアカウントを使用してログインしてください。
 
-なお、内部から各種情報の編集・削除などが行えますが、ゲストアカウント自体の情報を編集した際は元に戻してからログアウト頂きますよう、よろしくお願いいたします。
+- Email: `guest@example.com`
+- Password: `password`
 
-## 主な使用言語とフレームワーク
+## 主な使用言語 / FW / ライブラリ
 
 - Ruby
   - Ruby on Rails
@@ -44,21 +109,25 @@ GitHub Actions を用いての CI/CD も取り入れています。
 
 ## サービス構成
 
-![demo](https://github.com/Kurupeku/crm-sample/blob/main/docs/assets/services.png?raw=true)
+![demo](docs/assets/services.png?raw=true)
 
 当プロジェクトのバックエンドは 3 つのサービスと 2 つの中継サーバーで構成されています。
 
 ### サービス
 
+#### Auth API
+
+JWT の認証のみを行うサービスです。
+
+コンテキスト境界上は後述の Staff API と同等ですが、レイテンシを抑えるために gRPC でリクエストを受け付けている関係上、サービスとしては独立させています
+
+実装は Golang で、DDD によるレイヤードアーキテクチャを取り入れています。
+
 #### Staff API
 
-操作するスタッフの情報を扱うサービスです。
-
-認証用サーバーも兼任しています。
+アプリケーションの利用者であるスタッフの情報を扱うサービスです。
 
 使用言語は Golang で、gqlgen というスキーマドリブンなフレームワークにて構築しています。
-
-認証情報の問い合わせにのみ gRPC を使用して応答します。
 
 #### User API
 
@@ -84,9 +153,9 @@ GraphQL 配信のため graphql-rails という Gem も併用しています。
 
 各サービスに対するリクエストを振り分けています。
 
-また JWT の認可もこのサーバーにて行っており、認可したアクセスのみを GraphQL 用エンドポイントにつなぎます。
+また JWT の検証もこのサーバーにて行っており、ログインが確認できたアクセスのみを GraphQL 用エンドポイントにつなぎます。
 
-## インフラ構成
+<!-- ## インフラ構成
 
 ![demo](https://github.com/Kurupeku/crm-sample/blob/main/docs/assets/aws.png?raw=true)
 
@@ -100,7 +169,7 @@ GitHub Actions でデプロイ用の Workflow を組んでいるため、main �
 
 フロントエンドの Next.js は Amplify で SSR モードにてホスティングしており、そこからバックエンドへ通信を行いデータを取得しています。
 
-こちらはデフォルトで用意されている AutoDeployment を使用しており、client ディレクトリ以下の更新を検知して自動でビルド&ホスティングが行われます。
+こちらはデフォルトで用意されている AutoDeployment を使用しており、client ディレクトリ以下の更新を検知して自動でビルド&ホスティングが行われます。 -->
 
 ## 機能一覧
 

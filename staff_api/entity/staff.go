@@ -28,7 +28,7 @@ type PageInfo struct {
 }
 
 func AllStaffs() ([]Staff, error) {
-	db := database.GetDB()
+	db := database.Get()
 
 	var staffs []Staff
 	if err := db.Order("id").Find(&staffs).Error; err != nil {
@@ -47,7 +47,7 @@ func PaginatedStaffs(lm int, of int) ([]Staff, error) {
 		return nil, errors.New("ページ数は1以上である必要があります")
 	}
 
-	db := database.GetDB()
+	db := database.Get()
 
 	var staffs []Staff
 	if err := db.Order("id").Limit(lm).Offset(of).Find(&staffs).Error; err != nil {
@@ -86,7 +86,7 @@ func GetPageInfo(per int, page int) (*PageInfo, error) {
 }
 
 func (s *Staff) FindStaffByID(id string) error {
-	db := database.GetDB()
+	db := database.Get()
 	result := db.First(s, id)
 
 	if count := result.RowsAffected; count == 0 {
@@ -101,7 +101,7 @@ func (s *Staff) FindStaffByID(id string) error {
 }
 
 func (s *Staff) FindStaffByEmail(email string) error {
-	db := database.GetDB()
+	db := database.Get()
 	result := db.Where(Staff{Email: email}).First(s)
 
 	if count := result.RowsAffected; count == 0 {
@@ -128,7 +128,7 @@ func (s *Staff) Create(name string, email string, password string) error {
 		return errors.New("パスワードは英数字8文字以上である必要があります")
 	}
 
-	db := database.GetDB()
+	db := database.Get()
 
 	if count := db.Where("email = ?", email).Find(&Staff{}).RowsAffected; count > 0 {
 		return errors.New("すでに同じEmailが登録されています")
@@ -177,7 +177,7 @@ func (s *Staff) Update(id string, name *string, email *string) error {
 		return err
 	}
 
-	db := database.GetDB()
+	db := database.Get()
 	if err := db.Model(s).Updates(params).Error; err != nil {
 		return err
 	}
@@ -190,7 +190,7 @@ func (s *Staff) Delete(id string) error {
 		return err
 	}
 
-	db := database.GetDB()
+	db := database.Get()
 	if err := db.Delete(s, id).Error; err != nil {
 		return err
 	}
@@ -203,7 +203,7 @@ func (s *Staff) UpdateIcon(id string, icon string) error {
 		return err
 	}
 
-	db := database.GetDB()
+	db := database.Get()
 	if err := db.Model(s).Update("icon", icon).Error; err != nil {
 		return err
 	}
@@ -216,7 +216,7 @@ func (s *Staff) DeleteIcon(id string) error {
 		return err
 	}
 
-	db := database.GetDB()
+	db := database.Get()
 	if err := db.Model(s).Update("icon", nil).Error; err != nil {
 		return err
 	}
@@ -242,25 +242,12 @@ func (s *Staff) ChangePassword(id string, current string, new string) error {
 		return err
 	}
 
-	db := database.GetDB()
+	db := database.Get()
 	if err := db.Model(s).Update("password_digest", newHash).Error; err != nil {
 		return err
 	}
 
 	return nil
-}
-
-func (s Staff) IsAuthenticated(email string, password string) bool {
-	err := s.FindStaffByEmail(email)
-	if err != nil {
-		return false
-	}
-
-	if s.comparePassword(password) != nil {
-		return false
-	}
-
-	return true
 }
 
 func (s Staff) comparePassword(p string) error {

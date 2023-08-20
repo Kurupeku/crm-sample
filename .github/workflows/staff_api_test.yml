@@ -2,10 +2,21 @@ name: Staff API Test
 
 on:
   workflow_dispatch:
-
-  push:
+  pull_request:
+    branches-ignore:
+      - main
     paths:
-      - "staff_api/**"
+      - "staff_api/**/**.go"
+
+env:
+  API_NAME: staff_api
+  GO_ENV: production
+  GOOS: linux
+  GOARCH: amd64
+  DB_HOST: localhost
+  DB_USER: postgres
+  DB_PASSWORD: postgres
+  DB_PORT: 5432
 
 defaults:
   run:
@@ -15,45 +26,44 @@ jobs:
   test-staff-api:
     name: Test Staff API
     runs-on: ubuntu-latest
-    env:
-      GO_ENV: production
-      GO111MODULE: on
-      CGO_ENABLED: 0
-      GOOS: linux
 
     services:
       db:
-        image: postgres:13.4
+        image: postgres:15.4-alpine
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_HOST: db
-          POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Set up Go
-        uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
         with:
-          go-version: "1.17.1"
+          fetch-depth: 1
+
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: ${{ env.API_NAME }}/go.mod
+          cache: true
+          cache-dependency-path: ${{ env.API_NAME }}/go.sum
 
       - name: Get dependencies
-        run: go mod download
+        run: go get .
 
-      - name: Test code
+      - name: Test
         run: |
-          go test -v ./
-          go test -v ./entity
+          go test -v ./...
         env:
-          DB_HOST: localhost
-          DB_USER: postgres
-          DB_PASSWORD: postgres
-          DB_PORT: 5432
           GO_ENV: test
+
+      - name: Vet
+        run: go vet ./...
+
+      - uses: dominikh/staticcheck-action@v1.3.0
+        with:
+          install-go: false
+          working-directory: ${{ env.API_NAME }}
 
       - name: Try Building
         run: go build main.go

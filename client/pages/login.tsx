@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/dist/client/router";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { ThemeProvider, createTheme } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import CircleProgress from "@mui/material/CircularProgress";
+import CssBaseline from "@mui/material/CssBaseline";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import { pink, teal } from "@mui/material/colors";
 import axios from "axios";
+import { useRouter } from "next/dist/client/router";
+import { useSnackbar } from "notistack";
+import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { globalLoadingState, sessionState } from "../modules/atoms";
-import { useSnackbar } from "notistack";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import CircleProgress from "@mui/material/CircularProgress";
-import { generateSessionData, AuthResponseData } from "../modules/jwt";
-import { createTheme, ThemeProvider } from "@mui/material";
-import { teal, pink } from "@mui/material/colors";
+import { AuthResponseData, generateSessionData } from "../modules/jwt";
 
 const publicTheme = createTheme({
   palette: {
@@ -38,7 +38,7 @@ export default function Login() {
     const jwt = localStorage.getItem("jwt");
     if (jwt) {
       setGlobalLoading(true);
-      const url = `${process.env.NEXT_PUBLIC_API_HOST}/api/refresh_token`;
+      const url = `${process.env.NEXT_PUBLIC_API_HOST || ""}/api/refresh_token`;
       axios
         .request<AuthResponseData>({
           url,
@@ -71,7 +71,7 @@ export default function Login() {
 
   const handleSubmit = () => {
     setLoading(true);
-    const url = `${process.env.NEXT_PUBLIC_API_HOST}/api/login`;
+    const url = `${process.env.NEXT_PUBLIC_API_HOST || ""}/api/login`;
     axios
       .request<AuthResponseData>({
         url,
