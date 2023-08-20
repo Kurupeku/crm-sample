@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+  - config_map/client_config.yaml
+  - config_map/db_config.yaml
+  - config_map/db_sql_config.yaml
+  - service/ingress.yaml

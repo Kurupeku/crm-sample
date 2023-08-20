@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: batch
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+        - name: batch
+          image: ghcr.io/kurupeku/crm-sample/batch:latest
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - configMapRef:
+                name: db-config
+      restartPolicy: Never
+  backoffLimit: 10
