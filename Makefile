@@ -11,9 +11,9 @@ delete-kind-cluster:
 apply-local:
 	kubectl apply -k k8s/override/local
 	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
-	sleep 3
+	sleep 10
 	kubectl wait --namespace ingress-nginx --for=condition=ready pod \
-  --selector=app.kubernetes.io/component=controller --timeout=90s
+  --selector=app.kubernetes.io/component=controller --timeout=180s
 
 delete-local:
 	kubectl delete -k k8s/override/local
